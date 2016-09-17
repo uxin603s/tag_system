@@ -1,0 +1,45 @@
+<div ng-controller="ApiCtrl" class="col-xs-12">
+	<div class="col-xs-12 bottom_line">		
+		<textarea 
+		placeholder="申請註解"
+		ng-model="comment" style="vertical-align: middle;"></textarea>
+		<button 
+		ng-click="insert(comment)"
+		class="btn btn-primary">申請API</button>
+	</div>
+	<div class="col-xs-12 bottom_line">
+		<div class="col-xs-2">api_id</div>
+		<div class="col-xs-2">申請人</div>
+		<div class="col-xs-2">註解</div>
+		<div class="col-xs-2">狀態</div>
+		<div class="col-xs-2">功能</div>
+	</div>
+	<div class="col-xs-12 bottom_line" ng-repeat="(list_index,item) in list">
+		<div class="col-xs-2">{{item.id}}</div>
+		<div class="col-xs-2">{{item.uid}}</div>
+		<div class="col-xs-2">
+		<textarea 
+		ng-change="update(list_index,{comment:item.comment})"
+		ng-model="item.comment" 
+		style="vertical-align: middle;"></textarea>
+		</div>
+		<div class="col-xs-2">
+			<button class="btn"
+			ng-click="update(list_index,{status:status.value})"
+			ng-class="item.status==status.value?'btn-danger':'btn-primary'"
+			ng-repeat="status in status_arr"
+			>{{status.name}}</button>
+		</div>
+		<div class="col-xs-2">
+			<button 
+			ng-click="delete(list_index)"
+			class="btn btn-primary">刪除</button>
+			<button 
+			ng-if="item.status==1"
+			ng-click="user_config.select_api_level=item.id;user_config.select_page=1"
+			class="btn btn-primary">階層設定</button>
+		</div>
+	</div>
+
+	
+</div>
