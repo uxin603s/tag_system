@@ -19,7 +19,6 @@ angular.module("app").directive("tagRelation",['$parse','$timeout',function($par
 						arg:search,
 					}
 					$.post("ajax.php",post_data,function(res){
-						
 						$scope.list=[];
 						if(res.status){
 							$scope.list=res.list;
@@ -28,8 +27,6 @@ angular.module("app").directive("tagRelation",['$parse','$timeout',function($par
 								$scope.searchTagNameTmp[id]=id;
 							}
 						}
-						console.log($scope.list);
-						
 						$scope.$apply();
 					},"json")
 				},500);

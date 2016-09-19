@@ -5,11 +5,10 @@
 		class="btn btn-primary"
 		>新增階層</button>
 	</div>
-	
-	<div class="col-xs-12 bottom_line" ng-repeat="item in TagLevelList">
+	<div class="col-xs-12 bottom_line" ng-repeat="item in list">
 		<div class="col-xs-12" >
 			<button 
-			ng-click="delete(level_index)"
+			ng-click="delete($index)"
 			class="btn"
 			>刪除本層</button>	
 			<input type="checkbox" 
@@ -17,7 +16,7 @@
 			ng-true-value="'1'" 
 			ng-false-value="'0'"
 			ng-model="item.sync_relation"
-			ng-change="update_tag_level({sync_relation:item.sync_relation},{id:item.id})"
+			ng-change="update({sync_relation:item.sync_relation},{id:item.id})"
 			/>與下層同步
 		</div>
 		<tag-relation-count 

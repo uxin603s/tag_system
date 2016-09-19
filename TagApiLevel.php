@@ -1,17 +1,17 @@
 <?php
 class TagApiLevel{
-	public static function update_sort_id($arg){
-		$update=[];
-		$where=[];
-		$update['sort_id']=$arg['sort_id'];
-		$where['api_id']=$arg['api_id'];
-		$where['level_id']=$arg['level_id'];
-		if(DB::update($update,$where,"tag_api_level")){
+	public static function update($arg){
+		//欄位案權限 再過濾一次
+		$update=$arg['update'];
+		$where=$arg['where'];
+		if(DB::update($arg['update'],$arg['where'],'tag_api_level')){
 			$status=true;
+			$message="修改成功";
 		}else{
 			$status=false;
+			$message="修改失敗";
 		}
-		return compact(['status']);
+		return compact(['status','message']);
 	}
 	public static function addRelation($arg){
 		$bind_data=[$arg['api_id'],$arg['level_id']];
