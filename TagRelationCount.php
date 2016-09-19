@@ -45,8 +45,15 @@ class TagRelationCount{
 		return compact(['insert']);
 	}
 	public static function delete($arg){
-		$level_id=$arg['level_id'];
-		$where=compact(['level_id']);
-		DB::delete($where,"tag_relation_count");
+		$where=$arg;
+		if(DB::delete($where,"tag_relation_count")){
+			TagRelation::delete($arg);
+			$status=true;
+			$message="刪除成功";
+		}else{
+			$status=false;
+			$message="刪除失敗";
+		}
+		return compact(['status','message']);
 	}
 }

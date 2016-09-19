@@ -29,11 +29,9 @@ angular.module('app').controller('LevelCtrl',['$scope',function($scope){
 		}
 	},1)
 	
-	$scope.getList=function(){
-		
+	$scope.getList=function(){		
 		clearTimeout($scope.getList_timer);
 		$scope.getList_timer=setTimeout(function(){
-			// console.log('getList')
 			var post_data={
 				func_name:'TagLevel::getList',
 				arg:{
@@ -80,16 +78,18 @@ angular.module('app').controller('LevelCtrl',['$scope',function($scope){
 		},"json")
 	}
 	
-	$scope.update=function(update,where){
-		console.log('update')
+	$scope.update=function(func_name,update,where){
+		
 		var post_data={
-			func_name:'TagApiLevel::update',
+			func_name:func_name,
 			arg:{
 				update:update,
 				where:where,
 			}
 		}
+		// console.log('update',post_data)
 		$.post("ajax.php",post_data,function(res){
+			// console.log(res)
 			if(res.status){
 				var data=$scope.list.find(function(value){
 					var flag=1;
@@ -117,24 +117,14 @@ angular.module('app').controller('LevelCtrl',['$scope',function($scope){
 				api_id:$scope.user_config.select_api_level,
 				level_id:$scope.list[index].id,
 			}
-			$scope.update(update,where);
+			$scope.update('TagApiLevel::update',update,where);
 		}
 	},1);
-	$scope.sync_relation=function(level_id,type){
-		var post_data={
-			func_name:'TagRelation::sync',
-			arg:{
-				api_id:$scope.user_config.select_api_level,
-				level_id:level_id,
-				type:type,
-			}
-		}
-		$.post("ajax.php",post_data,function(res){
-			console.log(res)
-			if(res.status){
-				$scope.getList();
-			}
-			$scope.$apply();
-		},"json")
-	}
+	
+	
+	// $scope.$watch("list",function(list){
+		// for(var i in list){
+			// console.log(list[i])
+		// }
+	// },1)
 }])

@@ -7,10 +7,11 @@ angular.module("app").directive("tagRelationCount",['$parse','$timeout',function
 			tagName:'=',
 			searchTagNameTmp:'=',
 			data:'=',
+			levelList:'=',
 			index:'=',
 		},
         link: function($scope,$element,$attr) {
-			$scope.getList=function(search){
+			$scope.getList=function(search,delay_time){
 				var time_name='getTagRelationCountList_timer';
 				clearTimeout($scope[time_name]);
 				$scope[time_name]=setTimeout(function(){
@@ -30,7 +31,7 @@ angular.module("app").directive("tagRelationCount",['$parse','$timeout',function
 						}
 						$scope.$apply();
 					},"json")
-				},500);
+				},delay_time);
 			}
 			$scope.watch_getList=function(data){
 				var search={};
@@ -52,11 +53,35 @@ angular.module("app").directive("tagRelationCount",['$parse','$timeout',function
 					arg:search,
 				}
 				$.post("ajax.php",post_data,function(res){
+					$scope.add_flag=true;
 					$scope.watch_getList();
 					$scope.$apply();
-				},"json")
+					
+					if($scope.levelList[$scope.index-1].sync_relation*1){
+						$scope.sync_relation($scope.levelList,$scope.index-1,1);
+					}
+				},"json");
 			}
-			
+			$scope.delete=function(index){
+				// console.log($scope.data)
+				var search={
+					id:$scope.list[index].id,
+					level_id:$scope.data.id,
+				}
+				var post_data={
+					func_name:'TagRelationCount::delete',
+					arg:search,
+				}
+				// console.log(post_data)
+				// return
+				$.post("ajax.php",post_data,function(res){
+					console.log(res)
+					$scope.list.splice(index,1);
+					delete $scope.data.select_tid;
+					$scope.add_flag=false;
+					$scope.$apply();
+				},"json");
+			}
 			$scope.$watch("tag_name",$scope.watch_getList,1)
 			$scope.$watch("data",$scope.watch_getList,1)
 			

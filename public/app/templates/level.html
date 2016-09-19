@@ -16,18 +16,27 @@
 			ng-true-value="'1'" 
 			ng-false-value="'0'"
 			ng-model="item.sync_relation"
-			ng-change="update({sync_relation:item.sync_relation},{id:item.id})"
+			ng-change="
+			update('TagLevel::update',{sync_relation:item.sync_relation},{id:item.id});
+			"
 			/>與下層同步
+			{{item}}
 		</div>
 		<tag-relation-count 
-		data="item" 
+		level-list="list" 
 		index="$index"
+		data="item" 
 		tag-name="tagName"
 		search-tag-name-tmp="searchTagNameTmp"
 		></tag-relation-count>
+		
 		<tag-relation 
-		data="item" 
+		ng-show="item.sync_relation==0"
+		
+		level-list="list" 
 		index="$index"
+		
+		data="item" 
 		tag-name="tagName"
 		search-tag-name-tmp="searchTagNameTmp"
 		></tag-relation>

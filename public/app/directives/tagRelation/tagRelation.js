@@ -7,10 +7,11 @@ angular.module("app").directive("tagRelation",['$parse','$timeout',function($par
 			tagName:'=',
 			searchTagNameTmp:'=',
 			data:'=',
+			levelList:'=',
 			index:'=',
 		},
         link: function($scope,$element,$attr) {
-			$scope.getList=function(search){
+			$scope.getList=function(search,delay_time){
 				var time_name='getTagRelationList_timer';
 				clearTimeout($scope[time_name]);
 				$scope[time_name]=setTimeout(function(){
@@ -29,7 +30,7 @@ angular.module("app").directive("tagRelation",['$parse','$timeout',function($par
 						}
 						$scope.$apply();
 					},"json")
-				},500);
+				},delay_time);
 			}
 			$scope.watch_getList=function(data){
 				var search={};
@@ -49,10 +50,10 @@ angular.module("app").directive("tagRelation",['$parse','$timeout',function($par
 					
 				}
 			}
-			$scope.update_view=function(){
-				$scope.data.ggwp=1;//更新值為了更新地一層
+			$scope.update_view=function(data){
+				data.ggwp=1;
 				$scope.$apply();
-				delete $scope.data.ggwp;//更新值為了更新地一層
+				delete data.ggwp;
 				$scope.$apply();
 			}
 			
@@ -71,8 +72,12 @@ angular.module("app").directive("tagRelation",['$parse','$timeout',function($par
 				}
 				$.post("ajax.php",post_data,function(res){
 					$scope.watch_getList();
+					$scope.add_flag=true;
 					$scope.$apply();
-					$scope.update_view();
+					if($scope.data.sync_relation*1){
+						$scope.sync_relation($scope.levelList,$scope.index,0);
+					}
+					$scope.update_view($scope.data);
 				},"json")
 			}
 			$scope.delete=function(child_id){
@@ -87,11 +92,11 @@ angular.module("app").directive("tagRelation",['$parse','$timeout',function($par
 				}
 				$.post("ajax.php",post_data,function(res){
 					$scope.watch_getList();
+					$scope.add_flag=false;
 					$scope.$apply();
-					$scope.update_view();
+					$scope.update_view($scope.data);
 				},"json")
 			}
-			
 			
 			$scope.$watch("tag_name",function(value){
 				if(!value)return;
@@ -99,6 +104,11 @@ angular.module("app").directive("tagRelation",['$parse','$timeout',function($par
 				$scope.add_flag=$scope.list.some(function(value){
 					return $scope.tagName[value.child_id]==$scope.tag_name;
 				})
+			},1)
+			$scope.$watch("data.sync_relation",function(sync_relation){
+				if(sync_relation*1){
+					$scope.sync_relation($scope.levelList,$scope.index,0);
+				}
 			},1)
         },
     }

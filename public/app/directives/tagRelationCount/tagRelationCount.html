@@ -6,17 +6,20 @@
 		placeholder="搜尋資料"
 	/>
 	
-	<button 
-	ng-show="tagName[item.id]"
-	class="btn"
-	ng-class="data.select_tid==item.id?'btn-danger':'btn-primary'"
-	ng-click="data.select_tid==item.id?data.select_tid=undefined:data.select_tid=item.id;"
-	ng-repeat="item in list"
-	>{{tagName[item.id]}}({{item.count}})</button>
-	
 	<button
 	ng-show="tag_name && !add_flag"
 	ng-click="insert();"
 	class="btn btn-primary"
 	>新增:{{tag_name}}</button>
+	
+	<button 
+	ng-show="tagName[item.id]"
+	class="btn"
+	ng-class="data.select_tid==item.id?'btn-danger':'btn-primary'"
+	ng-click="data.select_tid==item.id?data.select_tid=undefined:data.select_tid=item.id;"
+	ng-right-click="delete($index)"
+	ng-repeat="item in list"
+	>{{tagName[item.id]}}({{item.count}})</button>
+	
+	
 </div>
