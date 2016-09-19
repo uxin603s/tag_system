@@ -1,0 +1,22 @@
+<div class="col-xs-12 " ng-show="data.select_tid">
+	{{tagName[data.select_tid]?tagName[data.select_tid]+'的子層':''}}
+	
+	<input type="text"
+	ng-model="tag_name"
+	placeholder="搜尋資料"
+	/>
+	
+	<button 
+	ng-show="tagName[item.child_id]"
+	ng-right-click="delete(item.child_id)"
+	class="btn"
+	ng-repeat="item in list"
+	>{{tagName[item.child_id]}}</button>
+	
+	<button
+	ng-show="tag_name && !add_flag && (tag_name !=tagName[select_tid])"
+	ng-click="insert({name:tag_name,level_id:level_item.id,id:select_tid});"
+	
+	class="btn btn-primary"
+	>新增:{{tag_name}}</button>
+</div>

@@ -37,9 +37,9 @@ class TagApi{
 	}
 	
 	public static function delete($arg){
-		$where=[];
-		$where['id']=$arg['id'];
+		$where=$arg;
 		if(DB::delete($where,'tag_api')){
+			DB::delete($where,'tag_api_level');
 			$status=true;
 			$message="刪除成功";
 		}else{

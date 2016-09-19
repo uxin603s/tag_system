@@ -29,9 +29,15 @@ class TagRelationCount{
 		return compact(['status','list','sql','bind_data']);
 	}
 	public static function insert($arg){
-		$tag_data=Tag::insert($arg['name']);
+		if(isset($arg['name'])){
+			$tag_data=Tag::insert($arg['name']);
+			$id=$tag_data['id'];
+		}else if(isset($arg['id'])){
+			$id=$arg['id'];
+		}else{
+			return [];
+		}
 		
-		$id=$tag_data['id'];
 		$level_id=$arg['level_id'];
 		$count=0;
 		$insert=compact(['id','level_id','count']);

@@ -7,9 +7,18 @@
 	<script src="js/localForage-1.4.2.min.js"></script>
 	<script src="app/app.js"></script>
 	<script src="app/run/base.js"></script>
+	
 	<script src="app/controllers/ApiCtrl.js"></script>
 	<script src="app/controllers/LevelCtrl.js"></script>
 	<script src="app/controllers/RelationCtrl.js"></script>
+	
+	<script src="app/directives/parseInt/parseInt.js"></script>
+	<script src="app/directives/ngRightClick/ngRightClick.js"></script>
+	<script src="app/directives/pagnation/pagnation.js"></script>
+	
+	<script src="app/directives/tagRelationCount/tagRelationCount.js" ></script>
+	<script src="app/directives/tagRelation/tagRelation.js" ></script>
+	
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.7.min.css" />
 	<style>
 	.col-xs-1,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9,.col-xs-10,.col-xs-11,.col-xs-12{

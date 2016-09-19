@@ -1,0 +1,31 @@
+<div ng-show="page_arr && page_arr.length!=0 ">
+	<button 
+	class="btn btn-info"  
+	ng-click="(data.limit_page!=0)  && (data.limit_page=0)"
+	>＜＜</button>
+	<button 
+	class="btn btn-info"  
+	ng-click="(data.limit_page>0) && (data.limit_page=data.limit_page-1)"
+	>＜</button>
+	<button 
+	class="btn"  
+	ng-class="($parent.data.limit_page==page)?'btn-danger':'btn-primary'" 
+	ng-show="!(page_start>page || page_end<page)" 
+	ng-repeat="page in page_arr" 
+	ng-click="$parent.data.limit_page=page"
+	>{{page*1+1}}</button>
+	<button 
+	class="btn btn-info"  
+	ng-click="(data.limit_page<page_count-1) && (data.limit_page=data.limit_page+1)"
+	>＞</button>
+	<button 
+	class="btn btn-info"  
+	ng-click="(data.limit_page!=page_count-1) && (data.limit_page=page_count-1)"
+	>＞＞</button>
+	
+	目前在第{{data.limit_page+1}}頁，共{{page_count}}頁
+	，一頁<input type="text" 
+	class="form-control"
+	style="display:inline-block;width:50px;"
+	ng-model="data.limit_count" />筆
+</div>

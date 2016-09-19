@@ -35,11 +35,12 @@ class TagLevel{
 		}
 		return compact(['status','insert','TagApiLevel_message']);
 	}
+	
 	public static function update($arg){
 		//欄位案權限 再過濾一次
 		$update=$arg['update'];
 		$where=$arg['where'];
-		if(DB::update($update,$where,'tag_level')){
+		if(DB::update($arg['update'],$arg['where'],'tag_level')){
 			$status=true;
 			$message="修改成功";
 		}else{
