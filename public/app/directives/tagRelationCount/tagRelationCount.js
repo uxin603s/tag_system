@@ -57,7 +57,7 @@ angular.module("app").directive("tagRelationCount",['$parse','$timeout',function
 					$scope.watch_getList();
 					$scope.$apply();
 					
-					if($scope.levelList[$scope.index-1].sync_relation*1){
+					if($scope.levelList[$scope.index-1] && $scope.levelList[$scope.index-1].sync_relation*1){
 						$scope.sync_relation($scope.levelList,$scope.index-1,1);
 					}
 				},"json");
