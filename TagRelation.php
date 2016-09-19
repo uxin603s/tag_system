@@ -64,61 +64,55 @@ class TagRelation{
 		}
 		return compact(['status']);
 	}
-	public static function sync($arg){
-		$status=false;
-		$bind_data=[$arg['level_id']];
-		$sql="SELECT * FROM tag_level where id =?";
-		if($tmp=DB::select($sql,$bind_data)){
-			// return $tmp[0];
-			// return compact(['sql','bind_data','tmp']);
-			if($tmp[0]['sync_relation']){
-				
-				$bind_data=[$arg['level_id'],$arg['api_id']];
-				$sql="select * from tag_api_level where level_id= ? && api_id=?";
-				
-				if($tmp=DB::select($sql,$bind_data)){
-					$sort_id=$tmp[0]['sort_id'];
-					$sort_id+=1;
-					$bind_data=[$arg['api_id'],$sort_id];
-					$sql="select * from tag_api_level where api_id=? && sort_id =?";
+	// public static function sync($arg){
+		// $status=false;
+		// $bind_data=[$arg['level_id']];
+		// $sql="SELECT * FROM tag_level where id =?";
+		// if($tmp=DB::select($sql,$bind_data)){
+			// if($tmp[0]['sync_relation']){
+				// $bind_data=[$arg['level_id'],$arg['api_id']];
+				// $sql="select * from tag_api_level where level_id= ? && api_id=?";
+				// if($tmp=DB::select($sql,$bind_data)){
+					// $sort_id=$tmp[0]['sort_id'];
+					// $sort_id+=1;
+					// $bind_data=[$arg['api_id'],$sort_id];
+					// $sql="select * from tag_api_level where api_id=? && sort_id =?";
 					
-					if($tmp=DB::select($sql,$bind_data)){
+					// if($tmp=DB::select($sql,$bind_data)){
 						
-						$level_id_source=$arg['level_id'];
-						$level_id_object=$tmp[0]['level_id'];
+						// $level_id_source=$arg['level_id'];
+						// $level_id_object=$tmp[0]['level_id'];
 						
 						
-						if($arg['type']){
-							$tmp=TagRelationCount::getList(['level_id'=>$level_id_object]);
+						// if($arg['type']){
+							// $tmp=TagRelationCount::getList(['level_id'=>$level_id_object]);
 							
-							if($tmp['status']){
-								if(isset($arg['id'])){
-									$status=true;
-									$id_arr=array_column($tmp['list'],"id");
-									// return $tmp['list'];
-									foreach($id_arr as $id){
-										// return ['id'=>$arg['id'],'child_id'=>$id,'level_id'=>$level_id_object];
-										TagRelation::insert(['id'=>$arg['id'],'child_id'=>$id,'level_id'=>$level_id_source]);
-									}
-								}
-							}
-						}else{
-							$status=true;
-							$tmp=TagRelation::getList(['level_id'=>$level_id_source]);
-							if($tmp['status']){
-								$id_arr=array_column($tmp['list'],"child_id");
-								foreach($id_arr as $id){
-									TagRelationCount::insert(['id'=>$id,'level_id'=>$level_id_object]);
-								}
-							}
-						}
+							// if($tmp['status']){
+								// if(isset($arg['id'])){
+									// $status=true;
+									// $id_arr=array_column($tmp['list'],"id");
+									// foreach($id_arr as $id){
+										// TagRelation::insert(['id'=>$arg['id'],'child_id'=>$id,'level_id'=>$level_id_source]);
+									// }
+								// }
+							// }
+						// }else{
+							// $status=true;
+							// $tmp=TagRelation::getList(['level_id'=>$level_id_source]);
+							// if($tmp['status']){
+								// $id_arr=array_column($tmp['list'],"child_id");
+								// foreach($id_arr as $id){
+									// TagRelationCount::insert(['id'=>$id,'level_id'=>$level_id_object]);
+								// }
+							// }
+						// }
 						
-					}
+					// }
 					
-				}
+				// }
 				
-			}
-		}
-		return compact(['status']);
-	}
+			// }
+		// }
+		// return compact(['status']);
+	// }
 }

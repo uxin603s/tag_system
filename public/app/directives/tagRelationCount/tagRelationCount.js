@@ -20,12 +20,22 @@ angular.module("app").directive("tagRelationCount",['$parse','$timeout',function
 						arg:search,
 					}
 					$.post("ajax.php",post_data,function(res){
-						// console.log(res)
+						console.log($scope.levelList[$scope.index-1])
 						$scope.list=[];
 						if(res.status){
-							$scope.list=res.list;
+							// $scope.list=res.list;
 							for(var i in res.list){
-								var id=res.list[i].id;
+								var data=res.list[i];
+								var id=data.id;
+								// if($scope.data.filter){
+									// var index=$scope.data.filter.indexOf(id);
+									// if(index!=-1){
+										// $scope.list.push(data)
+									// }
+								// }else{
+									$scope.list.push(data)
+								// }
+								
 								$scope.searchTagNameTmp[id]=id;
 							}
 						}

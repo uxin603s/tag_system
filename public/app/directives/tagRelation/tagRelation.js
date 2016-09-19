@@ -21,10 +21,15 @@ angular.module("app").directive("tagRelation",['$parse','$timeout',function($par
 					}
 					$.post("ajax.php",post_data,function(res){
 						$scope.list=[];
+						// if($scope.levelList[$scope.index+1])
+						// $scope.levelList[$scope.index+1].filter=[];
 						if(res.status){
 							$scope.list=res.list;
+							
 							for(var i in res.list){
 								var id=res.list[i].child_id;
+								// if($scope.levelList[$scope.index+1])
+								// $scope.levelList[$scope.index+1].filter.push(id)
 								$scope.searchTagNameTmp[id]=id;
 							}
 						}

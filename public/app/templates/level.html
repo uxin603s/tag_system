@@ -21,6 +21,7 @@
 			"
 			/>與下層同步
 			{{item}}
+			
 		</div>
 		<tag-relation-count 
 		level-list="list" 
@@ -31,7 +32,7 @@
 		></tag-relation-count>
 		
 		<tag-relation 
-		ng-show="item.sync_relation==0 && item.select_tid"
+		ng-show="item.select_tid"
 		
 		level-list="list" 
 		index="$index"
