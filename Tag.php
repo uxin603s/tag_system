@@ -22,7 +22,6 @@ class Tag{
 			$insert['id']=$id;
 			$list=$insert;
 		}
-		
 		return $list;
 	}
 	

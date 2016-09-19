@@ -12,7 +12,6 @@ DB::$config=$DBConfig;
 
 
 
-
 session_start();
 $_SESSION['id']=0;
 session_write_close();

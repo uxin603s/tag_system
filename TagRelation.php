@@ -1,15 +1,36 @@
 <?php
 class TagRelation{
 	public static function getList($arg){
-		$level_id=$arg['level_id'];
-		$id=$arg['id'];
-		if($tmp=DB::select("select * from tag_relation where level_id = ? && id =?",[$level_id,$id])){
+		$where_str="";
+		$where=[];
+		if(isset($arg['name']) && $arg['name']!=""){
+			$tag_data=Tag::getList($arg['name']);
+			if($tag_data['status']){
+				$where[]="child_id in (".implode(",",array_column($tag_data['list'],"id")).") ";
+			}else{
+				$where[]="child_id = false";
+			}
+		}
+		if(isset($arg['level_id'])){
+			$where[]="level_id = ?";
+			$bind_data[]=$arg['level_id'];
+		}
+		if(isset($arg['id'])){
+			$where[]="id = ?";
+			$bind_data[]=$arg['id'];
+		}
+		if(count($where)){
+			$where_str.=" where ";
+			$where_str.=implode(" && ",$where);
+		}
+		$sql="select * from tag_relation {$where_str}";
+		if($tmp=DB::select($sql,$bind_data)){
 			$status=true;
 			$list=$tmp;
 		}else{
 			$status=false;
 		}
-		return compact(['status','list']);
+		return compact(['status','list','sql',]);
 	}
 	public static function insert($arg){
 		if($arg['name']!=""){
