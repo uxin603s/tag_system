@@ -1,12 +1,10 @@
 <div class="col-xs-12" >
-	
-	本層
 	<input 
 		type="text"
 		ng-model="tag_name"
 		placeholder="搜尋資料"
 	/>
-	
+	{{id}}
 	<button
 	ng-show="tag_name && !add_flag"
 	ng-click="insert();"
@@ -14,13 +12,20 @@
 	>新增:{{tag_name}}</button>
 	
 	<button 
-	ng-show="tagName[item.id]"
+	ng-shdow="tagName[item.id]"
 	class="btn"
-	ng-class="data.select_tid==item.id?'btn-danger':'btn-primary'"
-	ng-click="data.select_tid==item.id?data.select_tid=undefined:data.select_tid=item.id;"
+	ng-class="$parent.select_tid==item.id?'btn-danger':'btn-primary'"
+	ng-click="$parent.select_tid==item.id?$parent.select_tid=undefined:$parent.select_tid=item.id;"
 	ng-right-click="delete($index)"
 	ng-repeat="item in list"
 	>{{tagName[item.id]}}({{item.count}})</button>
-	
+	<tag-relation-count 
+	ng-if="levelList[index+1] && list.length"
+	level-list="levelList" 
+	index="index+1"
+	id="select_tid"
+	tag-name="tagName"
+	search-tag-name-tmp="searchTagNameTmp"
+	></tag-relation-count>	
 	
 </div>

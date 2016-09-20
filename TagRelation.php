@@ -48,11 +48,13 @@ class TagRelation{
 		if($id!=$child_id){
 			$insert=compact(['id','child_id','level_id']);
 			if(DB::insert($insert,"tag_relation")){
-				DB::query("update tag_relation_count set count=count+1 where id = ? && level_id = ?",[$id,$level_id]);
+				$bind_data=[$id,$level_id];
+				$sql="update tag_relation_count set count=count+1 where id = ? && level_id = ?";
+				$result=DB::query($sql,$bind_data);
 			}
 		}
 		
-		return compact(['insert']);
+		return compact(['insert','result','bind_data','sql']);
 	}
 	public static function delete($arg){
 		$status=false;

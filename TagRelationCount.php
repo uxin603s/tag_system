@@ -14,13 +14,18 @@ class TagRelationCount{
 		
 		$where_str="";
 		$where=[];
-		if(isset($arg['name']) && $arg['name']!=""){
+		$bind_data=[];
+		if(isset($arg['name']) && $arg['name']){
 			$tag_data=Tag::getList($arg['name']);
 			if($tag_data['status']){
 				$where[]="id in (".implode(",",array_column($tag_data['list'],"id")).") ";
 			}else{
 				$where[]="id = false";
 			}
+		}
+		if(isset($arg['ids']) && is_array($arg['ids'])){
+			$where[]="id in (".implode(",",array_fill(0,count($arg['ids']),"?")).")";
+			$bind_data=array_merge($bind_data,$arg['ids']);
 		}
 		if(isset($arg['level_id'])){
 			$where[]="level_id = ?";

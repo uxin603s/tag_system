@@ -5,36 +5,11 @@
 		class="btn btn-primary"
 		>新增階層</button>
 	</div>
-	<div class="col-xs-12 bottom_line" ng-repeat="item in list">
-		<div class="col-xs-12" >
-			<button 
-			ng-click="delete($index)"
-			class="btn"
-			>刪除本層</button>	
-			<input 
-			type="checkbox" 
-			parse-int 
-			ng-true-value="1" 
-			ng-false-value="0"
-			ng-model="item.sync_relation"
-			ng-change="
-			update('TagLevel::update',{sync_relation:item.sync_relation},{id:item.id});
-			"
-			/>與下層同步
-		</div>
-		<tag-relation-count 
-		data="item" 
-		tag-name="tagName"
-		search-tag-name-tmp="searchTagNameTmp"
-		></tag-relation-count>
-		
-		<tag-relation 
-		ng-show="item.select_tid"
-		
-		
-		data="item" 
-		tag-name="tagName"
-		search-tag-name-tmp="searchTagNameTmp"
-		></tag-relation>
-	</div>
+	<tag-relation-count 
+	level-list="list" 
+	index="0"
+	id="-1"
+	tag-name="tagName"
+	search-tag-name-tmp="searchTagNameTmp"
+	></tag-relation-count>	
 </div>
