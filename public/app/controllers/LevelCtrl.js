@@ -112,6 +112,7 @@ angular.module('app').controller('LevelCtrl',['$scope',function($scope){
 	$scope.$watch("list.length",function(list_length){
 		if(!list_length)return;
 		for(var index in $scope.list){
+			if($scope.list[index].sort_id==index)continue;
 			var update={sort_id:index}
 			var where={
 				api_id:$scope.user_config.select_api_level,

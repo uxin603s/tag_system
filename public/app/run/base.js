@@ -30,35 +30,5 @@ angular.module("app").run(['$rootScope','$filter',function($rootScope,$filter) {
 		// {name:'關聯設定',templateName:'relation.html?t='+Date.now()},
 	];
 	
-	$rootScope.__proto__.sync_relation=function(data,index,type){
-		console.log('sync_relation',data,index,type)
-		var post_data={
-			func_name:'TagRelation::sync',
-			arg:{
-				api_id:$rootScope.__proto__.user_config.select_api_level,
-				level_id:data[index].id,
-				id:data[index].select_tid,
-				type:type,
-			}
-		}
-		console.log(post_data.arg)
-		$.post("ajax.php",post_data,function(res){
-			console.log(res)
-			if(type){
-				if(data[index]){
-					data[index].ggwp=1;
-					$rootScope.__proto__.$apply();
-					delete data[index].ggwp;
-				}
-			}else{
-				// console.log($scope.list)
-				if(data[index+1]){
-					data[index+1].ggwp=1;
-					$rootScope.__proto__.$apply();
-					delete data[index+1].ggwp;
-				}
-			}
-			$rootScope.__proto__.$apply();			
-		},"json")
-	}
+	
 }]);

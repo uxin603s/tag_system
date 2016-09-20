@@ -1,6 +1,17 @@
 <?php
 class TagRelationCount{
 	public static function getList($arg){
+		$limit_str="";
+		// if(!isset($arg['pageData'])){
+			// $arg['pageData']['limit_count']=10;
+			// $arg['pageData']['limit_page']=0;
+		// }
+		// $count=$arg['pageData']['limit_count'];
+		// $start=$arg['pageData']['limit_page']*$count;
+		// $limit_str=" limit {$start} , {$count}";
+		// $pageData=$arg['pageData'];
+		
+		
 		$where_str="";
 		$where=[];
 		if(isset($arg['name']) && $arg['name']!=""){
@@ -19,14 +30,18 @@ class TagRelationCount{
 			$where_str.=" where ";
 			$where_str.=implode(" && ",$where);
 		}
-		$sql="select * from tag_relation_count {$where_str} order by count desc";
+		$sql="select * from tag_relation_count {$where_str} order by id desc,count desc {$limit_str}";//
+		
 		if($tmp=DB::select($sql,$bind_data)){
 			$status=true;
 			$list=$tmp;
+			$count_sql="select * from tag_relation_count {$where_str} ";
+			
+			$pageData['total_count']=count(DB::select($count_sql,$bind_data));
 		}else{
 			$status=false;
 		}
-		return compact(['status','list','sql','bind_data']);
+		return compact(['status','list','sql','bind_data','pageData']);
 	}
 	public static function insert($arg){
 		if(isset($arg['name'])){

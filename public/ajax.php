@@ -23,6 +23,6 @@ if(isset($argv[1])){
 if(isset($_REQUEST['func_name'])){
 	$func_name=$_REQUEST['func_name'];
 	$arg=empty($_REQUEST['arg'])?[]:$_REQUEST['arg'];
-	echo @json_encode(call_user_func($func_name,$arg));
+	echo @json_encode(call_user_func($func_name,$arg),JSON_NUMERIC_CHECK);
 }
 DB::$connect=null;

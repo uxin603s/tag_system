@@ -11,21 +11,18 @@
 			ng-click="delete($index)"
 			class="btn"
 			>刪除本層</button>	
-			<input type="checkbox" 
+			<input 
+			type="checkbox" 
 			parse-int 
-			ng-true-value="'1'" 
-			ng-false-value="'0'"
+			ng-true-value="1" 
+			ng-false-value="0"
 			ng-model="item.sync_relation"
 			ng-change="
 			update('TagLevel::update',{sync_relation:item.sync_relation},{id:item.id});
 			"
 			/>與下層同步
-			{{item}}
-			
 		</div>
 		<tag-relation-count 
-		level-list="list" 
-		index="$index"
 		data="item" 
 		tag-name="tagName"
 		search-tag-name-tmp="searchTagNameTmp"
@@ -34,8 +31,6 @@
 		<tag-relation 
 		ng-show="item.select_tid"
 		
-		level-list="list" 
-		index="$index"
 		
 		data="item" 
 		tag-name="tagName"
