@@ -1,31 +1,47 @@
 <div class="col-xs-12" >
-	第{{index}}層
+	<div class="col-xs-12" >
+		<div style="display:inline-block;" >
+			<input type="checkbox" />頁次隱藏
+		</div>
+		<div style="display:inline-block;" >
+			<input type="checkbox" />不使用父標籤篩選
+		</div>
+		<div style="display:inline-block;" >
+			<input type="checkbox" />非標籤
+		</div>
+	</div>
+	<pagnation data="pageData" callback="get"></pagnation>
+	<button
+	ng-click="add();"
+	class="btn btn-primary"
+	>第{{levelIndex}}層</button>
 	<input 
 		type="text"
 		ng-model="tag_name"
 		placeholder="搜尋資料"
 	/>
-	{{id}}
+	{{selectTagIndex}}
 	<button
 	ng-show="tag_name && !add_flag"
-	ng-click="insert();"
+	ng-click="add();"
 	class="btn btn-primary"
 	>新增:{{tag_name}}</button>
 	
 	<button 
 	ng-show="tagName[item.id]"
 	class="btn"
-	ng-class="$parent.select_tid==item.id?'btn-danger':'btn-primary'"
-	ng-click="$parent.select_tid==item.id?$parent.select_tid=undefined:$parent.select_tid=item.id;"
-	ng-right-click="delete($index)"
+	ng-class="$parent.selectTagIndex==$index?'btn-danger':'btn-primary'"
+	ng-click="$parent.selectTagIndex==$index?$parent.selectTagIndex=undefined:$parent.selectTagIndex=$index;"
+	ng-right-click="del($index)"
 	ng-repeat="item in list"
 	>{{tagName[item.id]}}({{item.count}})</button>
 	
 	<tag-relation-count 
-	ng-if="levelList[index+1] && list.length"
+	ng-if="levelList[levelIndex+1] && list.length && list[selectTagIndex]"
 	level-list="levelList" 
-	index="index+1"
-	id="select_tid"
+	level-index="levelIndex+1"
+	tag-list="list"
+	tag-index="selectTagIndex"
 	tag-name="tagName"
 	search-tag-name-tmp="searchTagNameTmp"
 	></tag-relation-count>	

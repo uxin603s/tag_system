@@ -32,7 +32,7 @@ angular.module("app").directive("pagnation",['$parse','$timeout',function($parse
 					if($scope.page_end > $scope.page_count){
 						$scope.page_start-=$scope.page_end-$scope.page_count;
 					}
-					console.log('limit_page',value)
+					// console.log('limit_page',value)
 					
 					$scope.callback && $scope.callback();
 				});

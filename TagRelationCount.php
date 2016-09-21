@@ -2,14 +2,14 @@
 class TagRelationCount{
 	public static function getList($arg){
 		$limit_str="";
-		// if(!isset($arg['pageData'])){
-			// $arg['pageData']['limit_count']=10;
-			// $arg['pageData']['limit_page']=0;
-		// }
-		// $count=$arg['pageData']['limit_count'];
-		// $start=$arg['pageData']['limit_page']*$count;
-		// $limit_str=" limit {$start} , {$count}";
-		// $pageData=$arg['pageData'];
+		if(!isset($arg['pageData'])){
+			$arg['pageData']['limit_count']=10;
+			$arg['pageData']['limit_page']=0;
+		}
+		$count=$arg['pageData']['limit_count'];
+		$start=$arg['pageData']['limit_page']*$count;
+		$limit_str=" limit {$start} , {$count}";
+		$pageData=$arg['pageData'];
 		
 		
 		$where_str="";
