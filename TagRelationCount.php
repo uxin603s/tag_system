@@ -67,7 +67,7 @@ class TagRelationCount{
 	}
 	public static function delete($arg){
 		$where=$arg;
-		$where['count']=0;
+		$where['count']=0;//確保移除的是count等於0
 		if(DB::delete($where,"tag_relation_count")){
 			TagRelation::delete($arg);
 			$status=true;

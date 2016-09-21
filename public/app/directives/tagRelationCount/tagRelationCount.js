@@ -14,15 +14,13 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 			levelIndex:'=',
 		},
         link: function($scope,$element,$attr) {
-			$scope.update_level=function(sync_relation){
+			$scope.update_level=function(update){
 				var arg={
 					where:{
 						api_id:$scope.user_config.select_api_id,
 						id:$scope.levelList[$scope.levelIndex].id,
 					},
-					update:{
-						sync_relation:sync_relation,
-					},
+					update:update,
 				}
 				level.update(arg,function(res){
 					console.log(res)
@@ -50,7 +48,7 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 					pageData:$scope.user_config.pageData[$scope.levelIndex],
 				}
 				tagRelationCount.get(arg,function(res){
-					console.log('第'+$scope.levelIndex+"層get tagRelationCount",arg,res);
+					// console.log('第'+$scope.levelIndex+"層get tagRelationCount",arg,res);
 					$scope.list=[];
 					
 					if(res.status){
@@ -64,7 +62,6 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 							}
 						}
 					}
-						
 					
 					$scope.$apply();
 				})
@@ -74,6 +71,11 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 				clearTimeout($scope.getTimer)
 				$scope.getTimer=setTimeout(function(){
 					$scope.user_config.pageData || ($scope.user_config.pageData={})
+					$scope.user_config.pageData[$scope.levelIndex] || ($scope.user_config.pageData[$scope.levelIndex]={
+						total_count:0,
+						limit_page:0,
+						limit_count:10,
+					});
 					$scope.user_config.pageData[$scope.levelIndex].total_count=0;
 					if($scope.levelList[$scope.levelIndex].sync_relation){
 						$scope.getInner();

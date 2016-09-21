@@ -1,17 +1,24 @@
 <div class="col-xs-12" >
-	<div class="col-xs-12 hidden" >
-		<div style="display:inline-block;" >
+	<div class="col-xs-12 " >
+		<div class="hidden" style="display:inline-block;" >
 			<input type="checkbox" 
 			parse-int
-			ng-change="update_level(levelList[levelIndex].sync_relation)"
+			ng-change="update_level({sync_relation:levelList[levelIndex].sync_relation})"
 			ng-model="levelList[levelIndex].sync_relation"
 			ng-true-value="'1'" ng-false-value="'0'"
 			/>不使用父標籤篩選
 		</div>
+		<div class="hidden" style="display:inline-block;" >
+			<button
+			ng-click="levelList[levelIndex].type=(levelList[levelIndex].type+1) % 2;update_level({type:levelList[levelIndex].type})"
+			ng-class="levelList[levelIndex].type==0?'btn-primary':'btn-danger'"
+			class="btn"
+			
+			>{{levelList[levelIndex].type?'標籤與資料':'標籤與標籤'}}</button>
+		</div>
 	</div>
-	<div style="height:70px;" >
-		<pagnation data="user_config.pageData[levelIndex]" callback="get"></pagnation>
-	</div>
+	<pagnation data="user_config.pageData[levelIndex]" callback="get"></pagnation>
+	
 	<button
 	ng-right-click="del_level()"
 	class="btn btn-primary"
@@ -21,7 +28,11 @@
 		ng-model="tag_name"
 		placeholder="搜尋資料"
 	/>
-	{{tagName[tagList[tagIndex].id]?tagName[tagList[tagIndex].id]+'　|':''}}
+	
+	<button
+	ng-show="tagName[tagList[tagIndex].id]"
+	class="btn btn-default"
+	>{{tagName[tagList[tagIndex].id]}}>></button>
 	<button
 	ng-show="tag_name && !add_flag"
 	ng-click="add();"
