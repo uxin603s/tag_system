@@ -1,20 +1,21 @@
 <div class="col-xs-12" >
-	<div class="col-xs-12" >
+	<div class="col-xs-12 hidden" >
 		<div style="display:inline-block;" >
-			<input type="checkbox" />頁次隱藏
-		</div>
-		<div style="display:inline-block;" >
-			<input type="checkbox" />不使用父標籤篩選
-		</div>
-		<div style="display:inline-block;" >
-			<input type="checkbox" />非標籤
+			<input type="checkbox" 
+			parse-int
+			ng-change="update_level(levelList[levelIndex].sync_relation)"
+			ng-model="levelList[levelIndex].sync_relation"
+			ng-true-value="'1'" ng-false-value="'0'"
+			/>不使用父標籤篩選
 		</div>
 	</div>
-	<pagnation data="pageData" callback="get"></pagnation>
+	<div style="height:70px;" >
+		<pagnation data="user_config.pageData[levelIndex]" callback="get"></pagnation>
+	</div>
 	<button
-	ng-click="add();"
+	ng-right-click="del_level()"
 	class="btn btn-primary"
-	>第{{levelIndex}}層</button>
+	>第{{levelIndex*1+1}}層</button>
 	<input 
 		type="text"
 		ng-model="tag_name"
@@ -35,9 +36,8 @@
 	ng-right-click="del($index)"
 	ng-repeat="item in list"
 	>{{tagName[item.id]}}({{item.count}})</button>
-	
 	<tag-relation-count 
-	ng-if="levelList[levelIndex+1] && list.length && list[selectTagIndex]"
+	ng-if="levelList[levelIndex+1] "
 	level-list="levelList" 
 	level-index="levelIndex+1"
 	tag-list="list"

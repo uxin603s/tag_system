@@ -44,6 +44,7 @@ class TagRelationCount{
 			
 			$pageData['total_count']=count(DB::select($count_sql,$bind_data));
 		}else{
+			$pageData['total_count']=0;
 			$status=false;
 		}
 		return compact(['status','list','sql','bind_data','pageData']);
@@ -66,6 +67,7 @@ class TagRelationCount{
 	}
 	public static function delete($arg){
 		$where=$arg;
+		$where['count']=0;
 		if(DB::delete($where,"tag_relation_count")){
 			TagRelation::delete($arg);
 			$status=true;

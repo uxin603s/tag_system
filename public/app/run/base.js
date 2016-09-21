@@ -5,6 +5,7 @@ angular.module("app").run(['$rootScope','$filter',function($rootScope,$filter) {
 			$rootScope.__proto__.user_config=data;
 		}
 		$rootScope.$apply();
+		// localforage.setItem(location.pathname+"user_config",{});
 		setInterval(function(){
 			localforage.setItem(location.pathname+"user_config",angular.copy($rootScope.__proto__.user_config));
 			$rootScope.$apply();
@@ -20,10 +21,10 @@ angular.module("app").run(['$rootScope','$filter',function($rootScope,$filter) {
 	
 	$rootScope.__proto__.Math=window.Math;
 	$rootScope.__proto__.isNaN=window.isNaN;
-	$rootScope.__proto__.user_config.select_level || ($rootScope.__proto__.user_config.select_level=0);
+	
 	
 	$rootScope.__proto__.user_config.select_page || ($rootScope.__proto__.user_config.select_page=0)
-	$rootScope.__proto__.user_config.select_api_level || ($rootScope.__proto__.user_config.select_api_level=0)
+	$rootScope.__proto__.user_config.select_api_id || ($rootScope.__proto__.user_config.select_api_id=0)
 	$rootScope.__proto__.page_list=[
 		{name:'api列表',templateName:'api.html?t='+Date.now()},
 		{name:'階層設定',templateName:'level.html?t='+Date.now()},

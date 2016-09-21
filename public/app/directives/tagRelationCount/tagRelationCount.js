@@ -1,4 +1,4 @@
-angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelation',function(tagRelationCount,tagRelation) {
+angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelation','level',function(tagRelationCount,tagRelation,level) {
     return {
 		templateUrl: 'app/directives/tagRelationCount/tagRelationCount.html?t='+Date.now(),
 		restrict: 'E',
@@ -14,19 +14,47 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 			levelIndex:'=',
 		},
         link: function($scope,$element,$attr) {
-			
+			$scope.update_level=function(sync_relation){
+				var arg={
+					where:{
+						api_id:$scope.user_config.select_api_id,
+						id:$scope.levelList[$scope.levelIndex].id,
+					},
+					update:{
+						sync_relation:sync_relation,
+					},
+				}
+				level.update(arg,function(res){
+					console.log(res)
+					$scope.get();
+					$scope.$apply();
+				})
+			}
+			$scope.del_level=function(){
+				// console.log($scope.levelList,$scope.levelIndex)
+				var arg={
+					api_id:$scope.user_config.select_api_id,
+					id:$scope.levelList[$scope.levelIndex].id,
+				}
+				level.del(arg,function(res){
+					console.log(res)
+					$scope.$apply();
+				})
+				$scope.levelList.splice($scope.levelIndex,1);
+			}
 			$scope.getInner=function(ids){
 				var arg={
 					level_id:$scope.levelList[$scope.levelIndex].id,
 					name:$scope.tag_name,
 					ids:ids,
-					pageData:$scope.pageData,
+					pageData:$scope.user_config.pageData[$scope.levelIndex],
 				}
 				tagRelationCount.get(arg,function(res){
 					console.log('第'+$scope.levelIndex+"層get tagRelationCount",arg,res);
 					$scope.list=[];
+					
 					if(res.status){
-						$scope.pageData=res.pageData;
+						$scope.user_config.pageData[$scope.levelIndex]=res.pageData;
 						$scope.list=res.list;
 						for(var i in res.list){
 							var data=res.list[i];
@@ -36,6 +64,8 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 							}
 						}
 					}
+						
+					
 					$scope.$apply();
 				})
 			}
@@ -43,69 +73,73 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 				if(!$scope.levelList || !$scope.levelList[$scope.levelIndex])return;
 				clearTimeout($scope.getTimer)
 				$scope.getTimer=setTimeout(function(){
-					
-					if($scope.levelIndex==0){
+					$scope.user_config.pageData || ($scope.user_config.pageData={})
+					$scope.user_config.pageData[$scope.levelIndex].total_count=0;
+					if($scope.levelList[$scope.levelIndex].sync_relation){
 						$scope.getInner();
-					}
-					else if(isNaN($scope.tagIndex)){
-						return;
-					}
-					else if($scope.levelIndex!=0){
-						if(!$scope.tagList[$scope.tagIndex]){
+					}else{
+						if($scope.levelIndex==0){
+							$scope.getInner();
+						}
+						else if(isNaN($scope.tagIndex)){
 							$scope.list=[];
 							return;
 						}
-						var arg={
-							id:$scope.tagList[$scope.tagIndex].id,
-							level_id:$scope.levelList[$scope.levelIndex-1].id,
-						}
-						tagRelation.get(arg,function(res){
-							// $scope.tagIndex=undefined;
-							var ids=[-1,];
-							for(var i in res.list){
-								ids.push(res.list[i].child_id);
+						else if($scope.levelIndex!=0){
+							if(!$scope.tagList[$scope.tagIndex]){
+								$scope.list=[];
+								return;
 							}
-							$scope.getInner(ids);
-							console.log('第'+$scope.levelIndex+"層get tagRelation",arg,res);
-						})
+							var arg={
+								id:$scope.tagList[$scope.tagIndex].id,
+								level_id:$scope.levelList[$scope.levelIndex-1].id,
+							}
+							tagRelation.get(arg,function(res){
+								var ids=[-1,];
+								for(var i in res.list){
+									ids.push(res.list[i].child_id);
+								}
+								$scope.getInner(ids);
+								$scope.$apply();
+								// console.log('第'+$scope.levelIndex+"層get tagRelation",arg,res);
+							})
+						}
+						
 					}
 				},500)
 			}
-			$scope.$watch("levelList",$scope.get,1);
-			$scope.$watch("levelIndex",$scope.get,1);
-			$scope.$watch("tagIndex",$scope.get,1);
 			
-			// limit_count
-			// limit_page
-			// total_count
-
 			$scope.add=function(){
-				if(!isNaN($scope.tagIndex)){
-					if(!$scope.tagList[$scope.tagIndex]){
-						alert("請選擇上一層")
-						return;
+				if(!$scope.levelList[$scope.levelIndex].sync_relation){
+					if($scope.levelIndex!=0){//第一層沒有上層
+						if(isNaN($scope.tagIndex)){
+							alert("請選擇上一層")
+							return
+						}else{
+							var arg={
+								name:$scope.tag_name,
+								level_id:$scope.levelList[$scope.levelIndex-1].id,
+								id:$scope.tagList[$scope.tagIndex].id,
+							}
+							tagRelation.add(arg,function(res){
+								$scope.tagList[$scope.tagIndex].count++;
+								// console.log('第'+$scope.levelIndex+"層insert關聯",arg,res)
+								$scope.$apply();
+							})
+						}
 					}
-					var arg={
-						name:$scope.tag_name,
-						level_id:$scope.levelList[$scope.levelIndex-1].id,
-						id:$scope.tagList[$scope.tagIndex].id,
-					}
-					tagRelation.add(arg,function(res){
-						$scope.tagList[$scope.tagIndex].count++;
-						console.log('第'+$scope.levelIndex+"層insert關聯",arg,res)
-					})
 				}
-				// console.log($scope.tagList,$scope.tagIndex)
-				// return
+				
 				var arg={
 					name:$scope.tag_name,
 					level_id:$scope.levelList[$scope.levelIndex].id,
 				}
 				tagRelationCount.add(arg,function(res){
 				
-					console.log('第'+$scope.levelIndex+"層insert新增",arg,res)
+					// console.log('第'+$scope.levelIndex+"層insert新增",arg,res)
 					$scope.add_flag=true;
 					$scope.list.push(res.insert);
+					$scope.user_config.pageData[$scope.levelIndex].total_count++;
 					var id=res.insert.id;
 					if(!$scope.tagName[id]){
 						$scope.searchTagNameTmp[id]=id;
@@ -123,7 +157,8 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 					}
 					tagRelation.del(arg,function(res){
 						$scope.tagList[$scope.tagIndex].count--;
-						console.log('第'+$scope.levelIndex+"層delete關聯",arg,res)
+						// console.log('第'+$scope.levelIndex+"層delete關聯",arg,res)
+						$scope.$apply();
 					})
 				}
 				
@@ -132,13 +167,17 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 					level_id:$scope.levelList[$scope.levelIndex].id,
 				}
 				tagRelationCount.del(arg,function(res){
-					console.log('第'+$scope.levelIndex+"層delete",arg,res)
-					$scope.list.splice(index,1);
-					$scope.add_flag=false;
-					$scope.$apply();
+					if(res.status){
+						// console.log('第'+$scope.levelIndex+"層delete",arg,res)
+						$scope.list.splice(index,1);
+						$scope.user_config.pageData[$scope.levelIndex].total_count--;
+						$scope.add_flag=false;
+						$scope.$apply();
+					}
 				})
 			}
-			
+			$scope.$watch("levelList",$scope.get,1)
+			$scope.$watch("tagIndex",$scope.get,1)
 			
 			$scope.$watch("tag_name",function(value){
 				$scope.get();

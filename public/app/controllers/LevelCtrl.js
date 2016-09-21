@@ -1,4 +1,4 @@
-angular.module('app').controller('LevelCtrl',['$scope',function($scope){
+angular.module('app').controller('LevelCtrl',['$scope','level',function($scope,level){
 	
 	$scope.searchTagNameTmp={};
 	$scope.tagName={};
@@ -27,105 +27,53 @@ angular.module('app').controller('LevelCtrl',['$scope',function($scope){
 				},"json")
 			}.bind(this,tid_arr),500)
 		}
+	},1);
+	$scope.$watch("user_config.select_api_id",function(value){
+		if(!value)return;
+		var arg={
+			api_id:$scope.user_config.select_api_id,
+		}
+		level.get(arg,function(res){
+			$scope.list=[]
+			if(res.status){
+				$scope.list=res.list;
+				$scope.$apply();
+			}
+		});
+	})
+	$scope.add=function(add_type){
+		var arg={
+			api_id:$scope.user_config.select_api_id,
+		}
+		level.add(arg,function(res){
+			if(res.status){
+				if(add_type){
+					$scope.list.unshift(res.insert);
+				}else{
+					$scope.list.push(res.insert);
+				}
+				$scope.$apply();
+			}
+		});
+	}
+	$scope.$watch("list",function(data){
+		for(var i in data){
+			if(data[i].sort_id!=i*1){
+				var arg={
+					update:{
+						sort_id:i,
+					},
+					where:{
+						id:data[i].id,
+					},
+				};
+				level.update(arg,function(res){
+					// console.log(res)
+				})
+				data[i].sort_id=i;
+			}
+		}
 	},1)
 	
-	$scope.getList=function(){		
-		clearTimeout($scope.getList_timer);
-		$scope.getList_timer=setTimeout(function(){
-			var post_data={
-				func_name:'TagLevel::getList',
-				arg:{
-					api_id:$scope.user_config.select_api_level,
-				}
-			}
-			$.post("ajax.php",post_data,function(res){
-				if(res.status){
-					$scope.list=res.list;
-				}
-				$scope.$apply();
-			},"json")
-		},500)
-	}
 	
-	$scope.getList();
-	$scope.insert=function(){
-		var post_data={
-			func_name:'TagLevel::insert',
-			arg:{
-				api_id:$scope.user_config.select_api_level,
-			}
-		}
-		$.post("ajax.php",post_data,function(res){
-			if(res.status){
-				$scope.list.push(res.insert)
-			}
-			$scope.$apply();
-		},"json")
-	}
-	$scope.delete=function(index){
-		var post_data={
-			func_name:'TagLevel::delete',
-			arg:{
-				level_id:$scope.list[index].id,
-				api_id:$scope.user_config.select_api_level,
-			}
-		}
-		$.post("ajax.php",post_data,function(res){
-			if(res.status){
-				$scope.list.splice(index,1)
-			}
-			$scope.$apply();
-		},"json")
-	}
-	
-	$scope.update=function(func_name,update,where){
-		
-		var post_data={
-			func_name:func_name,
-			arg:{
-				update:update,
-				where:where,
-			}
-		}
-		// console.log('update',post_data)
-		$.post("ajax.php",post_data,function(res){
-			// console.log(res)
-			if(res.status){
-				var data=$scope.list.find(function(value){
-					var flag=1;
-					for(var i in where){
-						flag*=where[i]==value[i]?1:0;
-					}
-					return flag;
-				});
-				if(data){
-					for(var i in update){
-						data[i]=update[i];
-					}
-				}
-				$scope.$apply();
-			}
-		},"json")
-	}
-	
-	
-	$scope.$watch("list.length",function(list_length){
-		if(!list_length)return;
-		for(var index in $scope.list){
-			if($scope.list[index].sort_id==index)continue;
-			var update={sort_id:index}
-			var where={
-				api_id:$scope.user_config.select_api_level,
-				level_id:$scope.list[index].id,
-			}
-			$scope.update('TagApiLevel::update',update,where);
-		}
-	},1);
-	
-	
-	// $scope.$watch("list",function(list){
-		// for(var i in list){
-			// console.log(list[i])
-		// }
-	// },1)
 }])

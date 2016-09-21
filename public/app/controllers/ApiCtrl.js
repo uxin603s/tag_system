@@ -1,5 +1,5 @@
-angular.module('app').controller('ApiCtrl',['$scope',function($scope){
-		
+angular.module('app').controller('ApiCtrl',['$scope','level',function($scope,level){
+	$scope.level=level;
 	$scope.insert=function(comment){
 		var post_data={
 			func_name:'TagApi::insert',

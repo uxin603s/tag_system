@@ -16,6 +16,7 @@
 	<script src="app/directives/ngRightClick/ngRightClick.js"></script>
 	<script src="app/directives/pagnation/pagnation.js"></script>
 	
+	<script src="app/factories/level.js" ></script>
 	<script src="app/factories/tagRelationCount.js" ></script>
 	<script src="app/factories/tagRelation.js" ></script>
 	
