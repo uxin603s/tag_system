@@ -20,7 +20,7 @@
 		ng-model="tag_name"
 		placeholder="搜尋資料"
 	/>
-	{{selectTagIndex}}
+	{{tagName[tagList[tagIndex].id]?tagName[tagList[tagIndex].id]+'　|':''}}
 	<button
 	ng-show="tag_name && !add_flag"
 	ng-click="add();"
@@ -45,5 +45,4 @@
 	tag-name="tagName"
 	search-tag-name-tmp="searchTagNameTmp"
 	></tag-relation-count>	
-	{{list}}
 </div>

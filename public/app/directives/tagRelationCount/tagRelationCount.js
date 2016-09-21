@@ -43,11 +43,14 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 				if(!$scope.levelList || !$scope.levelList[$scope.levelIndex])return;
 				clearTimeout($scope.getTimer)
 				$scope.getTimer=setTimeout(function(){
+					
 					if($scope.levelIndex==0){
 						$scope.getInner();
-					}else if(isNaN($scope.tagIndex)){
+					}
+					else if(isNaN($scope.tagIndex)){
 						return;
-					}else if($scope.levelIndex!=0){
+					}
+					else if($scope.levelIndex!=0){
 						if(!$scope.tagList[$scope.tagIndex]){
 							$scope.list=[];
 							return;
