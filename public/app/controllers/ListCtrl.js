@@ -1,10 +1,10 @@
-angular.module('app').controller('ApiCtrl',['$scope','level',function($scope,level){
+angular.module('app').controller('ListCtrl',['$scope','level',function($scope,level){
 	$scope.level=level;
-	$scope.insert=function(comment){
+	$scope.add=function(name){
 		var post_data={
-			func_name:'TagApi::insert',
+			func_name:'TagList::insert',
 			arg:{
-				comment:comment,//申請理由
+				name:name,//申請理由
 			}
 		}
 		$.post("ajax.php",post_data,function(res){
@@ -15,52 +15,47 @@ angular.module('app').controller('ApiCtrl',['$scope','level',function($scope,lev
 			$scope.$apply();
 		},"json")
 	}
-	$scope.getList=function(){
+	$scope.get=function(){
 		$scope.list=[]
 		var post_data={
-			func_name:'TagApi::getList',
+			func_name:'TagList::getList',
 			arg:{}
 		}
 		$.post("ajax.php",post_data,function(res){
+			console.log(res)
 			if(res.status){
 				$scope.list=res.list;
 			}
 			$scope.$apply();
 		},"json")
 	}
-	$scope.getList();
-	$scope.status_arr=[
-		{value:0,name:'審核中'},
-		{value:1,name:'上架'},
-		{value:-1,name:'下架'},
-	]
+	$scope.get();
 	
-	$scope.delete=function(index){
+	$scope.del=function(index){
 		var post_data={
-			func_name:'TagApi::delete',
+			func_name:'TagList::delete',
 			arg:{
 				id:$scope.list[index].id,
 			}
 		}
 		$.post("ajax.php",post_data,function(res){
+			console.log(res)
 			if(res.status){
 				$scope.list.splice(index,1)
 			}
-			console.log(res.message)
+			alert(res.message)
 			$scope.$apply();
 		},"json")
 	}
 	
-	$scope.update=function(index,update){
-		var timer_key=JSON.stringify(Object.keys(update))+index;
+	$scope.update=function(index,update,where){
+		var timer_key=JSON.stringify(Object.keys(where))+index;
 		clearTimeout($scope[timer_key])
 		$scope[timer_key]=setTimeout(function(){
 			var post_data={
-				func_name:'TagApi::update',
+				func_name:'TagList::update',
 				arg:{
-					where:{
-						id:$scope.list[index].id,
-					},
+					where:where,
 					update:update,
 				}
 			}
@@ -74,4 +69,6 @@ angular.module('app').controller('ApiCtrl',['$scope','level',function($scope,lev
 			},"json")			
 		},500)
 	}
+	
+	
 }])

@@ -38,16 +38,17 @@ class TagLevel{
 	public static function delete($arg){
 		$where=$arg;
 		// return $arg;
-		if(DB::delete($where,'tag_level')){
-			TagRelationCount::delete(['level_id'=>$arg['level_id']]);
-			TagRelation::delete(['level_id'=>$arg['level_id']]);
+		$tmp=TagRelationCount::getList(['level_id'=>$arg['id']]);
+		if(!$tmp['status'] && DB::delete($where,'tag_level')){
+			// TagRelationCount::delete(['level_id'=>$arg['level_id']]);
+			// TagRelation::delete(['level_id'=>$arg['level_id']]);
 			$status=true;
 			$message="刪除成功";
 		}else{
 			$status=false;
 			$message="刪除失敗";
 		}
-		return compact(['status','message']);
+		return compact(['status','message','tmp']);
 		
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-class Tag{
+class TagName{
 	public static function getTagIdTOName($arg){
 		$tid_arr=$arg['tid_arr'];
 		if(is_numeric(implode("",$tid_arr))){

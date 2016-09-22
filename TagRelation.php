@@ -4,7 +4,7 @@ class TagRelation{
 		$where_str="";
 		$where=[];
 		if(isset($arg['name']) && $arg['name']!=""){
-			$tag_data=Tag::getList($arg['name']);
+			$tag_data=TagName::getList($arg['name']);
 			if($tag_data['status']){
 				$where[]="child_id in (".implode(",",array_column($tag_data['list'],"id")).") ";
 			}else{
@@ -34,7 +34,7 @@ class TagRelation{
 	}
 	public static function insert($arg){
 		if(isset($arg['name'])){
-			$tag_data=Tag::insert($arg['name']);
+			$tag_data=TagName::insert($arg['name']);
 			$child_id=$tag_data['id'];
 		}else if(isset($arg['child_id'])){
 			$child_id=$arg['child_id'];

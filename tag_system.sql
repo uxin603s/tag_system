@@ -1,8 +1,8 @@
--- MySQL dump 10.16  Distrib 10.1.10-MariaDB, for Linux (x86_64)
+-- MySQL dump 10.15  Distrib 10.0.26-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: tag_system
 -- ------------------------------------------------------
--- Server version	10.1.10-MariaDB
+-- Server version	10.0.26-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,32 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `tag_api`
---
-
-DROP TABLE IF EXISTS `tag_api`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tag_api` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` int(11) NOT NULL,
-  `uid` int(11) NOT NULL,
-  `comment` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tag_api`
---
-
-LOCK TABLES `tag_api` WRITE;
-/*!40000 ALTER TABLE `tag_api` DISABLE KEYS */;
-INSERT INTO `tag_api` VALUES (7,1,0,'funfunquiz使用');
-/*!40000 ALTER TABLE `tag_api` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `tag_level`
@@ -55,7 +29,7 @@ CREATE TABLE `tag_level` (
   `type` int(11) NOT NULL COMMENT '0:標籤與標籤,1:標籤與資料',
   `sync_relation` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=121 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=130 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,8 +38,33 @@ CREATE TABLE `tag_level` (
 
 LOCK TABLES `tag_level` WRITE;
 /*!40000 ALTER TABLE `tag_level` DISABLE KEYS */;
-INSERT INTO `tag_level` VALUES (114,7,0,0,0),(118,7,1,1,0);
+INSERT INTO `tag_level` VALUES (128,7,0,0,0),(129,7,1,0,0);
 /*!40000 ALTER TABLE `tag_level` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tag_list`
+--
+
+DROP TABLE IF EXISTS `tag_list`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tag_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `uid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tag_list`
+--
+
+LOCK TABLES `tag_list` WRITE;
+/*!40000 ALTER TABLE `tag_list` DISABLE KEYS */;
+INSERT INTO `tag_list` VALUES (7,'會員用',0),(11,'測驗用',0),(12,'文章用',0);
+/*!40000 ALTER TABLE `tag_list` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -82,7 +81,7 @@ CREATE TABLE `tag_name` (
   `created_time_int` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,8 +90,31 @@ CREATE TABLE `tag_name` (
 
 LOCK TABLES `tag_name` WRITE;
 /*!40000 ALTER TABLE `tag_name` DISABLE KEYS */;
-INSERT INTO `tag_name` VALUES (1,'第一層','2016-09-21 13:59:24',1474437564),(2,'咚咚','2016-09-21 13:59:36',1474437576),(3,'西西','2016-09-21 13:59:40',1474437580),(4,'qq','2016-09-21 13:59:44',1474437584),(5,'aa','2016-09-21 14:04:27',1474437867),(6,'bb','2016-09-21 14:04:38',1474437878),(7,'fff','2016-09-21 14:10:42',1474438242),(8,'fffgg','2016-09-21 14:10:49',1474438249),(9,'aaa','2016-09-21 14:24:26',1474439066),(10,'ff','2016-09-21 14:45:05',1474440305),(11,'ffbbb','2016-09-21 14:45:07',1474440307),(12,'ffbbbdfgdfgfdg','2016-09-21 14:45:12',1474440312),(13,'dddd','2016-09-21 14:56:04',1474440964),(14,'q','2016-09-21 15:01:17',1474441277),(15,'a','2016-09-21 15:04:34',1474441474),(16,'b','2016-09-21 15:04:52',1474441492),(17,'aaaa','2016-09-21 15:37:14',1474443434),(18,'t','2016-09-21 15:50:36',1474444236),(19,'tyy','2016-09-21 15:50:39',1474444239),(20,'tyytyutyuetu','2016-09-21 15:50:40',1474444240),(21,'tyytyutyueytuetyutu','2016-09-21 15:50:42',1474444242);
+INSERT INTO `tag_name` VALUES (1,'第一層','2016-09-21 13:59:24',1474437564),(2,'咚咚','2016-09-21 13:59:36',1474437576),(3,'西西','2016-09-21 13:59:40',1474437580),(4,'qq','2016-09-21 13:59:44',1474437584),(5,'aa','2016-09-21 14:04:27',1474437867),(6,'bb','2016-09-21 14:04:38',1474437878),(7,'fff','2016-09-21 14:10:42',1474438242),(8,'fffgg','2016-09-21 14:10:49',1474438249),(9,'aaa','2016-09-21 14:24:26',1474439066),(10,'ff','2016-09-21 14:45:05',1474440305),(11,'ffbbb','2016-09-21 14:45:07',1474440307),(12,'ffbbbdfgdfgfdg','2016-09-21 14:45:12',1474440312),(13,'dddd','2016-09-21 14:56:04',1474440964),(14,'q','2016-09-21 15:01:17',1474441277),(15,'a','2016-09-21 15:04:34',1474441474),(16,'b','2016-09-21 15:04:52',1474441492),(17,'aaaa','2016-09-21 15:37:14',1474443434),(18,'t','2016-09-21 15:50:36',1474444236),(19,'tyy','2016-09-21 15:50:39',1474444239),(20,'tyytyutyuetu','2016-09-21 15:50:40',1474444240),(21,'tyytyutyueytuetyutu','2016-09-21 15:50:42',1474444242),(22,'吃','2016-09-21 22:58:03',1474469883),(23,'吃吃','2016-09-21 22:58:07',1474469887),(24,'bbb','2016-09-22 09:02:26',1474506146),(25,'nn','2016-09-22 09:21:56',1474507316),(26,'nnn','2016-09-22 09:21:57',1474507317),(27,'f','2016-09-22 09:53:54',1474509234);
 /*!40000 ALTER TABLE `tag_name` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tag_outside_relation`
+--
+
+DROP TABLE IF EXISTS `tag_outside_relation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tag_outside_relation` (
+  `id` int(11) NOT NULL,
+  `outside_id` int(11) NOT NULL,
+  `level_id` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tag_outside_relation`
+--
+
+LOCK TABLES `tag_outside_relation` WRITE;
+/*!40000 ALTER TABLE `tag_outside_relation` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tag_outside_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -116,6 +138,7 @@ CREATE TABLE `tag_relation` (
 
 LOCK TABLES `tag_relation` WRITE;
 /*!40000 ALTER TABLE `tag_relation` DISABLE KEYS */;
+INSERT INTO `tag_relation` VALUES (4,27,128);
 /*!40000 ALTER TABLE `tag_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,7 +163,7 @@ CREATE TABLE `tag_relation_count` (
 
 LOCK TABLES `tag_relation_count` WRITE;
 /*!40000 ALTER TABLE `tag_relation_count` DISABLE KEYS */;
-INSERT INTO `tag_relation_count` VALUES (15,114,0),(0,118,0),(16,114,0);
+INSERT INTO `tag_relation_count` VALUES (27,129,0),(4,128,1);
 /*!40000 ALTER TABLE `tag_relation_count` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -153,4 +176,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-09-21 17:05:31
+-- Dump completed on 2016-09-22 11:26:41

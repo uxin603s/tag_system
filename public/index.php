@@ -8,7 +8,7 @@
 	<script src="app/app.js"></script>
 	<script src="app/run/base.js"></script>
 	
-	<script src="app/controllers/ApiCtrl.js"></script>
+	<script src="app/controllers/ListCtrl.js"></script>
 	<script src="app/controllers/LevelCtrl.js"></script>
 	<script src="app/controllers/RelationCtrl.js"></script>
 	

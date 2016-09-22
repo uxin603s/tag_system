@@ -36,9 +36,12 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 				}
 				level.del(arg,function(res){
 					console.log(res)
-					$scope.$apply();
+					if(res.status){
+						$scope.levelList.splice($scope.levelIndex,1);
+						$scope.$apply();
+					}
 				})
-				$scope.levelList.splice($scope.levelIndex,1);
+				
 			}
 			$scope.getInner=function(ids){
 				var arg={
@@ -158,9 +161,11 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 						level_id:$scope.levelList[$scope.levelIndex-1].id,
 					}
 					tagRelation.del(arg,function(res){
-						$scope.tagList[$scope.tagIndex].count--;
-						// console.log('第'+$scope.levelIndex+"層delete關聯",arg,res)
-						$scope.$apply();
+						if(res.status){
+							$scope.tagList[$scope.tagIndex].count--;
+							// console.log('第'+$scope.levelIndex+"層delete關聯",arg,res)
+							$scope.$apply();
+						}
 					})
 				}
 				

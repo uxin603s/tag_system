@@ -26,8 +26,8 @@ angular.module("app").run(['$rootScope','$filter',function($rootScope,$filter) {
 	$rootScope.__proto__.user_config.select_page || ($rootScope.__proto__.user_config.select_page=0)
 	$rootScope.__proto__.user_config.select_api_id || ($rootScope.__proto__.user_config.select_api_id=0)
 	$rootScope.__proto__.page_list=[
-		{name:'api列表',templateName:'api.html?t='+Date.now()},
-		{name:'階層設定',templateName:'level.html?t='+Date.now()},
+		{name:'標籤列表',templateName:'list.html?t='+Date.now()},
+		// {name:'階層設定',templateName:'level.html?t='+Date.now()},
 		// {name:'關聯設定',templateName:'relation.html?t='+Date.now()},
 	];
 	
