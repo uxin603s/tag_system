@@ -21,6 +21,7 @@
 	<script src="app/factories/tagRelation.js" ></script>
 	
 	<script src="app/directives/tagRelationCount/tagRelationCount.js" ></script>
+	<script src="app/directives/tagRelationTail/tagRelationTail.js" ></script>
 	
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.7.min.css" />
 	<style>
@@ -54,6 +55,7 @@
 	ng-repeat="item in page_list"
 	>{{item.name}}</button>
 	<div 
+	ng-if="!isNaN(user_config.select_page)"
 	ng-include="'app/templates/'+page_list[user_config.select_page].templateName" ><div>
 </body>
 </html>

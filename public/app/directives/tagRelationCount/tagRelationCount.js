@@ -41,7 +41,6 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 						$scope.$apply();
 					}
 				})
-				
 			}
 			$scope.getInner=function(ids){
 				var arg={
@@ -53,7 +52,7 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 				tagRelationCount.get(arg,function(res){
 					// console.log('第'+$scope.levelIndex+"層get tagRelationCount",arg,res);
 					$scope.list=[];
-					
+					$scope.add_flag=false;
 					if(res.status){
 						$scope.user_config.pageData[$scope.levelIndex]=res.pageData;
 						$scope.list=res.list;
@@ -62,6 +61,9 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 							var id=data.id;
 							if(!$scope.tagName[id]){
 								$scope.searchTagNameTmp[id]=id;
+							}
+							if($scope.tagName[id]==$scope.tag_name){
+								$scope.add_flag=true
 							}
 						}
 					}
@@ -84,6 +86,7 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 						$scope.getInner();
 					}else{
 						if($scope.levelIndex==0){
+							$scope.user_config.tailData={}
 							$scope.getInner();
 						}
 						else if(isNaN($scope.tagIndex)){
@@ -140,7 +143,6 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 					level_id:$scope.levelList[$scope.levelIndex].id,
 				}
 				tagRelationCount.add(arg,function(res){
-				
 					// console.log('第'+$scope.levelIndex+"層insert新增",arg,res)
 					$scope.add_flag=true;
 					$scope.list.push(res.insert);
@@ -162,6 +164,7 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 					}
 					tagRelation.del(arg,function(res){
 						if(res.status){
+							$scope.list.splice(index,1);
 							$scope.tagList[$scope.tagIndex].count--;
 							// console.log('第'+$scope.levelIndex+"層delete關聯",arg,res)
 							$scope.$apply();
@@ -171,6 +174,7 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 				
 				var arg={
 					id:$scope.list[index].id,
+					p_level_id:$scope.levelList[$scope.levelIndex-1].id,
 					level_id:$scope.levelList[$scope.levelIndex].id,
 				}
 				tagRelationCount.del(arg,function(res){
@@ -185,15 +189,7 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 			}
 			$scope.$watch("levelList",$scope.get,1)
 			$scope.$watch("tagIndex",$scope.get,1)
-			
-			$scope.$watch("tag_name",function(value){
-				$scope.get();
-				if($scope.list){
-					$scope.add_flag=$scope.list.some(function(value){
-						return $scope.tagName[value.id]==$scope.tag_name;
-					})
-				}
-			},1)
+			$scope.$watch("tag_name",$scope.get,1)
         },
     }
 }]);

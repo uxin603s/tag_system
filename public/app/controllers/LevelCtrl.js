@@ -1,4 +1,4 @@
-angular.module('app').controller('LevelCtrl',['$scope','level',function($scope,level){
+angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',function($scope,level,tagRelation){
 	
 	$scope.searchTagNameTmp={};
 	$scope.tagName={};
@@ -8,7 +8,7 @@ angular.module('app').controller('LevelCtrl',['$scope','level',function($scope,l
 			var tid_arr=angular.copy(value);
 			$scope.search_tag_name_tmp_timer=setTimeout(function(tid_arr){
 				var post_data={
-					func_name:'Tag::getTagIdTOName',
+					func_name:'TagName::getTagIdTOName',
 					arg:{
 						tid_arr:tid_arr,
 					}
@@ -28,6 +28,31 @@ angular.module('app').controller('LevelCtrl',['$scope','level',function($scope,l
 			}.bind(this,tid_arr),500)
 		}
 	},1);
+	
+	function get_inner_tag_relation(list,index,ids,callback){
+		if(!list[index]){
+			callback && callback(ids);
+			return;
+		}
+		var arg={
+			ids:ids,
+			level_id:list[index].id,
+		}
+		tagRelation.get(arg,function(ids,res){
+			if(res.status){
+				var ids=res.list.map(function(value){
+					return value.child_id;
+				})
+				get_inner_tag_relation(list,index+1,ids,callback)
+			}else{
+				get_inner_tag_relation(list,index+1,ids,callback)
+				// callback && callback(ids);
+			}
+			$scope.$apply();
+		}.bind(this,ids))
+		
+	}
+	
 	$scope.$watch("user_config.select_api_id",function(value){
 		if(!value)return;
 		var arg={
@@ -35,10 +60,17 @@ angular.module('app').controller('LevelCtrl',['$scope','level',function($scope,l
 		}
 		level.get(arg,function(res){
 			$scope.list=[]
+			$scope.stop_watch && $scope.stop_watch();
 			if(res.status){
 				$scope.list=res.list;
-				$scope.$apply();
+				$scope.stop_watch=$scope.$watch("user_config.tailData",function(tailData){
+					if(isNaN(tailData.levelIndex))return;
+					get_inner_tag_relation($scope.list,tailData.levelIndex,[tailData.tid],function(ids){
+						console.log(ids);
+					})
+				},1)
 			}
+			$scope.$apply();
 		});
 	})
 	$scope.add=function(add_type){
@@ -74,6 +106,8 @@ angular.module('app').controller('LevelCtrl',['$scope','level',function($scope,l
 			}
 		}
 	},1)
+	
+	
 	
 	
 }])

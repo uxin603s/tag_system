@@ -22,7 +22,7 @@ angular.module('app').controller('ListCtrl',['$scope','level',function($scope,le
 			arg:{}
 		}
 		$.post("ajax.php",post_data,function(res){
-			console.log(res)
+			// console.log(res)
 			if(res.status){
 				$scope.list=res.list;
 			}

@@ -66,16 +66,20 @@ class TagRelationCount{
 		return compact(['insert']);
 	}
 	public static function delete($arg){
-		$where=$arg;
+		$where=[];
+		$where['id']=$arg['id'];//確保移除的是count等於0
+		$where['level_id']=$arg['level_id'];//確保移除的是count等於0
 		$where['count']=0;//確保移除的是count等於0
-		if(DB::delete($where,"tag_relation_count")){
-			TagRelation::delete($arg);
+		
+		$tmp=TagRelation::getList(['child_id'=>$arg['id'],'level_id'=>$arg['p_level_id']]);
+		
+		if(!$tmp['status'] && DB::delete($where,"tag_relation_count")){
 			$status=true;
 			$message="刪除成功";
 		}else{
 			$status=false;
 			$message="刪除失敗";
 		}
-		return compact(['status','message']);
+		return compact(['tmp','where','status','message',]);
 	}
 }

@@ -38,17 +38,16 @@
 	ng-click="add();"
 	class="btn btn-primary"
 	>新增:{{tag_name}}</button>
-	
 	<button 
 	ng-show="tagName[item.id]"
 	class="btn"
 	ng-class="$parent.selectTagIndex==$index?'btn-danger':'btn-primary'"
-	ng-click="$parent.selectTagIndex==$index?$parent.selectTagIndex=undefined:$parent.selectTagIndex=$index;"
+	ng-click="user_config.tailData={tid:item.id,levelIndex:levelIndex};$parent.selectTagIndex==$index?$parent.selectTagIndex=undefined:$parent.selectTagIndex=$index;"
 	ng-right-click="del($index)"
 	ng-repeat="item in list"
 	>{{tagName[item.id]}}({{item.count}})</button>
 	<tag-relation-count 
-	ng-if="levelList[levelIndex+1] "
+	ng-if="levelList[levelIndex+1]"
 	level-list="levelList" 
 	level-index="levelIndex+1"
 	tag-list="list"
@@ -56,4 +55,7 @@
 	tag-name="tagName"
 	search-tag-name-tmp="searchTagNameTmp"
 	></tag-relation-count>	
+	
+	
+	
 </div>
