@@ -21,7 +21,6 @@
 	<script src="app/factories/tagRelation.js" ></script>
 	
 	<script src="app/directives/tagRelationCount/tagRelationCount.js" ></script>
-	<script src="app/directives/tagRelationTail/tagRelationTail.js" ></script>
 	
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.7.min.css" />
 	<style>

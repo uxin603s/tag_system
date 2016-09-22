@@ -31,7 +31,7 @@ angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',fun
 	
 	function get_inner_tag_relation(list,index,ids,callback){
 		if(!list[index]){
-			callback && callback(ids);
+			callback && callback(ids,index);
 			return;
 		}
 		var arg={
@@ -45,8 +45,8 @@ angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',fun
 				})
 				get_inner_tag_relation(list,index+1,ids,callback)
 			}else{
-				get_inner_tag_relation(list,index+1,ids,callback)
-				// callback && callback(ids);
+				// get_inner_tag_relation(list,index+1,ids,callback)
+				callback && callback(ids,index);
 			}
 			$scope.$apply();
 		}.bind(this,ids))
@@ -65,8 +65,11 @@ angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',fun
 				$scope.list=res.list;
 				$scope.stop_watch=$scope.$watch("user_config.tailData",function(tailData){
 					if(isNaN(tailData.levelIndex))return;
-					get_inner_tag_relation($scope.list,tailData.levelIndex,[tailData.tid],function(ids){
-						console.log(ids);
+					get_inner_tag_relation($scope.list,tailData.levelIndex,[tailData.tid],function(ids,index){
+						if(($scope.list.length)==index){
+							console.log(ids)
+						}
+						// console.log(ids,index);
 					})
 				},1)
 			}
