@@ -65,6 +65,7 @@ angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',fun
 				$scope.list=res.list;
 				$scope.stop_watch=$scope.$watch("user_config.tailData",function(tailData){
 					if(isNaN(tailData.levelIndex))return;
+					console.log(tailData.tid)
 					get_inner_tag_relation($scope.list,tailData.levelIndex,[tailData.tid],function(ids,index){
 						if(($scope.list.length)==index){
 							console.log(ids)
