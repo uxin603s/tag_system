@@ -3,14 +3,27 @@ class TagRelation{
 	public static function getList($arg){
 		$where_str="";
 		$where=[];
-		if(isset($arg['name']) && $arg['name']!=""){
-			$tag_data=TagName::getList($arg['name']);
+		// if(isset($arg['name']) && $arg['name']!=""){
+			// $tag_data=TagName::getList(['name'=>$arg['name']]);
+			// if($tag_data['status']){
+				// $where[]="child_id in (".implode(",",array_column($tag_data['list'],"id")).") ";
+			// }else{
+				// $where[]="child_id = false";
+			// }
+		// }
+		
+		
+		if(isset($arg['names_to_ids']) && is_array($arg['names_to_ids'])){
+			$tag_data=TagName::getList(['name'=>$arg['names_to_ids']]);
+			$id_to_names_str="id in (false)";
 			if($tag_data['status']){
-				$where[]="child_id in (".implode(",",array_column($tag_data['list'],"id")).") ";
-			}else{
-				$where[]="child_id = false";
+				if(count($arg['names_to_ids'])==count($tag_data['list'])){
+					$id_to_names_str="id in (".implode(",",array_column($tag_data['list'],"id")).")";
+				}
 			}
+			$where[]=$id_to_names_str;
 		}
+		
 		if(isset($arg['child_id'])){
 			$where[]="child_id = ?";
 			$bind_data[]=$arg['child_id'];
@@ -33,26 +46,62 @@ class TagRelation{
 		}
 		$sql="select * from tag_relation {$where_str}";
 		if($tmp=DB::select($sql,$bind_data)){
-			$status=true;
-			$list=$tmp;
+			
+			if(isset($arg['tag_names']) && is_array($arg['tag_names'])){
+				$count=count($arg['tag_names']);
+				$count_list=[];
+				$list=[];
+				foreach($tmp as $val){
+					if(empty($count_list[$val['child_id']])){
+						$count_list[$val['child_id']]=1;
+					}else{
+						$count_list[$val['child_id']]++;
+					}
+				}
+				foreach($count_list as $child_id=>$count_item){
+					if($count==$count_item){
+						$list[]=$child_id;
+					}
+				}
+				if(count($list)){
+					$status=true;
+				}
+			}else{
+				$status=true;
+				$list=$tmp;
+			}
 		}else{
 			$status=false;
 		}
+		
 		return compact(['status','list','sql','bind_data']);
 	}
 	public static function insert($arg){
-		if(isset($arg['name'])){
-			$tag_data=TagName::insert($arg['name']);
-			$child_id=$tag_data['id'];
-		}else if(isset($arg['child_id'])){
-			$child_id=$arg['child_id'];
+		
+		if(isset($arg['id'])){
+			$id=$arg['id'];
+		}else if(isset($arg['name_to_id'])){
+			$tag_data=TagName::insert($arg['name_to_id']);
+			$id=$tag_data['id'];
 		}else{
 			return [];
 		}
 		
-		$id=$arg['id'];
+		if(isset($arg['child_id'])){
+			$child_id=$arg['child_id'];
+		}else if(isset($arg['name_to_child_id'])){
+			$tag_data=TagName::insert($arg['name_to_id']);
+			$child_id=$tag_data['id'];
+		}else{
+			return [];
+		}
 		
-		$level_id=$arg['level_id'];
+		if(isset($arg['level_id'])){
+			$level_id=$arg['level_id'];
+		}else{
+			return [];
+		}
+		
 		if($id!=$child_id){
 			$insert=compact(['id','child_id','level_id']);
 			if(DB::insert($insert,"tag_relation")){

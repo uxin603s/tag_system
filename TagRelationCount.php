@@ -16,7 +16,7 @@ class TagRelationCount{
 		$where=[];
 		$bind_data=[];
 		if(isset($arg['name']) && $arg['name']){
-			$tag_data=TagName::getList($arg['name']);
+			$tag_data=TagName::getList(['name'=>$arg['name']]);
 			if($tag_data['status']){
 				$where[]="id in (".implode(",",array_column($tag_data['list'],"id")).") ";
 			}else{

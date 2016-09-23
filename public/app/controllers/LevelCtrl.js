@@ -1,4 +1,5 @@
-angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',function($scope,level,tagRelation){
+angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation','tagRelationTail',function($scope,level,tagRelation,tagRelationTail){
+	$scope.tagRelationTail=tagRelationTail;
 	
 	$scope.searchTagNameTmp={};
 	$scope.tagName={};
@@ -71,20 +72,7 @@ angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',fun
 		}
 		level.get(arg,function(res){
 			$scope.list=[];
-			$scope.stop_watch && $scope.stop_watch();
-			$scope.stop_watch=$scope.$watch("tailData.tid",function(tid){
-				var tailData=$scope.tailData;
-				if(isNaN(tailData.levelIndex))return;
-				// console.log(tailData.tid)
-				get_inner_tag_relation($scope.list,tailData.levelIndex,[tailData.tid],function(ids,index){
-					if(($scope.list.length)==index){
-						
-						tailData.outsideList=ids;
-					}else{
-						tailData.message="";
-					}
-				})
-			},1)
+			
 			if(res.status){
 				$scope.list=res.list;
 			}
@@ -124,8 +112,96 @@ angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',fun
 			}
 		}
 	},1)
-	
-	
+	$scope.$watch("tagRelationTail.data.tid",function(tid){
+		// console.log(data)
+		var tid=tagRelationTail.data.tid;
+		var levelIndex=tagRelationTail.data.levelIndex;
+		if(isNaN(levelIndex))return;
+		tagRelationTail.data.list=[];
+		get_inner_tag_relation($scope.list,levelIndex,[tid],function(ids,index){
+			if(($scope.list.length)==index){
+				tagRelationTail.data.list=ids;
+			}
+		})
+
+	},1)
+	$scope.$watch("tagRelationTail.data.tag_names.length",function(){
+		tagRelationTail.data.list=[];
+		var tag_names=tagRelationTail.data.tag_names
+		if(!tag_names.length)return
+		
+		var arg={
+			names_to_ids:tag_names,
+			level_id:$scope.list[$scope.list.length-1].id,
+		};
+		tagRelation.get(arg,function(res){
+			if(res.status){
+				tagRelationTail.data.list=res.list;
+			}
+			$scope.$apply();
+		})
+	},1)
+	$scope.del_relation=function(index){
+		var arg={
+			id:tagRelationTail.data.tag_list[index],
+			child_id:tagRelationTail.data.oid,
+			level_id:$scope.list[$scope.list.length-1].id,
+		}
+		// console.log(arg);
+		// return
+		tagRelation.del(arg,function(res){
+			console.log(res)
+			$scope.$apply();
+		})
+		tagRelationTail.data.tag_list.splice(index,1)
+	}
+	$scope.add_relation=function(name){
+		var arg={
+			name_to_id:name,
+			child_id:tagRelationTail.data.oid,
+			level_id:$scope.list[$scope.list.length-1].id,
+		}
+		tagRelation.add(arg,function(res){
+			console.log(res)
+			var id=res.insert.id;
+			if(tagRelationTail.data.tag_list.indexOf(id)==-1)
+				tagRelationTail.data.tag_list.push(id);
+			
+			if(!$scope.tagName[id]){
+				$scope.searchTagNameTmp[id]=id;
+			}
+			console.log(tagRelationTail.data.tag_list)
+			$scope.$apply();
+		})
+		// tagRelationTail.data.tag_list.splice(index,1)
+	}
+		
+	$scope.$watch("tagRelationTail.data.oid",function(oid){
+		tagRelationTail.data.tag_list=[];
+		if(!oid)return;
+		clearTimeout($scope.tagRelationTail_oid_timer)
+		$scope.tagRelationTail_oid_timer=setTimeout(function(){
+			var arg={
+				child_id:oid,
+				level_id:$scope.list[$scope.list.length-1].id,
+			};
+			tagRelation.get(arg,function(res){
+				// console.log(res)
+				
+				if(res.status){
+					tagRelationTail.data.tag_list=res.list.map(function(value){
+						var id=value.id;
+						if(!$scope.tagName[id]){
+							$scope.searchTagNameTmp[id]=id;
+						}
+						return id;
+					})
+				}
+				$scope.$apply();
+			});
+		})
+		
+	},1)
 	
 	
 }])

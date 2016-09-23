@@ -43,16 +43,14 @@
 	class="btn"
 	ng-class="$parent.selectTagIndex==$index?'btn-danger':'btn-primary'"
 	ng-click="
-	$parent.selectTagIndex==$index
-	?
-	(($parent.selectTagIndex=undefined))
-	:
-	(($parent.selectTagIndex=$index));
-	
+	$parent.selectTagIndex==$index?$parent.selectTagIndex=undefined:$parent.selectTagIndex=$index;
+	$parent.tagRelationTail.data.tid=item.id;$parent.tagRelationTail.data.levelIndex=levelIndex;
 	"
+	
 	ng-right-click="del($index)"
 	ng-repeat="item in list"
 	>{{tagName[item.id]}}({{item.count}})</button>
+	
 	<tag-relation-count 
 	ng-if="levelList[levelIndex+1]"
 	level-list="levelList" 

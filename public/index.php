@@ -19,6 +19,7 @@
 	<script src="app/factories/level.js" ></script>
 	<script src="app/factories/tagRelationCount.js" ></script>
 	<script src="app/factories/tagRelation.js" ></script>
+	<script src="app/factories/tagRelationTail.js" ></script>
 	
 	<script src="app/directives/tagRelationCount/tagRelationCount.js" ></script>
 	

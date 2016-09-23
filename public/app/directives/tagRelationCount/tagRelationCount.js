@@ -1,4 +1,4 @@
-angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelation','level',function(tagRelationCount,tagRelation,level) {
+angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelation','level','tagRelationTail',function(tagRelationCount,tagRelation,level,tagRelationTail) {
     return {
 		templateUrl: 'app/directives/tagRelationCount/tagRelationCount.html?t='+Date.now(),
 		restrict: 'E',
@@ -14,6 +14,7 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 			levelIndex:'=',
 		},
         link: function($scope,$element,$attr) {
+			$scope.tagRelationTail=tagRelationTail;
 			$scope.update_level=function(update){
 				var arg={
 					where:{
@@ -45,10 +46,14 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 			$scope.getInner=function(ids){
 				var arg={
 					level_id:$scope.levelList[$scope.levelIndex].id,
-					name:$scope.tag_name,
+					
 					ids:ids,
 					pageData:$scope.user_config.pageData[$scope.levelIndex],
 				}
+				if($scope.tag_name){
+					arg.name="%"+$scope.tag_name+"%"
+				}
+				
 				tagRelationCount.get(arg,function(res){
 					// console.log('第'+$scope.levelIndex+"層get tagRelationCount",arg,res);
 					$scope.list=[];
@@ -86,7 +91,6 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 						$scope.getInner();
 					}else{
 						if($scope.levelIndex==0){
-							$scope.user_config.tailData={}
 							$scope.getInner();
 						}
 						else if(isNaN($scope.tagIndex)){
@@ -125,7 +129,7 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 							return
 						}else{
 							var arg={
-								name:$scope.tag_name,
+								name_to_child_id:$scope.tag_name,
 								level_id:$scope.levelList[$scope.levelIndex-1].id,
 								id:$scope.tagList[$scope.tagIndex].id,
 							}
@@ -193,19 +197,7 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 				$scope.get()
 			},1)
 			$scope.$watch("tag_name",$scope.get,1)
-			$scope.$watch("selectTagIndex",function(selectTagIndex){
-				if(!isNaN(selectTagIndex)){
-					$scope.tailData.tid=$scope.list[selectTagIndex].id;
-					$scope.tailData.levelIndex=$scope.levelIndex;
-					$scope.tailData.outsideList=[];
-					$scope.tailData.message="以"+$scope.tagName[$scope.tailData.tid]+"搜尋到";
-				}else{
-					delete $scope.tailData.message;
-					delete $scope.tailData.tid;
-					delete $scope.tailData.levelIndex;
-					delete $scope.tailData.outsideList;
-				}
-			},1)
+			
         },
     }
 }]);

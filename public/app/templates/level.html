@@ -21,20 +21,55 @@
 	tag-name="tagName"
 	search-tag-name-tmp="searchTagNameTmp"
 	></tag-relation-count>	
-	<div class="col-xs-12">
-		tag順搜:
-		{{tailData.message}}
-		<button ng-repeat="oid in tailData.outsideList">{{oid}}</button>
-	</div>
-	<div class="col-xs-12">
-		tag逆搜:
-		<input type="text" />
-	</div>
 	
-	<div class="col-xs-12">
-		id擁有的標籤:
-		<button 
-		ng-show="tagName[tailData.tid]"
-		>新增{{tagName[tailData.tid]}}</button>
+	<div class="col-xs-12 bottom_line">
+		<div class="col-xs-12">
+		標籤搜尋id模式
+		</div>
+		<div class="col-xs-12">
+			<button 
+			ng-repeat="item in tagRelationTail.data.list"
+			>{{item}}</button>
+		</div>
+		<div class="col-xs-12">
+			<input type="text" ng-model="search_name" />
+			<button
+			ng-click="tagRelationTail.data.tag_names.push(search_name)"
+			>新增搜尋標籤</button>
+			<button
+			ng-click="tagRelationTail.data.tag_names.splice($index,1)"
+			ng-repeat="item in tagRelationTail.data.tag_names"
+			>{{item}}</button>
+		</div>
 	</div>
+	<div class="col-xs-12 bottom_line">
+		<div class="col-xs-12">
+		id搜尋標籤模式
+		</div>
+		<div class="col-xs-12">
+			<input type="text" ng-model="tagRelationTail.data.oid" />
+			<button
+			ng-click="del_relation($index);"
+			ng-show="tagName[item]"
+			ng-repeat="item in tagRelationTail.data.tag_list"
+			>{{tagName[item]}}</button>
+			{{tagRelationTail.data.tag_list}}
+		</div>
+	</div>	
+	<div class="col-xs-12 bottom_line">
+		<div class="col-xs-12">
+		id新增標籤模式
+		</div>
+		<div class="col-xs-12">
+			{{tagRelationTail.data.oid}}
+			<input type="text" ng-model="add_tag_name" />
+			<button
+			ng-click="add_relation(add_tag_name)"
+			
+			
+			>新增標籤</button>
+		
+		</div>
+	</div>	
+	
 </div>

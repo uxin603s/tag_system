@@ -25,13 +25,32 @@ class TagName{
 		return $list;
 	}
 	
-	public static function getList($name){
-		$status=false;
-		if($tmp=DB::select("select * from tag_name where name like ?",["%".$name."%"])){
-			$list=$tmp;
-			$status=true;
+	public static function getList($arg){
+		if(isset($arg['name'])){
+			$where_str="";
+			$where=[];
+			$bind_data=[];
+			if(is_array($arg['name'])){
+				$names=$arg['name'];
+			}else{
+				$names=[$arg['name']];
+			}
+			foreach($names as $name){
+				$where[]=" name like ? ";
+				$bind_data[]=$name;
+			}
+			if(count($where)){
+				$where_str.="where ".implode(" || ",$where);
+			}
+			$sql="select * from tag_name {$where_str}";
+			if($tmp=DB::select($sql,$bind_data)){
+				$list=$tmp;
+				$status=true;
+			}else{
+				$status=false;
+			}
 		}
-		return compact(['status','list']);
+		return compact(['status','list','sql','bind_data']);
 	}
 	
 }
