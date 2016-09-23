@@ -46,7 +46,6 @@
 	</style>
 </head>
 <body ng-app="app" class="container">
-	
 	<button
 	ng-click="$parent.user_config.select_page=$index"
 	ng-class="$parent.user_config.select_page==$index?'btn-danger':'btn-primary'"

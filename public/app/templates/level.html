@@ -22,6 +22,19 @@
 	search-tag-name-tmp="searchTagNameTmp"
 	></tag-relation-count>	
 	<div class="col-xs-12">
-	{{user_config.tailData}}
+		tag順搜:
+		{{tailData.message}}
+		<button ng-repeat="oid in tailData.outsideList">{{oid}}</button>
+	</div>
+	<div class="col-xs-12">
+		tag逆搜:
+		<input type="text" />
+	</div>
+	
+	<div class="col-xs-12">
+		id擁有的標籤:
+		<button 
+		ng-show="tagName[tailData.tid]"
+		>新增{{tagName[tailData.tid]}}</button>
 	</div>
 </div>

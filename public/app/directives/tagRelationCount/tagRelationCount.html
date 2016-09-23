@@ -42,7 +42,14 @@
 	ng-show="tagName[item.id]"
 	class="btn"
 	ng-class="$parent.selectTagIndex==$index?'btn-danger':'btn-primary'"
-	ng-click="user_config.tailData={tid:item.id,levelIndex:levelIndex};$parent.selectTagIndex==$index?$parent.selectTagIndex=undefined:$parent.selectTagIndex=$index;"
+	ng-click="
+	$parent.selectTagIndex==$index
+	?
+	(($parent.selectTagIndex=undefined))
+	:
+	(($parent.selectTagIndex=$index));
+	
+	"
 	ng-right-click="del($index)"
 	ng-repeat="item in list"
 	>{{tagName[item.id]}}({{item.count}})</button>

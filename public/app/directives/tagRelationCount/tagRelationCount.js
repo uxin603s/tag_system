@@ -188,8 +188,24 @@ angular.module("app").directive("tagRelationCount",['tagRelationCount','tagRelat
 				})
 			}
 			$scope.$watch("levelList",$scope.get,1)
-			$scope.$watch("tagIndex",$scope.get,1)
+			$scope.$watch("tagIndex",function(){
+				delete $scope.selectTagIndex;
+				$scope.get()
+			},1)
 			$scope.$watch("tag_name",$scope.get,1)
+			$scope.$watch("selectTagIndex",function(selectTagIndex){
+				if(!isNaN(selectTagIndex)){
+					$scope.tailData.tid=$scope.list[selectTagIndex].id;
+					$scope.tailData.levelIndex=$scope.levelIndex;
+					$scope.tailData.outsideList=[];
+					$scope.tailData.message="以"+$scope.tagName[$scope.tailData.tid]+"搜尋到";
+				}else{
+					delete $scope.tailData.message;
+					delete $scope.tailData.tid;
+					delete $scope.tailData.levelIndex;
+					delete $scope.tailData.outsideList;
+				}
+			},1)
         },
     }
 }]);

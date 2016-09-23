@@ -30,23 +30,34 @@ angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',fun
 	},1);
 	
 	function get_inner_tag_relation(list,index,ids,callback){
-		if(!list[index]){
-			callback && callback(ids,index);
-			return;
-		}
 		var arg={
 			ids:ids,
 			level_id:list[index].id,
 		}
 		tagRelation.get(arg,function(ids,res){
 			if(res.status){
-				var ids=res.list.map(function(value){
-					return value.child_id;
-				})
-				get_inner_tag_relation(list,index+1,ids,callback)
-			}else{
-				// get_inner_tag_relation(list,index+1,ids,callback)
-				callback && callback(ids,index);
+				var no_repeat=function(res,ids){
+					var tmp={};
+					for(var i in ids){
+						tmp[ids[i]]=ids[i];
+					}
+					for(var i in res.list){
+						var child_id=res.list[i].child_id;
+						tmp[child_id]=child_id;
+					}
+					var ids=[];
+					for(var i in tmp){
+						ids.push(i);
+					}
+					return ids;
+				}
+				if(list[index+1]){
+					var ids=no_repeat(res,ids);
+					get_inner_tag_relation(list,index+1,ids,callback);
+				}else{
+					var ids=no_repeat(res)
+					callback && callback(ids,index+1);
+				}
 			}
 			$scope.$apply();
 		}.bind(this,ids))
@@ -59,20 +70,23 @@ angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation',fun
 			api_id:$scope.user_config.select_api_id,
 		}
 		level.get(arg,function(res){
-			$scope.list=[]
+			$scope.list=[];
 			$scope.stop_watch && $scope.stop_watch();
+			$scope.stop_watch=$scope.$watch("tailData.tid",function(tid){
+				var tailData=$scope.tailData;
+				if(isNaN(tailData.levelIndex))return;
+				// console.log(tailData.tid)
+				get_inner_tag_relation($scope.list,tailData.levelIndex,[tailData.tid],function(ids,index){
+					if(($scope.list.length)==index){
+						
+						tailData.outsideList=ids;
+					}else{
+						tailData.message="";
+					}
+				})
+			},1)
 			if(res.status){
 				$scope.list=res.list;
-				$scope.stop_watch=$scope.$watch("user_config.tailData",function(tailData){
-					if(isNaN(tailData.levelIndex))return;
-					console.log(tailData.tid)
-					get_inner_tag_relation($scope.list,tailData.levelIndex,[tailData.tid],function(ids,index){
-						if(($scope.list.length)==index){
-							console.log(ids)
-						}
-						// console.log(ids,index);
-					})
-				},1)
 			}
 			$scope.$apply();
 		});
