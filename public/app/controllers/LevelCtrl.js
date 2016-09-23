@@ -114,9 +114,11 @@ angular.module('app').controller('LevelCtrl',['$scope','level','tagRelation','ta
 	},1)
 	$scope.$watch("tagRelationTail.data.tid",function(tid){
 		// console.log(data)
+		
 		var tid=tagRelationTail.data.tid;
 		var levelIndex=tagRelationTail.data.levelIndex;
 		if(isNaN(levelIndex))return;
+		$scope.add_tag_name=$scope.tagName[tid];
 		tagRelationTail.data.list=[];
 		get_inner_tag_relation($scope.list,levelIndex,[tid],function(ids,index){
 			if(($scope.list.length)==index){
