@@ -7,7 +7,7 @@ angular.module('app').factory('tagRelation',[function(){
 		$.post("ajax.php",post_data,callback,"json")
 	}
 
-	var add=function(arg,callback){//count§ó·s
+	var add=function(arg,callback){//countæ›´æ–°
 		var post_data={
 			func_name:'TagRelation::insert',
 			arg:arg,
