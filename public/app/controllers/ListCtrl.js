@@ -29,7 +29,7 @@ angular.module('app').controller('ListCtrl',['$scope','level',function($scope,le
 			$scope.$apply();
 		},"json")
 	}
-	$scope.get();
+	
 	
 	$scope.del=function(index){
 		var post_data={
@@ -70,5 +70,5 @@ angular.module('app').controller('ListCtrl',['$scope','level',function($scope,le
 		},500)
 	}
 	
-	
+	$scope.get();
 }])

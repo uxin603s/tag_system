@@ -10,7 +10,6 @@
 	
 	<script src="app/controllers/ListCtrl.js"></script>
 	<script src="app/controllers/LevelCtrl.js"></script>
-	<script src="app/controllers/RelationCtrl.js"></script>
 	
 	<script src="app/directives/parseInt/parseInt.js"></script>
 	<script src="app/directives/ngRightClick/ngRightClick.js"></script>
@@ -47,14 +46,6 @@
 	</style>
 </head>
 <body ng-app="app" class="container">
-	<button
-	ng-click="$parent.user_config.select_page=$index"
-	ng-class="$parent.user_config.select_page==$index?'btn-danger':'btn-primary'"
-	class="btn"
-	ng-repeat="item in page_list"
-	>{{item.name}}</button>
-	<div 
-	ng-if="!isNaN(user_config.select_page)"
-	ng-include="'app/templates/'+page_list[user_config.select_page].templateName" ><div>
+	<div ng-include="'app/templates/list.html?t='+Date.now()"><div>
 </body>
 </html>

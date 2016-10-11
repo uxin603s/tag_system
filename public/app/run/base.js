@@ -24,20 +24,15 @@ angular.module("app").run(['$rootScope','$filter',function($rootScope,$filter) {
 	
 	$rootScope.$watch("user_config",function(user_config){
 		if(!user_config)return;
-		user_config.select_page || (user_config.select_page=0);
+		// user_config.select_page || (user_config.select_page=0);
 		// delete user_config.tailData
 		// user_config.tailData || (user_config.tailData={});
-		if(isNaN(user_config.select_api_id)){
-			user_config.select_page=0
-		}
+		// if(isNaN(user_config.select_api_id)){
+			// user_config.select_page=0
+		// }
 	},1)
 	
-	$rootScope.__proto__.tailData={};
-	$rootScope.__proto__.page_list=[
-		{name:'標籤列表',templateName:'list.html?t='+Date.now()},
-		{name:'階層設定',templateName:'level.html?t='+Date.now()},
-		// {name:'關聯設定',templateName:'relation.html?t='+Date.now()},
-	];
+	
 	
 	
 }]);
