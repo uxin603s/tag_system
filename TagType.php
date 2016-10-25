@@ -1,5 +1,5 @@
 <?php
-class TagList{
+class TagType{
 	public static $white_field=["id","name","comment"];
 	public static function filter_field($array){
 		$data=[];
@@ -12,14 +12,14 @@ class TagList{
 	}
 	public static function getList($arg){
 		$status=false;
-		if($tmp=DB::select("select * from tag_list ")){
+		if($tmp=DB::select("select * from tag_type ")){
 			$status=true;
 			$list=$tmp;
 		}
 		return compact(['status','list']);
 	}
 	public static function insert($insert){
-		if($id=DB::insert($insert,'tag_list')){
+		if($id=DB::insert($insert,'tag_type')){
 			$insert['id']=$id;
 			$status=true;
 			$message="新增成功";
@@ -35,7 +35,7 @@ class TagList{
 		$update=self::filter_field($arg['update']);
 		$where=self::filter_field($arg['where']);
 		
-		if(DB::update($update,$where,'tag_list')){
+		if(DB::update($update,$where,'tag_type')){
 			$status=true;
 			$message="修改成功";
 		}else{
@@ -47,7 +47,7 @@ class TagList{
 	
 	public static function delete($arg){
 		$where=$arg;
-		if(DB::delete($where,'tag_list')){
+		if(DB::delete($where,'tag_type')){
 			$status=true;
 			$message="刪除成功";
 		}else{

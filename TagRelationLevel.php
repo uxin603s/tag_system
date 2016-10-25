@@ -1,8 +1,8 @@
 <?php
-class TagLevel{
+class TagRelationLevel{
 	public static function getList($arg){
-		$api_id=$arg['api_id'];		
-		if($tmp=DB::select("select * from tag_level where api_id = ? order by sort_id asc",[$api_id])){
+		$tid=$arg['tid'];		
+		if($tmp=DB::select("select * from tag_relation_level where tid = ? order by sort_id asc",[$tid])){
 			$status=true;
 			$list=$tmp;
 		}else{
@@ -10,9 +10,10 @@ class TagLevel{
 		}
 		return compact(['status','list']);
 	}
+	
 	public static function insert($arg){
 		$insert=$arg;
-		if($id=DB::insert($insert,'tag_level')){
+		if($id=DB::insert($insert,'tag_relation_level')){
 			$insert['id']=$id;
 			$insert['sort_id']=0;
 			$status=true;
@@ -26,7 +27,7 @@ class TagLevel{
 		//欄位案權限 再過濾一次
 		$update=$arg['update'];
 		$where=$arg['where'];
-		if(DB::update($arg['update'],$arg['where'],'tag_level')){
+		if(DB::update($arg['update'],$arg['where'],'tag_relation_level')){
 			$status=true;
 			$message="修改成功";
 		}else{
@@ -37,11 +38,8 @@ class TagLevel{
 	}
 	public static function delete($arg){
 		$where=$arg;
-		// return $arg;
 		$tmp=TagRelationCount::getList(['level_id'=>$arg['id']]);
-		if(!$tmp['status'] && DB::delete($where,'tag_level')){
-			// TagRelationCount::delete(['level_id'=>$arg['level_id']]);
-			// TagRelation::delete(['level_id'=>$arg['level_id']]);
+		if(!$tmp['status'] && DB::delete($where,'tag_relation_level')){
 			$status=true;
 			$message="刪除成功";
 		}else{

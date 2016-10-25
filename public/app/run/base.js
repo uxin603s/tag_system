@@ -1,38 +1,6 @@
-angular.module("app").run(['$rootScope','$filter',function($rootScope,$filter) {
-	$rootScope.__proto__.user_config={}
-	localforage.getItem(location.pathname+"user_config").then(function(data){
-		if(data){
-			$rootScope.__proto__.user_config=data;
-		}
-		$rootScope.$apply();
-		// localforage.setItem(location.pathname+"user_config",{});
-		setInterval(function(){
-			localforage.setItem(location.pathname+"user_config",angular.copy($rootScope.__proto__.user_config));
-			$rootScope.$apply();
-		},500)
-	});
-	
-	$rootScope.__proto__.confirm=function(message){
-		return $rootScope.__proto__.user_config.confirm_sw || confirm(message);			
-	};
-	$rootScope.__proto__.alert=function(message){
-		window.alert(message);
-	};
-	
+angular.module("app").run(['$rootScope',function($rootScope) {
+	$rootScope.__proto__.confirm=window.confirm(message);			
+	$rootScope.__proto__.alert=window.alert(message);
 	$rootScope.__proto__.Math=window.Math;
 	$rootScope.__proto__.isNaN=window.isNaN;
-	
-	$rootScope.$watch("user_config",function(user_config){
-		if(!user_config)return;
-		// user_config.select_page || (user_config.select_page=0);
-		// delete user_config.tailData
-		// user_config.tailData || (user_config.tailData={});
-		// if(isNaN(user_config.select_api_id)){
-			// user_config.select_page=0
-		// }
-	},1)
-	
-	
-	
-	
 }]);
