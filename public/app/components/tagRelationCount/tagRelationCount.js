@@ -10,10 +10,11 @@ angular.module("app").component("tagRelationCount",{
 			if(!value)return;
 			// console.log($scope.$ctrl.levelIndex,value)
 			$scope.$watch("cache.levelList["+$scope.$ctrl.levelIndex+"].select",function(value){
+				// if(!value)return;
 				for(var i in $scope.cache.levelList){
 					if(i>$scope.$ctrl.levelIndex){
 						$scope.cache.levelList[i].list=[];
-						delete $scope.cache.levelList[i].select;
+						// delete $scope.cache.levelList[i].select;
 					}
 				}
 				// console.log("第"+$scope.$ctrl.levelIndex+"層，select",value)
