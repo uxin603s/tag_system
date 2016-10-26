@@ -17,13 +17,6 @@ angular.module("app").component("tagRelationCount",{
 		},1);
 		
 		
-		
-		
-		// $scope.$watch("select",function(select){
-			// level_data.select=select;
-			// console.log(level_data)
-		// },1);
-		
 		$scope.get=function(){
 			var post_data={
 				func_name:'TagRelationCount::getList',
@@ -39,6 +32,7 @@ angular.module("app").component("tagRelationCount",{
 			},"json")
 		}
 		$scope.add=function(name){
+			// cache.levelList[$scope.$ctrl.levelIndex-1].select
 			var post_data={
 				func_name:'TagRelationCount::insert',
 				arg:{

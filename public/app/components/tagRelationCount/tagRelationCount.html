@@ -3,13 +3,16 @@
 	<input type="text" ng-model="tag_name" />
 	<button class="btn" ng-click="add(tag_name)">新增標籤</button>
 	<div>
+		{{cache.levelList[$ctrl.levelIndex-1].select}}
 		<button
 		ng-click="cache.levelList[$ctrl.levelIndex].select=item.id"
+		ng-class="cache.levelList[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"
 		ng-repeat="item in list"
 		class="btn" 
 		>{{item.id}}({{item.count}})</button>
 		{{cache.levelList[$ctrl.levelIndex].select}}
 	</div>
+	
 	<tag-relation-count
 	ng-if="cache.levelList[$ctrl.levelIndex+1]"
 	level-index="$ctrl.levelIndex+1"

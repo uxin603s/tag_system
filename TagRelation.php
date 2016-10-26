@@ -3,14 +3,6 @@ class TagRelation{
 	public static function getList($arg){
 		$where_str="";
 		$where=[];
-		// if(isset($arg['name']) && $arg['name']!=""){
-			// $tag_data=TagName::getList(['name'=>$arg['name']]);
-			// if($tag_data['status']){
-				// $where[]="child_id in (".implode(",",array_column($tag_data['list'],"id")).") ";
-			// }else{
-				// $where[]="child_id = false";
-			// }
-		// }
 		
 		
 		if(isset($arg['names_to_ids']) && is_array($arg['names_to_ids'])){
