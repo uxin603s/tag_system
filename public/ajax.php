@@ -1,13 +1,15 @@
 <?php
 
-include_once __DIR__."/../DB/DB.php";
+include_once __DIR__."/../github/DB/DB.php";
+include_once __DIR__."/../github/MysqlCompact/MysqlCompact.php";
+
 include_once __DIR__."/../TagName.php";
 include_once __DIR__."/../TagType.php";
 
 include_once __DIR__."/../TagRelation.php";
 include_once __DIR__."/../TagRelationCount.php";
 include_once __DIR__."/../TagRelationLevel.php";
-include_once __DIR__."/../github/MysqlCompact/MysqlCompact.php";
+
 
 $DBConfig=json_decode(file_get_contents(__DIR__."/../config/DB.json"),1);
 DB::$config=$DBConfig;
