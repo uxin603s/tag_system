@@ -38,13 +38,6 @@ class DB{
 			error_log($e);//getMessage,getTrace
 		}
 		ob_end_clean();
-		$error_log=ob_get_contents();
-		
-		if($error_log){
-			error_log($error_log);
-			self::$connect=null;
-		}
-		
 		
 		return $query;
 	}
