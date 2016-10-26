@@ -15,9 +15,8 @@ class MysqlCompact{
 		"like",
 		"not like",
 	];
-	public static function where($where_list=[],$filter_fields=[]){
-		$query_str="";
-		$bind_data=[];
+	public static function where($where_list=[],$filter_fields=[],&$bind_data){
+		$query_str="where 1=1 ";
 		
 		$used_count=array_count_values(array_column($where_list,'field'));
 		$or_array=[];
@@ -29,21 +28,29 @@ class MysqlCompact{
 				$and_array[]=$field;
 			}
 		}
+		$or_where=[];
 		foreach($where_list as $item){
 			$field=$item['field'];
+			$type=$item['type'];
+			$value=$item['value'];
 			$symbol=self::$type_list[$type];
 			//欄位白名單
 			if(in_array($field,$filter_fields) && $symbol){
 				if(in_array($field,$and_array)){
 					$query_str.=" && {$field} {$symbol} ?";
-					$bind_data[]=$item['value'];
+					$bind_data[]=$value;
 				}else if(in_array($field,$or_array)){
-					$query_str.=" || {$field} {$symbol} ?";
-					$bind_data[]=$item['value'];
+					$or_where[$field]['query'][]=" {$field} {$symbol} ? ";
+					$or_where[$field]['value'][]=$value;
 				}
 			}
 		}
-		return compact(["query_str","bind_data"]);
+		foreach($or_where as $field=>$item){
+			$query_str.=" && (".implode(" || ",$item['query']).")";
+			$bind_data=array_merge($bind_data,$item['value']);
+		}
+		
+		return $query_str;
 	}
 	public static $sort_list=[
 		"asc",
