@@ -16,9 +16,20 @@ angular.module('app').component("tagRelationLevel",{
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
-				cache.levelList=[]
-				for(var i in res.list){
-					cache.levelList.push({data:res.list[i],list:undefined,select:undefined})
+				// console.log(res)
+				if(res.status){
+					var new_arr_count=res.list.length;
+					var old_arr_count=cache.levelList.length;
+					if(old_arr_count>new_arr_count){
+						cache.levelList.splice(new_arr_count,old_arr_count-new_arr_count)
+					}
+					for(var i in res.list){
+						if(!cache.levelList[i]){
+							cache.levelList.push({data:res.list[i],list:undefined,select:undefined})
+						}
+					}
+				}else{
+					cache.levelList=[];
 				}
 				$scope.$apply();
 			},"json")

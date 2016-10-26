@@ -15,6 +15,8 @@
 	<script src="app/components/tagRelationLevel/tagRelationLevel.js?t<?=time()?>"></script>
 	<script src="app/components/tagRelationCount/tagRelationCount.js?t<?=time()?>"></script>
 	
+	<script src="app/directives/ngRightClick/ngRightClick.js?t<?=time()?>"></script>
+	
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.7.min.css?t=<?=time()?>" />
 	<link rel="stylesheet" type="text/css" href="css/index.css?t=<?=time()?>" />
 </head>
