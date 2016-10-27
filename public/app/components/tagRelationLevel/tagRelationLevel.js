@@ -41,6 +41,7 @@ angular.module('app').component("tagRelationLevel",{
 				func_name:'TagRelationLevel::insert',
 				arg:{
 					tid:$scope.cache.selectTagType,
+					sort_id:cache.levelList.length,
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
