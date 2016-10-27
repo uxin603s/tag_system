@@ -7,13 +7,9 @@ class TagName{
 		$name=$arg['name'];
 		$created_time_int=time();
 		$created_time=date("Y-m-d H:i:s",$created_time_int);
-		if($tmp=DB::select("select * from tag_name where name like ?",[$name])){
-			$insert=$tmp[0];
-		}else{
-			$insert=compact(['name','created_time','created_time_int']);
-			$id=DB::insert($insert,"tag_name");
-			$insert['id']=$id;
-		}
+		$insert=compact(['name','created_time','created_time_int']);
+		$id=DB::insert($insert,"tag_name");
+		$insert['id']=$id;
 		return $insert;
 	}
 	public static function getList($arg){

@@ -19,7 +19,9 @@ angular.module('app').component("tagRelationLevel",{
 				// console.log(res)
 				if(res.status){
 					var new_arr_count=res.list.length;
+					cache.levelList || (cache.levelList=[])
 					var old_arr_count=cache.levelList.length;
+					
 					if(old_arr_count>new_arr_count){
 						cache.levelList.splice(new_arr_count,old_arr_count-new_arr_count)
 					}

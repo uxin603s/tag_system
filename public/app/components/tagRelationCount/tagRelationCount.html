@@ -1,16 +1,18 @@
 <div class="col-xs-12 " >	
-	<div>
+	<div style="display:inline-block;">
 		第{{$ctrl.levelIndex+1}}層
-		<input type="text" ng-model="tag_name" />
-		<button class="btn" ng-click="add(tag_name);tag_name=undefined">新增標籤</button>
+		<input type="text" 
+		ng-init="tag.name=''"
+		ng-model="tag.name" />
+		<button class="btn" ng-click="add(tag.name);tag.name=''">新增標籤</button>
+
 		{{cache.levelList[$ctrl.levelIndex].select}}
 	</div>
-	<div>
-		
+	<div style="display:inline-block;">
 		<button
-		ng-click="cache.levelList[$ctrl.levelIndex+1].select==item.id?cache.levelList[$ctrl.levelIndex+1].select=undefined:cache.levelList[$ctrl.levelIndex+1].select=item.id"
+		ng-click="cache.levelList[$ctrl.levelIndex].select==item.id?cache.levelList[$ctrl.levelIndex].select=undefined:cache.levelList[$ctrl.levelIndex].select=item.id"
 		ng-right-click="del(item.id)"
-		ng-class="cache.levelList[$ctrl.levelIndex+1].select==item.id?'btn-danger':'btn-primary'"
+		ng-class="cache.levelList[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"
 		ng-repeat="item in cache.levelList[$ctrl.levelIndex].list"
 		class="btn" 
 		>{{item.id}}({{item.count}})</button>
