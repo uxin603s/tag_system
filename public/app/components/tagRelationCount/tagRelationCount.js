@@ -9,6 +9,7 @@ angular.module("app").component("tagRelationCount",{
 				func_name:'TagRelationLevel::delete',
 				arg:{
 					id:id,
+					tid:$scope.cache.selectTagType,
 				},
 			}
 			$.post("ajax.php",post_data,function(res){

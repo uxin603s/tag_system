@@ -12,12 +12,23 @@ class TagRelationLevel{
 	}
 	
 	public static function insert($insert){
-		if($id=DB::insert($insert,'tag_relation_level')){
-			$insert['id']=$id;
-			$status=true;
-		}else{
-			$status=false;
+		if($tmp=self::getList(['tid'=>$insert['tid']])){
+			if($tmp['status']){
+				$last_data=array_pop($tmp['list']);
+				$where_list=[
+					['field'=>'level_id','type'=>0,'value'=>$last_data['id']],
+				];
+				$TagRelation=TagRelation::getList(['where_list'=>$where_list]);
+				
+				if(!$TagRelation['status'] && $id=DB::insert($insert,'tag_relation_level')){
+					$insert['id']=$id;
+					$status=true;
+				}else{
+					$status=false;
+				}
+			}
 		}
+		
 		return compact(['status','insert']);
 	}
 	
@@ -34,20 +45,25 @@ class TagRelationLevel{
 		}
 		return compact(['status','message']);
 	}
-	public static function delete($arg){
-		$where=$arg;
-		$where_list=[
-			['field'=>'level_id','type'=>0,'value'=>$arg['id']],
-		];
-		$tmp=TagRelationCount::getList(['where_list'=>$where_list]);
-		if(!$tmp['status'] && DB::delete($where,'tag_relation_level')){
-			$status=true;
-			$message="刪除成功";
-		}else{
-			$status=false;
-			$message="刪除失敗";
+	public static function delete($where){
+		
+		if($tmp=self::getList(['tid'=>$where['tid']])){
+			if($tmp['status']){
+				$last_data=array_pop($tmp['list']);
+			
+				$where_list=[
+					['field'=>'level_id','type'=>0,'value'=>$where['id']],
+				];
+				$TagRelationCount=TagRelationCount::getList(['where_list'=>$where_list]);
+				if($where['id']==$last_data['id'] && !$TagRelationCount['status'] && DB::delete($where,'tag_relation_level')){
+					$status=true;
+					$message="刪除成功";
+				}else{
+					$status=false;
+					$message="刪除失敗";
+				}	
+			}
 		}
 		return compact(['status','message','tmp']);
-		
 	}
 }
