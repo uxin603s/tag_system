@@ -25,16 +25,4 @@ class TagName{
 		
 		return compact(['status','list','sql','bind_data']);
 	}
-	// public static function getTagIdTOName($arg){
-		// $tid_arr=$arg['tid_arr'];
-		// if(is_numeric(implode("",$tid_arr))){
-			// $list=DB::select("select * from tag_name where id in (".implode(",",$tid_arr).")");
-			// $status=true;
-		// }else{
-			// $status=false;
-		// }
-		// return compact(['status','list']);
-	// }
-	
-	
 }

@@ -9,7 +9,7 @@
 		ng-init="tag.name=''"
 		ng-model="tag.name" />
 		<button class="btn" ng-click="add(tag.name);tag.name=''">新增標籤</button>
-		{{cache.levelList[$ctrl.levelIndex].select}}
+		{{cache.tag_name[cache.levelList[$ctrl.levelIndex].select]}}
 	</div>
 	<div style="display:inline-block;">
 		<button
@@ -18,7 +18,7 @@
 		ng-class="cache.levelList[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"
 		ng-repeat="item in cache.levelList[$ctrl.levelIndex].list"
 		class="btn" 
-		>{{item.id}}({{item.count}})</button>
+		>{{cache.tag_name[item.id]}}({{item.count}})</button>
 	</div>
 	<tag-relation-count
 	ng-if="cache.levelList[$ctrl.levelIndex+1].data"

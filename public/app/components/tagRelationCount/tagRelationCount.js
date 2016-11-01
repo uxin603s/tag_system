@@ -138,6 +138,7 @@ angular.module("app").component("tagRelationCount",{
 				},"json")
 			});
 		}
+		
 		$scope.get=function(){
 			$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[]
 			clearTimeout($scope.Timer);
@@ -163,6 +164,35 @@ angular.module("app").component("tagRelationCount",{
 			// console.log("第"+$scope.$ctrl.levelIndex+"層，select",value)
 			$scope.get();
 		},1);
+		
+		$scope.$watch("cache.levelList["+$scope.$ctrl.levelIndex+"].list",function(list){
+			if(!list.length)return;
+			$scope.cache.tag_name || ($scope.cache.tag_name={});
+			var where_list=[];
+			for(var i in list){
+				var id=list[i].id;
+				if(!$scope.cache.tag_name[id]){
+					where_list.push({field:'id',type:0,value:id})
+				}
+			}
+			var post_data={
+				func_name:'TagName::getList',
+				arg:{
+					where_list:where_list,
+				},
+			}
+			$.post("ajax.php",post_data,function(res){
+				if(res.status){
+					for(var i in res.list){
+						var data=res.list[i];
+						var id=data.id;
+						var name=data.name;
+						$scope.cache.tag_name[id]=name;
+					}
+					$scope.$apply();
+				}
+			},"json")
+		},1)
 		$scope.$watch("cache.levelList["+$scope.$ctrl.levelIndex+"].data",function(value){
 			if(!value)return;
 			// console.log("第"+$scope.$ctrl.levelIndex+"層，init",$scope.cache.levelList[$scope.$ctrl.levelIndex].list)
