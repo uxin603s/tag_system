@@ -3,8 +3,11 @@ angular.module("app").component("tagRelationCount",{
 		levelIndex:"=",
 	},
 	templateUrl:'app/components/tagRelationCount/tagRelationCount.html?t='+Date.now(),
-	controller:["$scope","cache",function($scope,cache){
+	controller:["$scope","cache","tagName",function($scope,cache,tagName){
 		$scope.delete_level=function(id){
+			if(!confirm("確認刪除?")){
+				return;
+			}
 			var post_data={
 				func_name:'TagRelationLevel::delete',
 				arg:{
@@ -26,60 +29,13 @@ angular.module("app").component("tagRelationCount",{
 		}
 		$scope.cache=cache;
 		$scope.tag={};
-		$scope.add_tag_name=function(name,callback){
-			// console.log(name)
-			if(name==""){
-				alert("標籤不能空白")
-				return;
-			}
-			var post_data={
-				func_name:'TagName::insert',
-				arg:{
-					name:name,
-				},
-			}
-			$.post("ajax.php",post_data,function(res){
-				callback && callback(res.id)
-			},"json")
-		}
 		
-		var nameToId=function(name,return_type){
-			return new Promise(function(resolve,reject) {
-				var post_data={
-					func_name:'TagName::getList',
-					arg:{
-						where_list:[
-							{field:'name',type:2,value:name},
-						],
-					},
-				}
-				$.post("ajax.php",post_data,function(res){
-					if(res.status){
-						var ids=res.list.map(function(value){
-							return value.id;
-						})
-						if(return_type){//搜尋模式
-							resolve && resolve(ids)
-						}else{//新增模式
-							resolve && resolve(ids.pop())
-						}
-					}else{
-						if(return_type){//搜尋模式
-							resolve && resolve()
-						}else{//新增模式
-							$scope.add_tag_name(name,function(id){
-								resolve && resolve(id)
-							})
-						}
-					}
-				},"json")	
-			})
-		}
+		
 		var search_tag_name=function(){
 			return new Promise(function(resolve,reject) {
 				if($scope.tag.name){
 					//搜尋模式
-					nameToId("%"+$scope.tag.name+"%",1).then(function(ids){
+					tagName.nameToId("%"+$scope.tag.name+"%",1).then(function(ids){
 						if(ids){
 							resolve(ids);
 						}
@@ -250,24 +206,25 @@ angular.module("app").component("tagRelationCount",{
 			})
 		}
 		$scope.add=function(name){
-			nameToId(name).then(function(id){
-				
+			tagName.nameToId(name).then(function(id){
 				if($scope.$ctrl.levelIndex==0){
 					return TagRelationCount_insert(id);
 				}else if(isNaN(cache.levelList[$scope.$ctrl.levelIndex-1].select)){
-					alert("請選擇上一層");
-					return ;
+					return Promise.reject("請選擇上一層")
 				}else{
 					if(cache.levelList[$scope.$ctrl.levelIndex-1].select==id){
-						alert("不能跟父層同名");
-						return;
-					}						
-					return TagRelation_insert(id);
+						return Promise.reject("不能跟父層同名")
+					}else{				
+						return TagRelation_insert(id);
+					}
 				}
 			}).then(function(id){
-				if(id)
 				return TagRelationCount_insert(id);
-			});
+			})
+			.catch(function(message){
+				alert(message)
+			})
+			
 		}
 		var TagRelation_delete=function(id){
 			return new Promise(function(resolve,reject) {
@@ -320,9 +277,13 @@ angular.module("app").component("tagRelationCount",{
 				},"json")
 			})
 		}
+		
 		$scope.del=function(id){
+			if(!confirm("確認刪除?")){
+				return;
+			}
 			TagRelation_delete(id).then(function(id){
-				return TagRelationCount_delete(id)
+				return TagRelationCount_delete(id);
 			})
 		}
 	}]

@@ -11,6 +11,7 @@ include_once __DIR__."/../TagRelationCount.php";
 include_once __DIR__."/../TagRelationLevel.php";
 
 include_once __DIR__."/../WebList.php";
+include_once __DIR__."/../AliasList.php";
 
 
 $DBConfig=json_decode(file_get_contents(__DIR__."/../config/DB.json"),1);

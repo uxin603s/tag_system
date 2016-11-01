@@ -19,14 +19,15 @@ class TagRelationLevel{
 					['field'=>'level_id','type'=>0,'value'=>$last_data['id']],
 				];
 				$TagRelation=TagRelation::getList(['where_list'=>$where_list]);
-				
-				if(!$TagRelation['status'] && $id=DB::insert($insert,'tag_relation_level')){
-					$insert['id']=$id;
-					$status=true;
-				}else{
-					$status=false;
-				}
 			}
+		}else{
+			$TagRelation['status']=false;
+		}
+		if(!$TagRelation['status'] && $id=DB::insert($insert,'tag_relation_level')){
+			$insert['id']=$id;
+			$status=true;
+		}else{
+			$status=false;
 		}
 		
 		return compact(['status','insert']);

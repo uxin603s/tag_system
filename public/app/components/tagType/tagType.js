@@ -5,7 +5,7 @@ angular.module('app').component("tagType",{
 		$scope.cache=cache;
 		$scope.cache.tagType || ($scope.cache.tagType={})
 		$scope.$watch("cache.tagType",function(value){
-			console.log(value)
+			// console.log(value)
 			$scope.get();
 		})
 		$scope.add=function(tagType){

@@ -1,20 +1,12 @@
 <?php
-class TagName{
+class AliasList{
 	public static $filter_field=[
-		'id','name',
+		'id','source_id','wid',
 	];
-	public static function insert($insert){
-		$time=time();
-		$insert['created_time_int']=$time;
-		$insert['created_time']=date("Y-m-d H:i:s",$time);
-		$id=DB::insert($insert,"tag_name");
-		$insert['id']=$id;
-		return $insert;
-	}
 	public static function getList($arg){
 		$bind_data=[];
 		$where_str=MysqlCompact::where($arg['where_list'],self::$filter_field,$bind_data);		
-		$sql="select * from tag_name {$where_str}";
+		$sql="select * from alias_list {$where_str}";
 		if($tmp=DB::select($sql,$bind_data)){
 			$list=$tmp;
 			$status=true;
@@ -23,5 +15,11 @@ class TagName{
 		}
 		
 		return compact(['status','list','sql','bind_data']);
+	}
+	public static function insert($insert){
+		
+		$id=DB::insert($insert,"alias_list");
+		$insert['id']=$id;
+		return $insert;
 	}
 }

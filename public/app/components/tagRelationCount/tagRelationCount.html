@@ -20,6 +20,7 @@
 		class="btn" 
 		>{{cache.tag_name[item.id]}}({{item.count}})</button>
 	</div>
+	
 	<tag-relation-count
 	ng-if="cache.levelList[$ctrl.levelIndex+1].data"
 	level-index="$ctrl.levelIndex+1"
