@@ -17,6 +17,31 @@
 	ng-click="add(webList)"
 	>新增網站</button>
 </div>
+
+<div class="col-xs-12 ">
+	<h1 class="text-center">搜尋模式</h1>
+	<div class="bottom_line">
+		以標籤搜尋source_id
+		<input 
+		placeholder="輸入"
+		type="text" 
+		ng-enter="add_search(search_name);search_name='';"
+		ng-model="search_name"
+		/>
+		<button 
+		ng-click="del_search($index)"
+		ng-repeat="item in cache.search.list"
+		class="btn btn-primary"
+		>{{item}}</button>
+	</div>
+	<div class="bottom_line">
+		以source_id搜尋標籤
+		(待寫)
+	</div>
+</div>
+<div class="col-xs-12">
+{{cache.levelList[cache.levelList.length-1].select}}
+</div>
 <div class="col-xs-12">
 	<h1 class="text-center">新增模式</h1>
 	<div class="bottom_line">
@@ -51,8 +76,5 @@
 		class="btn btn-primary"
 		ng-click="add_tag_relation(source_id,tag_name_list)"
 		>關聯</button>
-	</div>
-	<h1 class="text-center">搜尋模式</h1>
-	<div class="bottom_line">
 	</div>
 </div>
