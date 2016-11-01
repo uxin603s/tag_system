@@ -3,23 +3,24 @@
 		<h1 class="text-center">標籤種類</h1>
 	</div>	
 	<div class="col-xs-12 bottom_line">
+		
+		<button 
+		ng-click="cache.tagType.select==item.id?cache.tagType.select=undefined:cache.tagType.select=item.id"
+		ng-class="cache.tagType.select==item.id?'btn-danger':'btn-primary'"
+		class="btn"	
+		ng-right-click="del($index)"
+		ng-repeat="item in cache.tagType.list">
+		{{item.name}}
+		</button>
 		<textarea 
-		placeholder="申請標籤種類"
-		ng-model="name" 
+		placeholder="標籤種類"
+		ng-model="tagType.name" 
 		style="vertical-align: middle;"
 		></textarea>
 		<button 
-		ng-click="add(name)"
+		ng-click="add(tagType);"
 		class="btn btn-primary"
 		>新增標籤種類</button>
 	</div>
-	<div >
-		<button 
-		ng-click="cache.selectTagType==item.id?cache.selectTagType=undefined:cache.selectTagType=item.id"
-		ng-class="cache.selectTagType==item.id?'btn-danger':'btn-primary'"
-		class="btn"	
-		ng-repeat="item in list">
-		{{item.name}}
-		</button>
-	</div>
+	
 </div>

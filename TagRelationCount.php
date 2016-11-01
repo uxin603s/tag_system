@@ -2,29 +2,14 @@
 class TagRelationCount{
 	public static $filter_field=['id','level_id','count'];
 	public static function getList($arg){
-		$limit_str="";
-		if(!isset($arg['pageData'])){
-			$arg['pageData']['limit_count']=10;
-			$arg['pageData']['limit_page']=0;
-		}
-		$count=$arg['pageData']['limit_count'];
-		$start=$arg['pageData']['limit_page']*$count;
-		$limit_str=" limit {$start} , {$count}";
-		$pageData=$arg['pageData'];
-		
-		
 		$bind_data=[];
 		$where_str=MysqlCompact::where($arg['where_list'],self::$filter_field,$bind_data);		
-		$sql="select * from tag_relation_count {$where_str} order by id desc,count desc {$limit_str}";//
+		$sql="select * from tag_relation_count {$where_str} order by id desc,count desc";//
 		
 		if($tmp=DB::select($sql,$bind_data)){
 			$status=true;
 			$list=$tmp;
-			$count_sql="select * from tag_relation_count {$where_str} ";
-			
-			$pageData['total_count']=count(DB::select($count_sql,$bind_data));
 		}else{
-			$pageData['total_count']=0;
 			$status=false;
 		}
 		return compact(['status','list','sql','bind_data','pageData']);

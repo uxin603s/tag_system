@@ -10,6 +10,8 @@ include_once __DIR__."/../TagRelation.php";
 include_once __DIR__."/../TagRelationCount.php";
 include_once __DIR__."/../TagRelationLevel.php";
 
+include_once __DIR__."/../WebList.php";
+
 
 $DBConfig=json_decode(file_get_contents(__DIR__."/../config/DB.json"),1);
 DB::$config=$DBConfig;

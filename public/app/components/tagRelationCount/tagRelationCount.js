@@ -27,6 +27,11 @@ angular.module("app").component("tagRelationCount",{
 		$scope.cache=cache;
 		$scope.tag={};
 		$scope.add_tag_name=function(name,callback){
+			// console.log(name)
+			if(name==""){
+				alert("標籤不能空白")
+				return;
+			}
 			var post_data={
 				func_name:'TagName::insert',
 				arg:{

@@ -45,8 +45,7 @@ class TagType{
 		return compact(['status','message']);
 	}
 	
-	public static function delete($arg){
-		$where=$arg;
+	public static function delete($where){
 		if(DB::delete($where,'tag_type')){
 			$status=true;
 			$message="刪除成功";

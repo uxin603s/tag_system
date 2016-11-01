@@ -3,7 +3,7 @@ angular.module('app').component("tagRelationLevel",{
 	templateUrl:'app/components/tagRelationLevel/tagRelationLevel.html?t='+Date.now(),
 	controller:["$scope","cache",function($scope,cache){
 		$scope.cache=cache;
-		$scope.$watch("cache.selectTagType",function(value){
+		$scope.$watch("cache.tagType.select",function(value){
 			if(typeof value!="undefined"){
 				$scope.get();
 			}
@@ -12,7 +12,7 @@ angular.module('app').component("tagRelationLevel",{
 			var post_data={
 				func_name:'TagRelationLevel::getList',
 				arg:{
-					tid:$scope.cache.selectTagType,
+					tid:$scope.cache.tagType.select,
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
@@ -40,7 +40,7 @@ angular.module('app').component("tagRelationLevel",{
 			var post_data={
 				func_name:'TagRelationLevel::insert',
 				arg:{
-					tid:$scope.cache.selectTagType,
+					tid:$scope.cache.tagType.select,
 					sort_id:cache.levelList.length,
 				},
 			}

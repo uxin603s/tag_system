@@ -1,0 +1,19 @@
+<div class="col-xs-12">
+	<button 
+	ng-click="cache.webList.select==item.id?cache.webList.select=undefined:cache.webList.select=item.id"
+	ng-class="cache.webList.select==item.id?'btn-danger':'btn-primary'"
+	class="btn"	
+	ng-right-click="del($index)"
+	ng-repeat="item in cache.webList.list">
+	{{item.name}}
+	</button>
+	<textarea 
+	style="vertical-align: middle;"
+	ng-model="webList.name" 
+	></textarea>
+	<button 
+	style="vertical-align: middle;" 
+	class="btn btn-primary"
+	ng-click="add(webList)"
+	>新增網站</button>
+</div>
