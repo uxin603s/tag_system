@@ -7,8 +7,8 @@ class TagName{
 		$time=time();
 		$insert['created_time_int']=$time;
 		$insert['created_time']=date("Y-m-d H:i:s",$time);
-		$id=DB::insert($insert,"tag_name");
-		$insert['id']=$id;
+		$insert['id']=DB::insert($insert,"tag_name");
+		
 		return $insert;
 	}
 	public static function getList($arg){

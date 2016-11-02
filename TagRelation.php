@@ -14,32 +14,48 @@ class TagRelation{
 		
 		return compact(['status','list','sql','bind_data']);
 	}
-	public static function insert($arg){
+	public static function insert($insert){
 		//需要檢查欄位
-		$insert=[];
-		$insert['id']=$arg['id'];
-		$insert['child_id']=$arg['child_id'];
-		$insert['level_id']=$arg['level_id'];
+		
 		$status=false;
-		if($arg['child_id']!=$arg['id']){
+		if($insert['child_id']!=$insert['id']){
 			if(DB::insert($insert,"tag_relation")){
-				$sql="update tag_relation_count set count=count+1 where id = ? && level_id = ?";
-				$bind_data=[$arg['id'],$arg['level_id']];
-				$result=DB::query($sql,$bind_data)->rowCount();
+				$sql="select * from tag_relation_count where id = ? && level_id = ?";
+				$bind_data=[$insert['id'],$insert['level_id']];
+				if($tmp=DB::select($sql,$bind_data)){
+					$sql="update tag_relation_count set count=count+1 where id = ? && level_id = ?";
+					$result=DB::query($sql,$bind_data)->rowCount();
+				}else{
+					TagRelationCount::insert([
+						'id'=>$insert['id'],
+						'level_id'=>$insert['level_id'],
+						'count'=>1,
+					]);
+				}
 				$status=true;
 			}
 		}
 		return compact(['insert','result','bind_data','status']);
 	}
 	public static function delete($arg){
+		$auto_delete=$arg['auto_delete'];
+		unset($arg['auto_delete']);
 		$status=false;
 		if(DB::delete($arg,"tag_relation")){
 			$status=true;
 			if(isset($arg['id'])){
-				DB::query("update tag_relation_count set count=count-1 where id = ? && level_id = ?",[$arg['id'],$arg['level_id']]);
+				$bind_data=[$arg['id'],$arg['level_id']];
+				$sql="update tag_relation_count set count=count-1 where id = ? && level_id = ?";
+				DB::query($sql,$bind_data);
+				if($auto_delete){
+					$tmp=TagRelationCount::delete([
+						'id'=>$arg['id'],
+						'level_id'=>$arg['level_id'],
+					]);
+				}
 			}
 		}
-		return compact(['status']);
+		return compact(['status','tmp']);
 	}
 	
 }
