@@ -7,9 +7,7 @@ angular.module('app').factory('aliasList',[function(){
 					where_list:where_list
 				}
 			}
-			$.post("ajax.php",post_data,function(res){
-				resolve && resolve(res);				
-			},"json")
+			$.post("ajax.php",post_data,resolve,"json")
 		})
 	}
 
@@ -20,9 +18,7 @@ angular.module('app').factory('aliasList',[function(){
 				func_name:'AliasList::insert',
 				arg:insert,
 			}
-			$.post("ajax.php",post_data,function(res){
-				resolve && resolve(res)
-			},"json")
+			$.post("ajax.php",post_data,resolve,"json")
 		})
 	}
 	return {

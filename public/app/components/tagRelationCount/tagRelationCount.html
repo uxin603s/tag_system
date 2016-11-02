@@ -14,7 +14,7 @@
 	<div style="display:inline-block;">
 		<button
 		ng-click="cache.levelList[$ctrl.levelIndex].select==item.id?cache.levelList[$ctrl.levelIndex].select=undefined:cache.levelList[$ctrl.levelIndex].select=item.id"
-		ng-right-click="del(item.id)"
+		ng-right-click="del($index)"
 		ng-class="cache.levelList[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"
 		ng-repeat="item in cache.levelList[$ctrl.levelIndex].list"
 		class="btn" 

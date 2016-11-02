@@ -1,5 +1,16 @@
 <?php
 class TagRelationLevel{
+	public static function get_p_level_id($id){
+		if($tmp=DB::select("select * from tag_relation_level where id = ?",[$id])){
+			$sort_id=$tmp[0]['sort_id']-1;
+			$tid=$tmp[0]['tid'];
+			
+			if($tmp=DB::select("select * from tag_relation_level where sort_id ={$sort_id} && tid = {$tid}")){
+				return $tmp[0]['id'];
+			}
+		}
+		return false;
+	}
 	public static function getList($arg){
 		$tid=$arg['tid'];		
 		if($tmp=DB::select("select * from tag_relation_level where tid = ? order by sort_id asc",[$tid])){

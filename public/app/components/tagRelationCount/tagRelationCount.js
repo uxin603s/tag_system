@@ -3,7 +3,7 @@ angular.module("app").component("tagRelationCount",{
 		levelIndex:"=",
 	},
 	templateUrl:'app/components/tagRelationCount/tagRelationCount.html?t='+Date.now(),
-	controller:["$scope","cache","tagName",function($scope,cache,tagName){
+	controller:["$scope","cache","tagName","tagRelation",function($scope,cache,tagName,tagRelation){
 		$scope.delete_level=function(id){
 			if(!confirm("確認刪除?")){
 				return;
@@ -35,9 +35,12 @@ angular.module("app").component("tagRelationCount",{
 			return new Promise(function(resolve,reject) {
 				if($scope.tag.name){
 					//搜尋模式
-					tagName.nameToId("%"+$scope.tag.name+"%",1).then(function(ids){
-						if(ids){
-							resolve(ids);
+					tagName.nameToId("%"+$scope.tag.name+"%",1)
+					.then(function(list){
+						if(list.length){
+							resolve(list.map(function(val){
+								return val.id;
+							}));
 						}
 					})
 				}else{
@@ -59,13 +62,7 @@ angular.module("app").component("tagRelationCount",{
 					for(var i in ids){
 						where_list.push({field:'child_id',type:0,value:ids[i]})
 					}
-					var post_data={
-						func_name:'TagRelation::getList',
-						arg:{
-							where_list:where_list,
-						},
-					}
-					$.post("ajax.php",post_data,function(res){
+					return tagRelation.get(where_list,function(res){
 						var child_ids=[];
 						if(res.status){
 							for(var i in res.list){
@@ -76,7 +73,7 @@ angular.module("app").component("tagRelationCount",{
 							reject("沒有關聯");
 						}
 						$scope.$apply();
-					},"json")
+					});
 				}
 			});
 		}
@@ -121,6 +118,7 @@ angular.module("app").component("tagRelationCount",{
 					return get_list(ids);
 				})
 				.then(function(list){
+					// console.log(list)
 					$scope.cache.tag_name || ($scope.cache.tag_name={});
 					var where_list=[];
 					for(var i in list){
@@ -129,6 +127,7 @@ angular.module("app").component("tagRelationCount",{
 							where_list.push({field:'id',type:0,value:id})
 						}
 					}
+					// console.log(where_list)
 					if(where_list.length){
 						return tagName.getList(where_list);
 					}else{
@@ -136,16 +135,15 @@ angular.module("app").component("tagRelationCount",{
 					}
 				})
 				.then(function(list){
-					if(res.status){
-						for(var i in res.list){
-							var data=res.list[i];
-							$scope.cache.tag_name[data.id]=data.name;
-						}
-						$scope.$apply();
+					for(var i in list){
+						var data=list[i];
+						$scope.cache.tag_name[data.id]=data.name;
 					}
+					$scope.$apply();
+					
 				})
 				.catch(function(message){
-					console.log(message)
+					// console.log(message)
 				})
 			},500)
 		}
@@ -190,112 +188,110 @@ angular.module("app").component("tagRelationCount",{
 				},"json")
 			})
 		}
-		var TagRelation_insert=function(id){
-			return new Promise(function(resolve,reject) {
-				var post_data={
-					func_name:'TagRelation::insert',
-					arg:{
-						level_id:$scope.p_level_id,
-						id:cache.levelList[$scope.$ctrl.levelIndex-1].select,
-						child_id:id,
-					},
-				}
-				$.post("ajax.php",post_data,function(res){
-					console.log(res)
-					if(res.status){
-						var data=cache.levelList[$scope.$ctrl.levelIndex-1];
-						var find_data=data.list.find(function(value){
-							return value.id==cache.levelList[$scope.$ctrl.levelIndex-1].select
-						})
-						if(find_data){
-							find_data.count++;
-						}
-						$scope.$apply();
-						resolve(id);
-					}
-				},"json")
-			})
-		}
+		
+		
 		$scope.add=function(name){
-			tagName.nameToId(name).then(function(id){
+			
+			tagName.nameToId(name)
+			.then(function(list){
+				var id=list.pop().id;
 				if($scope.$ctrl.levelIndex==0){
-					return TagRelationCount_insert(id);
+					return id;
 				}else if(isNaN(cache.levelList[$scope.$ctrl.levelIndex-1].select)){
 					return Promise.reject("請選擇上一層")
 				}else{
 					if(cache.levelList[$scope.$ctrl.levelIndex-1].select==id){
 						return Promise.reject("不能跟父層同名")
-					}else{				
-						return TagRelation_insert(id);
+					}else{		
+						var add={
+							level_id:$scope.p_level_id,
+							id:cache.levelList[$scope.$ctrl.levelIndex-1].select,
+							child_id:id,
+						}
+						return tagRelation.add(add).then(function(res){
+							if(res.status){
+								var data=cache.levelList[$scope.$ctrl.levelIndex-1];
+								var find_data=data.list.find(function(value){
+									return value.id==cache.levelList[$scope.$ctrl.levelIndex-1].select
+								})
+								if(find_data){
+									find_data.count++;
+								}
+								return Promise.resolve(id);
+							}
+						})
 					}
 				}
-			}).then(function(id){
+			})
+			.then(function(id){
 				return TagRelationCount_insert(id);
 			})
 			.catch(function(message){
 				alert(message)
+				console.log(message)
 			})
-			
 		}
-		var TagRelation_delete=function(id){
-			return new Promise(function(resolve,reject) {
-				if($scope.$ctrl.levelIndex==0){
-					resolve(id)
-				}else{
-					var post_data={
-						func_name:'TagRelation::delete',
-						arg:{
-							level_id:$scope.p_level_id,
-							id:$scope.cache.levelList[$scope.$ctrl.levelIndex-1].select,
-							child_id:id,
-						},
-					}
-					$.post("ajax.php",post_data,function(res){
-						if(res.status){
-							var data=cache.levelList[$scope.$ctrl.levelIndex-1];
-							var find_data=data.list.find(function(value){
-								return value.id==cache.levelList[$scope.$ctrl.levelIndex-1].select
-							})
-							if(find_data){
-								find_data.count--;
-							}
-						}
-						resolve(id)
-						$scope.$apply();
-					},"json")
-				}
-			});
-		}
-		var TagRelationCount_delete=function(id){
+		
+		
+		var TagRelationCount_delete=function(index){
+			var id=$scope.cache.levelList[$scope.$ctrl.levelIndex].list[index].id;
 			return new Promise(function(resolve,reject) {
 				var post_data={
 					func_name:'TagRelationCount::delete',
 					arg:{
-						p_level_id:$scope.p_level_id,
 						level_id:$scope.level_id,
 						id:id,
 					},
 				}
 				$.post("ajax.php",post_data,function(res){
 					if(res.status){
-						var index=$scope.cache.levelList[$scope.$ctrl.levelIndex].list.findIndex(function(value){
-							return value.id==id
-						})
-						if(index!=-1)
 						$scope.cache.levelList[$scope.$ctrl.levelIndex].list.splice(index,1);
+						resolve(id);
+					}else{
+						reject("TagRelationCount刪除失敗");
 					}
 					$scope.$apply();
 				},"json")
 			})
 		}
 		
-		$scope.del=function(id){
+		$scope.del=function(index){
 			if(!confirm("確認刪除?")){
 				return;
 			}
-			TagRelation_delete(id).then(function(id){
-				return TagRelationCount_delete(id);
-			})
+			var id=$scope.cache.levelList[$scope.$ctrl.levelIndex].list[index].id;
+			if($scope.$ctrl.levelIndex==0){
+				TagRelationCount_delete(index);
+				//第一層沒有關聯;
+			}else{
+				var del={
+					level_id:$scope.p_level_id,
+					id:$scope.cache.levelList[$scope.$ctrl.levelIndex-1].select,
+					child_id:id,
+				}
+				tagRelation.del(del)
+				.then(function(res){
+					if(res.status){
+						var data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
+						var find_data=data.list.find(function(value){
+							return value.id==$scope.cache.levelList[$scope.$ctrl.levelIndex-1].select
+						})
+						if(find_data){
+							find_data.count--;
+						}
+						$scope.$apply();
+						return id;
+					}else{
+						return Promise.reject("刪除關聯失敗");
+					}
+				})
+				.then(function(){
+					TagRelationCount_delete(index);
+				})
+				.catch(function(message){
+					console.log(message)
+				})
+			}
 		}
 	}]
 })

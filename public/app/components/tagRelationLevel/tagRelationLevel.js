@@ -45,7 +45,11 @@ angular.module('app').component("tagRelationLevel",{
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
-				$scope.get();
+				console.log(res)
+				if(res.status){
+					cache.levelList.push({data:res.insert,list:undefined,select:undefined})
+				}
+				$scope.$apply();
 			},"json")
 		}
 		

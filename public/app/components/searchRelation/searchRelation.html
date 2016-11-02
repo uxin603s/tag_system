@@ -9,7 +9,7 @@
 		ng-model="search_name"
 		/>
 		<button 
-		ng-click="del_tag_search($index)"
+		ng-right-click="del_tag_search($index)"
 		ng-repeat="item in cache.tag_search.search"
 		class="btn btn-primary"
 		>{{item}}</button>
@@ -21,15 +21,35 @@
 		>{{item}}</button>
 	</div>
 	<div class="bottom_line">
-		以source_id搜尋tag
-		<input 
-		placeholder="輸入id"
-		type="text" 
-		ng-model="cache.id_search.search"
-		/>
-		<button 
-		ng-repeat="item in cache.id_search.result"
-		class="btn btn-primary"
-		>{{cache.tag_name[item.id]}}</button>
+		<div>
+			以source_id搜尋tag
+			<input 
+			placeholder="輸入id"
+			type="text" 
+			ng-model="search_id"
+			ng-enter="add_id_search(search_id);search_id='';"
+			/>
+			<button 
+			ng-right-click="del_id_search($index,item)"
+			ng-repeat="item in cache.id_search.search"
+			class="btn btn-primary"
+			>{{item}}</button>
+		</div>
+		<div ng-repeat="(source_id,tag) in cache.id_search.result">
+			{{source_id}}:
+			<input 
+			placeholder="輸入tag_name"
+			type="text" 
+			ng-enter="add_relation(tag_name,source_id);tag_name='';"
+			ng-model="tag_name"
+			/>
+			<button 
+			ng-right-click="del_relation($index,source_id)"
+			class="btn btn-primary"
+			ng-repeat="item in tag">
+			{{cache.tag_name[item.id]}}
+			</button>
+			
+		</div>
 	</div>
 </div>

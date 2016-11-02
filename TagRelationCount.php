@@ -16,32 +16,50 @@ class TagRelationCount{
 	}
 	public static function insert($insert){
 		DB::insert($insert,"tag_relation_count");
-		$insert['count']=0;
+		if(isset($insert['count'])){
+			$insert['count']=0;
+		}
 		return $insert;
 	}
 	public static function delete($arg){
-		$where=[];
-		$where['id']=$arg['id'];
-		$where['level_id']=$arg['level_id'];
-		$where['count']=0;//確保移除的是count等於0
+		
 		$where_list=[
-			['field'=>'child_id','type'=>0,'value'=>$arg['id']],
-			['field'=>'level_id','type'=>0,'value'=>$arg['p_level_id']],
+			['field'=>'id','type'=>0,'value'=>$arg['id']],
+			['field'=>'level_id','type'=>0,'value'=>$arg['level_id']],
+			['field'=>'count','type'=>0,'value'=>0],
 		];
-		$tmp=TagRelation::getList(compact(["where_list"]));//確保別的人沒有關聯才刪除
+		$tmp=self::getList(compact(["where_list"]));
 		if($tmp['status']){
-			$status=true;
-			$message="刪除成功";
-		}else{
-			if(DB::delete($where,"tag_relation_count")){
-				$status=true;
-				$message="刪除成功";
+			if($p_level_id=TagRelationLevel::get_p_level_id($arg['level_id'])){
+				$where_list=[
+					['field'=>'child_id','type'=>0,'value'=>$arg['id']],
+					['field'=>'level_id','type'=>0,'value'=>$p_level_id],
+				];
+				$tmp1=TagRelation::getList(compact(["where_list"]));//確保別的人沒有關聯才刪除
 			}else{
-				$status=false;
-				$message="刪除失敗";
+				$tmp1['status']=false;
 			}
+			if($tmp1['status']){
+				$status=true;
+				$message="假刪除成功";
+			}else{
+				$where=[];
+				$where['id']=$arg['id'];
+				$where['level_id']=$arg['level_id'];
+				$where['count']=0;//確保移除的是count等於0
+				if(DB::delete($where,"tag_relation_count")){
+					$status=true;
+					$message="刪除成功";
+				}else{
+					$status=false;
+					$message="刪除失敗";
+				}
+			}
+		}else{
+			$status=false;
+			$message="刪除失敗";
 		}
 		
-		return compact(['arg','tmp','where','status','message',]);
+		return compact(['arg','tmp','where','status','message','ggwp','tmp1','p_level_id']);
 	}
 }
