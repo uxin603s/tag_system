@@ -10,6 +10,7 @@
 	<script src="app/factories/cache.js?t=<?=time()?>"></script>
 	<script src="app/factories/tagName.js?t=<?=time()?>"></script>
 	<script src="app/factories/aliasList.js?t=<?=time()?>"></script>
+	<script src="app/factories/tagRelation.js?t=<?=time()?>"></script>
 	
 	<script src="app/components/index/index.js?t<?=time()?>"></script>
 	<script src="app/components/tagType/tagType.js?t<?=time()?>"></script>
