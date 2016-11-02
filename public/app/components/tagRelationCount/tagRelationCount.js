@@ -56,6 +56,9 @@ angular.module("app").component("tagRelationCount",{
 						{field:'level_id',type:0,value:$scope.p_level_id},
 						{field:'id',type:0,value:cache.levelList[$scope.$ctrl.levelIndex-1].select},
 					];
+					for(var i in ids){
+						where_list.push({field:'child_id',type:0,value:ids[i]})
+					}
 					var post_data={
 						func_name:'TagRelation::getList',
 						arg:{
@@ -63,11 +66,14 @@ angular.module("app").component("tagRelationCount",{
 						},
 					}
 					$.post("ajax.php",post_data,function(res){
+						var child_ids=[];
 						if(res.status){
 							for(var i in res.list){
-								ids.push(res.list[i].child_id);
+								child_ids.push(res.list[i].child_id);
 							}
-							resolve(ids);
+							resolve(child_ids);
+						}else{
+							reject("沒有關聯");
 						}
 						$scope.$apply();
 					},"json")
@@ -81,8 +87,7 @@ angular.module("app").component("tagRelationCount",{
 				];
 				if(ids){
 					for(var i in ids){
-						var id=ids[i];
-						where_list.push({field:'id',type:0,value:id})
+						where_list.push({field:'id',type:0,value:ids[i]})
 					}
 				}
 				var post_data={
@@ -93,7 +98,11 @@ angular.module("app").component("tagRelationCount",{
 				}
 				$.post("ajax.php",post_data,function(res){
 					if(res.status){
-						$scope.cache.levelList[$scope.$ctrl.levelIndex].list=res.list;
+						var list=res.list;
+						$scope.cache.levelList[$scope.$ctrl.levelIndex].list=list;
+						resolve(list);
+					}else{
+						reject("沒有資料")
 					}
 					$scope.$apply();
 				},"json")
@@ -104,10 +113,39 @@ angular.module("app").component("tagRelationCount",{
 			$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[]
 			clearTimeout($scope.Timer);
 			$scope.Timer=setTimeout(function(){
-				search_tag_name().then(function(ids){
+				search_tag_name()
+				.then(function(ids){
 					return search_select_tag(ids);
-				}).then(function(ids){
+				})
+				.then(function(ids){
 					return get_list(ids);
+				})
+				.then(function(list){
+					$scope.cache.tag_name || ($scope.cache.tag_name={});
+					var where_list=[];
+					for(var i in list){
+						var id=list[i].id;
+						if(!$scope.cache.tag_name[id]){
+							where_list.push({field:'id',type:0,value:id})
+						}
+					}
+					if(where_list.length){
+						return tagName.getList(where_list);
+					}else{
+						return Promise.reject("不需要tagName");
+					}
+				})
+				.then(function(list){
+					if(res.status){
+						for(var i in res.list){
+							var data=res.list[i];
+							$scope.cache.tag_name[data.id]=data.name;
+						}
+						$scope.$apply();
+					}
+				})
+				.catch(function(message){
+					console.log(message)
 				})
 			},500)
 		}
@@ -126,34 +164,7 @@ angular.module("app").component("tagRelationCount",{
 			$scope.get();
 		},1);
 		
-		$scope.$watch("cache.levelList["+$scope.$ctrl.levelIndex+"].list",function(list){
-			if(!list.length)return;
-			$scope.cache.tag_name || ($scope.cache.tag_name={});
-			var where_list=[];
-			for(var i in list){
-				var id=list[i].id;
-				if(!$scope.cache.tag_name[id]){
-					where_list.push({field:'id',type:0,value:id})
-				}
-			}
-			var post_data={
-				func_name:'TagName::getList',
-				arg:{
-					where_list:where_list,
-				},
-			}
-			$.post("ajax.php",post_data,function(res){
-				if(res.status){
-					for(var i in res.list){
-						var data=res.list[i];
-						var id=data.id;
-						var name=data.name;
-						$scope.cache.tag_name[id]=name;
-					}
-					$scope.$apply();
-				}
-			},"json")
-		},1)
+		
 		$scope.$watch("cache.levelList["+$scope.$ctrl.levelIndex+"].data",function(value){
 			if(!value)return;
 			// console.log("第"+$scope.$ctrl.levelIndex+"層，init",$scope.cache.levelList[$scope.$ctrl.levelIndex].list)

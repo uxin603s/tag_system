@@ -7,8 +7,9 @@
 		</button>
 		<input type="text" 
 		ng-init="tag.name=''"
-		ng-model="tag.name" />
-		<button class="btn" ng-click="add(tag.name);tag.name=''">新增標籤</button>
+		ng-model="tag.name" 
+		ng-enter="add(tag.name);tag.name=''"
+		/>
 	</div>
 	<div style="display:inline-block;">
 		<button

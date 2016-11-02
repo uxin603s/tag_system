@@ -1,0 +1,35 @@
+<div class="col-xs-12 ">
+	<h1 class="text-center">搜尋模式</h1>
+	<div class="bottom_line">
+		以tag搜尋source_id
+		<input 
+		placeholder="輸入tag"
+		type="text" 
+		ng-enter="add_tag_search(search_name);search_name='';"
+		ng-model="search_name"
+		/>
+		<button 
+		ng-click="del_tag_search($index)"
+		ng-repeat="item in cache.tag_search.search"
+		class="btn btn-primary"
+		>{{item}}</button>
+		<br/>
+		source_id:
+		<button 
+		ng-repeat="item in cache.tag_search.result"
+		class="btn btn-primary"
+		>{{item}}</button>
+	</div>
+	<div class="bottom_line">
+		以source_id搜尋tag
+		<input 
+		placeholder="輸入id"
+		type="text" 
+		ng-model="cache.id_search.search"
+		/>
+		<button 
+		ng-repeat="item in cache.id_search.result"
+		class="btn btn-primary"
+		>{{cache.tag_name[item.id]}}</button>
+	</div>
+</div>
