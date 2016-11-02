@@ -1,6 +1,6 @@
 angular.module('app').factory('tagName',[function(){
 	var insert=function(name,callback){
-		if(name==""){
+		if(name===""){
 			alert("標籤不能空白")
 			return;
 		}
@@ -16,6 +16,7 @@ angular.module('app').factory('tagName',[function(){
 		},"json")
 	};
 	var getList=function(where_list,return_type){
+		
 		return new Promise(function(resolve,reject) {
 			var post_data={
 				func_name:'TagName::getList',
@@ -25,38 +26,35 @@ angular.module('app').factory('tagName',[function(){
 			}
 			
 			$.post("ajax.php",post_data,function(res){
-				var result_ids=[];
 				var result_names=[];
+			
 				if(res.status){
-					for(var i in res.list){
-						var data=res.list[i];
-						result_ids.push(data.id);
+					var list=res.list;
+					for(var i in list){
+						var data=list[i];
 						result_names.push(data.name);
 					}
+				}else{
+					var list=[];
 				}	
 				
 				if(return_type){//搜尋模式
-					resolve && resolve(result_ids)
+					resolve && resolve(list)
 				}else{//新增模式
-					if(where_list.length==1){
-						insert(where_list[0].value,function(res){
-							resolve && resolve(res.id)
-						});
+					var insert_arr=[];
+					if(where_list.length==list.length){
+						resolve && resolve(list)
 					}else{
-						var insert_arr=[];
-						if(where_list.length!=result_names.length){
-							for(var i in where_list){
-								if(result_names.indexOf(where_list[i].value)==-1){
-									insert_arr.push(where_list[i].value)
-								}
+						for(var i in where_list){
+							if(result_names.indexOf(where_list[i].value)==-1){
+								insert_arr.push(where_list[i].value)
 							}
 						}
 						for(var i in insert_arr){
 							insert(insert_arr[i],function(res){
-								result_ids.push(res.id);
-								result_names.push(res.name);
-								if(where_list.length==result_names.length){
-									resolve && resolve(result_ids)
+								list.push(res)
+								if(where_list.length==list.length){
+									resolve && resolve(list)
 								}
 							})
 						}
@@ -76,8 +74,7 @@ angular.module('app').factory('tagName',[function(){
 			}
 		}
 		return new Promise(function(resolve,reject) {
-			getList(where_list,return_type)
-			.then(resolve);
+			getList(where_list,return_type).then(resolve);
 		})
 	}
 	return {
