@@ -169,10 +169,12 @@ angular.module('app').component("searchRelation",{
 		}
 		var id_search_tag=function(){
 			var ids=$scope.cache.id_search.search;
+			$scope.cache.id_search.result || ($scope.cache.id_search.result={})
 			for(var i in ids){
 				get_id_relation_tag(ids[i])
 				.then(function(id,list){
 					// console.log(list)
+					
 					$scope.cache.id_search.result[id]=list;
 					if(Object.keys($scope.cache.id_search.result).length==ids.length){
 						$scope.$apply();
@@ -187,6 +189,10 @@ angular.module('app').component("searchRelation",{
 			id_search_tag();
 		})
 		$scope.add_relation=function(name,source_id){
+			if(!$scope.cache.webList.select){
+				alert("請選擇網站");
+				return;
+			}
 			var add_relation_object={
 				level_id:$scope.cache.levelList[$scope.cache.levelList.length-1].data.id
 			};
