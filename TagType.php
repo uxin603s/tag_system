@@ -46,7 +46,11 @@ class TagType{
 	}
 	
 	public static function delete($where){
-		if(DB::delete($where,'tag_type')){
+		
+		if(DB::select("select * from tag_relation_level where tid = ? ",[$where['id']])){
+			$status=false;
+			$message="tag_relation_level 有資料無法刪除";
+		}else if(DB::delete($where,'tag_type')){
 			$status=true;
 			$message="刪除成功";
 		}else{

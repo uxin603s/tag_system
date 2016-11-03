@@ -37,25 +37,25 @@ class TagRelation{
 		}
 		return compact(['insert','result','bind_data','status']);
 	}
-	public static function delete($arg){
-		$auto_delete=$arg['auto_delete'];
-		unset($arg['auto_delete']);
+	public static function delete($delete){
+		$auto_delete=$delete['auto_delete'];
+		unset($delete['auto_delete']);
 		$status=false;
-		if(DB::delete($arg,"tag_relation")){
+		if(DB::delete($delete,"tag_relation")){
 			$status=true;
-			if(isset($arg['id'])){
-				$bind_data=[$arg['id'],$arg['level_id']];
+			if(isset($delete['id'])){
+				$bind_data=[$delete['id'],$delete['level_id']];
 				$sql="update tag_relation_count set count=count-1 where id = ? && level_id = ?";
 				DB::query($sql,$bind_data);
 				if($auto_delete){
 					$tmp=TagRelationCount::delete([
-						'id'=>$arg['id'],
-						'level_id'=>$arg['level_id'],
+						'id'=>$delete['id'],
+						'level_id'=>$delete['level_id'],
 					]);
 				}
 			}
 		}
-		return compact(['status','tmp']);
+		return compact(['status','delete']);
 	}
 	
 }

@@ -18,8 +18,7 @@ class AliasList{
 	}
 	public static function insert($insert){
 		
-		$id=DB::insert($insert,"alias_list");
-		$insert['id']=$id;
+		$insert['id']=DB::insert($insert,"alias_list");
 		return $insert;
 	}
 }

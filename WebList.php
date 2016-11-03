@@ -29,7 +29,11 @@ class WebList{
 		
 	}
 	public static function delete($where){
-		if(DB::delete($where,'web_list')){
+		
+		if(DB::select("select * from alias_list where wid = ? ",[$where['id']])){
+			$status=false;
+			$message="alias_list 有資料無法刪除";
+		}else if(DB::delete($where,'web_list')){
 			$status=true;
 			$message="刪除成功";
 		}else{

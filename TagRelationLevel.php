@@ -63,11 +63,13 @@ class TagRelationLevel{
 			if($tmp['status']){
 				$last_data=array_pop($tmp['list']);
 			
-				$where_list=[
-					['field'=>'level_id','type'=>0,'value'=>$where['id']],
-				];
-				$TagRelationCount=TagRelationCount::getList(['where_list'=>$where_list]);
-				if($where['id']==$last_data['id'] && !$TagRelationCount['status'] && DB::delete($where,'tag_relation_level')){
+				if($where['id']!=$last_data['id']){
+					$status=false;
+					$message="不是最後一層 無法刪除";
+				}else if(DB::select("select * from tag_relation_count where level_id = ?",[$where['id']])){
+					$status=false;
+					$message="tag_relation_count 有資料 無法刪除";
+				}else if(DB::delete($where,'tag_relation_level')){
 					$status=true;
 					$message="刪除成功";
 				}else{
