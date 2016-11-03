@@ -25,7 +25,7 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.7.min.css?t=<?=time()?>" />
 	<link rel="stylesheet" type="text/css" href="css/index.css?t=<?=time()?>" />
 </head>
-<body ng-app="app" class="container" >
+<body ng-app="app" class="container" style="overflow-y: scroll;" >
 	<index></index>
 </body>
 </html>
