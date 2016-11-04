@@ -4,9 +4,9 @@ angular.module('app').component("tagRelationLevel",{
 	controller:["$scope","cache",function($scope,cache){
 		$scope.cache=cache;
 		$scope.$watch("cache.tagType.select",function(value){
-			if(typeof value!="undefined"){
-				$scope.get();
-			}
+			// if(typeof value!="undefined"){
+				// $scope.get();
+			// }
 		},1)
 		$scope.get=function(){
 			var post_data={

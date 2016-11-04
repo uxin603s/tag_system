@@ -5,117 +5,109 @@ angular.module('app').component("searchRelation",{
 		$scope.cache=cache;
 		$scope.cache.tag_search || ($scope.cache.tag_search={});
 		$scope.cache.id_search || ($scope.cache.id_search={});
-		
-		var search_last_level=function(where_list){
+		// $scope.cache.tag_search.search || ($scope.cache.tag_search.search=[])
+		var search_last_level=function(require_id,option_id){
 			return new Promise(function(resolve,reject){
 				var post_data={
-					func_name:'TagRelation::getList',
+					func_name:'TagRelation::getIntersection',
 					arg:{
-						where_list:where_list,
+						require_id:require_id,
+						option_id:option_id,
 					},
 				}
 				$.post("ajax.php",post_data,function(res){
 					if(res.status){
 						resolve(res.list);
 					}else{
-						reject("沒有任何關聯")
+						reject(require_id.join(",")+" search_last_level 沒有資料")
 					}
 					$scope.$apply();
 				},"json");
 			});
 		}
-		var tag_search_id=function(){		
-			var value=$scope.cache.tag_search.search;
-			tagName.nameToId(value,1)
-			.then(function(list){
-			
-				// console.log($scope.cache.tag_search.search.length,ids.length)
-				if($scope.cache.tag_search.search.length==list.length){
-					var where_list=[
-						{field:'level_id',type:0,value:$scope.cache.levelList[$scope.cache.levelList.length-1].data.id},
-					];
-					for(var i in list){
-						where_list.push({field:'id',type:0,value:list[i].id});
+		var tag_search_id=function(){
+			clearTimeout($scope.tag_search_id_timer)
+			$scope.tag_search_id_timer=setTimeout(function(){
+				var value=$scope.cache.tag_search.search.map(function(val){
+					return val.name;
+				});
+				// console.log(value)
+				tagName.nameToId(value,1)
+				.then(function(list){
+					if($scope.cache.tag_search.search.length==list.length){
+						var require_id=[];
+						var option_id=[];
+						for(var i in list){
+							var data=list[i];
+							var id=data.id;
+							var name=data.name;
+							var find=$scope.cache.tag_search.search.find(function(val){
+								return val.name==name;
+							});
+							if(find.type){
+								option_id.push(id);
+							}else{
+								require_id.push(id)
+							}
+						}
+						
+						return search_last_level(require_id,option_id);
+					}else{
+						return Promise.reject("標籤有些不存在");
 					}
-					return search_last_level(where_list);
-				}else{
-					return Promise.reject("標籤有些不存在");
-				}
-			})
-			.then(function(list){
-				
-				var count=$scope.cache.tag_search.search.length;
-				var child_id_result={};
-				
-				for(var i in list){
-					var data=list[i];
-					var child_id=data.child_id;
-					var id=data.id;
-					child_id_result[child_id] || (child_id_result[child_id]=[])
-					child_id_result[child_id].push(id)
-				}
-				var child_ids=[];
-				for(var i in child_id_result){
-					if(child_id_result[i].length==count){//擁有搜尋標籤的id
-						child_ids.push(i)
+				})
+				.then(function(list){
+					
+					if(list.length){
+						var where_list=[
+							{field:'wid',type:0,value:$scope.cache.webList.select},
+						];
+						for(var i in list){
+							where_list.push({field:'id',type:0,value:list[i]})
+						}
+						return aliasList.get(where_list);//把id轉換成source_id
+					}else{
+						return Promise.reject("標籤沒有命中id");
 					}
-				}
-				if(child_ids.length){
-					var where_list=[
-						{field:'wid',type:0,value:$scope.cache.webList.select},
-					];
-					for(var i in child_ids){
-						where_list.push({field:'id',type:0,value:child_ids[i]})
+				})
+				.then(function(res){
+					if(res.status){
+						$scope.cache.tag_search.result=res.list.map(function(value){
+							return value.source_id;
+						})
+						$scope.$apply()
 					}
-					return aliasList.get(where_list);//把id轉換成source_id
-				}else{
-					return Promise.reject("標籤沒有命中id");
-				}
-			})
-			.then(function(res){
-				if(res.status){
-					$scope.cache.tag_search.result=res.list.map(function(value){
-						return value.source_id;
-					})
+				})
+				.catch(function(message){
+					// console.log(message)
+					$scope.cache.tag_search.result=[];
 					$scope.$apply()
-				}
-			})
-			.catch(function(message){
-				// console.log(message)
-				$scope.cache.tag_search.result=[];
-				$scope.$apply()
-			})
+				})
+			},500);
 		}
 		$scope.$watch("cache.tag_search.search",function(value){
+			// console.log('tag_search_id')
+			$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
 			if(!value)return;
 			tag_search_id();
-		});
+		},1);
 		
 		$scope.add_tag_search=function(name){
-			$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
-			if($scope.cache.tag_search.search.indexOf(name)==-1){
-				$scope.cache.tag_search.search.push(name);
+			
+			var index=$scope.cache.tag_search.search.findIndex(function(val){
+				return val.name==name;
+			})
+			if(index==-1){
+				$scope.cache.tag_search.search.push({name:name});
 			}
-			tag_search_id();
 		}
 		$scope.del_tag_search=function(index){
 			$scope.cache.tag_search.search.splice(index,1);
-			tag_search_id();
 		}
 		
-		$scope.add_id_search=function(id){
-			
-			$scope.cache.id_search.search || ($scope.cache.id_search.search=[]);
-			if($scope.cache.id_search.search.indexOf(id)==-1){
-				$scope.cache.id_search.search.push(id)
-			}
-			id_search_tag();
-		}
-		$scope.del_id_search=function(index){
-			var source_id=$scope.cache.id_search.search.splice(index,1).pop();
-			delete $scope.cache.id_search.result[source_id];
-			id_search_tag();
-		}
+		
+		
+		
 		var get_id_relation_tag=function(source_id,callback){
 			return new Promise(function(resolve,reject){
 				var where_list=[
@@ -137,7 +129,7 @@ angular.module('app').component("searchRelation",{
 							{field:'level_id',type:0,value:$scope.cache.levelList[$scope.cache.levelList.length-1].data.id},
 							{field:'child_id',type:0,value:item.id},
 						];
-						return search_last_level(where_list);
+						return tagRelation.get(where_list);
 					}
 				})
 				.then(resolve)
@@ -148,7 +140,6 @@ angular.module('app').component("searchRelation",{
 			})
 		}
 		var get_tag_name=function(list){
-			
 			$scope.cache.tag_name || ($scope.cache.tag_name={});
 			var where_list=[];
 			for(var i in list){
@@ -158,7 +149,8 @@ angular.module('app').component("searchRelation",{
 				}
 			}
 			if(where_list.length){
-				tagName.getList(where_list).then(function(list){
+				tagName.getList(where_list)
+				.then(function(list){
 					for(var i in list){
 						var data=list[i];
 						$scope.cache.tag_name[data.id]=data.name;
@@ -168,93 +160,194 @@ angular.module('app').component("searchRelation",{
 			}
 		}
 		var id_search_tag=function(){
-			var ids=$scope.cache.id_search.search;
-			$scope.cache.id_search.result || ($scope.cache.id_search.result={})
-			for(var i in ids){
-				get_id_relation_tag(ids[i])
-				.then(function(id,list){
-					// console.log(list)
-					
-					$scope.cache.id_search.result[id]=list;
-					if(Object.keys($scope.cache.id_search.result).length==ids.length){
-						$scope.$apply();
-					}
-					return list;
-				}.bind(this,ids[i]))
-				.then(get_tag_name)
-			}
+			clearTimeout($scope.id_search_tag_timer)
+			$scope.id_search_tag_timer=setTimeout(function(){
+				var ids=$scope.cache.id_search.search;
+				$scope.cache.id_search.result || ($scope.cache.id_search.result={})
+				for(var i in ids){
+					get_id_relation_tag(ids[i])
+					.then(function(id,res){
+						if(res.status){
+							$scope.cache.id_search.result[id]=res.list;
+							if(Object.keys($scope.cache.id_search.result).length==ids.length){
+								$scope.$apply();
+							}
+							return res.list;
+						}else{
+							// console.log(id)
+							$scope.cache.id_search.result[id]=[];
+							$scope.$apply();
+							return Promise.reject("id_search_tag 沒有資料");
+						}
+					}.bind(this,ids[i]))
+					.then(get_tag_name)
+					.catch(function(message){
+						// console.log(message)
+					})
+				}
+			},500);
 		}
-		$scope.$watch("cache.id_search",function(value){
+		$scope.$watch("cache.id_search.search",function(value){
 			if(!value)return;
 			id_search_tag();
-		})
+		},1)
+		$scope.add_id_search=function(id){
+			if(!$scope.cache.webList.select){
+				alert("請選擇網站");
+				return;
+			}
+			$scope.cache.id_search.search || ($scope.cache.id_search.search=[]);
+			if($scope.cache.id_search.search.indexOf(id)==-1){
+				$scope.cache.id_search.search.push(id)
+			}
+		}
+		$scope.del_id_search=function(index){
+			var source_id=$scope.cache.id_search.search.splice(index,1).pop();
+			delete $scope.cache.id_search.result[source_id];
+		}
+		function promiseRecursive(gen,result){
+			var next=gen.next(result);
+			if(next.done) return;
+			next.value.then(function(result){
+				promiseRecursive(gen,result);
+			});
+		}
+		
 		$scope.add_relation=function(name,source_id){
 			if(!$scope.cache.webList.select){
 				alert("請選擇網站");
 				return;
 			}
-			var add_relation_object={
-				level_id:$scope.cache.levelList[$scope.cache.levelList.length-1].data.id
-			};
-			tagName.nameToId(name)
-			.then(function(list){
+			
+			if(!$scope.cache.tagType.select){
+				alert("請選擇類別");
+				return;
+			}
+			promiseRecursive(function* (name,source_id){
+				
+				var level_id=$scope.cache.levelList[$scope.cache.levelList.length-1].data.id;
+				var wid=$scope.cache.webList.select;
+				var add_relation_object={
+					level_id:level_id,
+				};
+				
+				var list=yield tagName.nameToId(name);
+				
 				add_relation_object.id=list.pop().id;
 				var where_list=[
-					{field:'wid',type:0,value:$scope.cache.webList.select},
+					{field:'wid',type:0,value:wid},
 					{field:'source_id',type:0,value:source_id},
 				];				
-				return aliasList.get(where_list);//把source_id轉換成id
-			})
-			.then(function(res){
+				var res=yield aliasList.get(where_list);//把source_id轉換成id
 				if(res.status){
-					return res.list.pop();
+					var item=res.list.pop();
 				}else{
-					return aliasList.add({
-						wid:$scope.cache.webList.select,
+					var item=yield aliasList.add({
+						wid:wid,
 						source_id:source_id,
 					});
 				}
-			})
-			.then(function(item){
 				add_relation_object.child_id=item.id;
-				return tagRelation.add(add_relation_object);
-			})
-			.then(function(res){
-				get_tag_name([res.insert])
-				if(res.status){
-					$scope.cache.id_search.result[source_id].push(res.insert);
-					
-					var list=$scope.cache.levelList[$scope.cache.levelList.length-1].list;
-					var find_data=list.find(function(value){
-						return value.id==res.insert.id
-					})
-					if(find_data){
-						find_data.count++;
-					}
-				}
+				var res=yield tagRelation.add(add_relation_object);
+				get_tag_name([res]);
+				$scope.cache.id_search.result[source_id].push(res);
+				tag_search_id();
 				$scope.$apply();
-				
-			})
+			}(name,source_id))
 		}
+		
+		
 		$scope.del_relation=function(index,source_id){
 			if(!confirm("確認刪除關聯?"))return;
 			var del=angular.copy($scope.cache.id_search.result[source_id][index]);
 			del.auto_delete=1;
 			tagRelation.del(del)
-			.then(function(res){
-				if(res.status){
-					var del=$scope.cache.id_search.result[source_id].splice(index,1).pop();
-					var list=$scope.cache.levelList[$scope.cache.levelList.length-1].list;
-					var find_data=list.find(function(value){
-						return value.id==del.id
-					})
-					if(find_data){
-						find_data.count--;
-					}
-					$scope.$apply();
-				}
+			.then(function(){
+				$scope.cache.id_search.result[source_id].splice(index,1);
+				tag_search_id();
+				$scope.$apply();
 			})
 		}
+		
+		$scope.$watch("cache.levelList",function(levelList){
+			var tag_name=$scope.cache.tag_name;
+			if(!levelList)return;
+			
+			
+			$scope.$watch("cache.levelList["+(levelList.length-1)+"].list",function(curr,prev){				
+				if(curr.length==prev.length)return;
+				for(var i in curr){
+					var tag=tag_name[curr[i].id];
+					// console.log(tag)
+					var index=$scope.cache.tag_search.search.findIndex(function(val){
+						return val.name==tag;
+					});
+					if(index==-1){
+						$scope.cache.tag_search.search.push({name:tag,type:1})
+					}
+				}
+				// console.log(curr,prev,$scope.rm_cache_select)
+				for(var i in prev){
+					var tag=tag_name[prev[i].id];
+					// console.log(tag)
+					var index=$scope.cache.tag_search.search.findIndex(function(val){
+						return val.name==tag;
+					});
+					if(index!=-1){
+						$scope.cache.tag_search.search.splice(index,1);
+					}
+				}
+			})
+			
+			$scope.$watch("cache.levelList["+(levelList.length-1)+"].select",function(curr,prev){
+				
+				var prev_tag=tag_name[prev];
+				var curr_tag=tag_name[curr];
+				
+				
+				var list=$scope.cache.levelList[$scope.cache.levelList.length-1].list.map(function(val){
+					return tag_name[val.id];
+				});
+				
+				if(prev_tag){
+					var index=$scope.cache.tag_search.search.findIndex(function(val){
+						return val.name==prev_tag;
+					});
+					if(index!=-1)
+						$scope.cache.tag_search.search.splice(index,1)
+				}
+				
+				while(list[0]){
+					var index=$scope.cache.tag_search.search.findIndex(function(val){
+						return val.name==list[0];
+					});
+					
+					if(curr_tag){
+						if(index!=-1)
+							$scope.cache.tag_search.search.splice(index,1)
+					}
+					else{
+						if(index==-1){
+							$scope.cache.tag_search.search.push({name:list[0]})
+						}
+					}
+					
+					list.splice(0,1);
+				}
+				
+				
+				if(curr_tag){
+					var index=$scope.cache.tag_search.search.findIndex(function(val){
+						return val.name==curr_tag;
+					});
+					if(index==-1){
+						$scope.cache.tag_search.search.push({name:curr_tag})
+					}
+				}
+				
+			},1);
+		});
+		
 	}],
 })
 

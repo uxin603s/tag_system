@@ -15,8 +15,8 @@ angular.module('app').factory('tagName',[function(){
 			callback && callback(res)
 		},"json")
 	};
+	
 	var getList=function(where_list,return_type){
-		
 		return new Promise(function(resolve,reject) {
 			var post_data={
 				func_name:'TagName::getList',

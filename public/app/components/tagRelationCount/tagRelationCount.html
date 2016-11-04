@@ -10,6 +10,7 @@
 		ng-model="tag.name" 
 		ng-enter="add(tag.name);tag.name=''"
 		/>
+		{{cache.levelList[$ctrl.levelIndex].select}}
 	</div>
 	<div style="display:inline-block;">
 		<button
