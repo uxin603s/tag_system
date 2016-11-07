@@ -36,7 +36,7 @@ angular.module('app').component("tagRelationLevel",{
 			},"json")
 		}
 		$scope.add=function(){
-			console.log($scope.cache)
+			// console.log($scope.cache)
 			var post_data={
 				func_name:'TagRelationLevel::insert',
 				arg:{
@@ -45,7 +45,7 @@ angular.module('app').component("tagRelationLevel",{
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
-				console.log(res)
+				// console.log(res)
 				if(res.status){
 					cache.levelList.push({data:res.insert,list:undefined,select:undefined})
 				}

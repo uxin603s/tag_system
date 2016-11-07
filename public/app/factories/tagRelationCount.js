@@ -6,11 +6,15 @@ angular.module('app').factory('tagRelationCount',['$rootScope','cache',function(
 				arg:arg,
 			}
 			$.post("ajax.php",post_data,function(res){
+				
 				var list=cache.levelList.find(function(val){
 					return val.data.id==arg.level_id;
 				}).list;
-				list.push(res);
-				$rootScope.$apply();
+				
+				if(list){
+					list.push(res);
+					$rootScope.$apply();
+				}
 			},"json")
 		})
 	}
