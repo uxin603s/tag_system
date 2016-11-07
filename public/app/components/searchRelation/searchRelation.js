@@ -224,7 +224,10 @@ angular.module('app').component("searchRelation",{
 				return;
 			}
 			promiseRecursive(function* (name,source_id){
-				
+				if(!$scope.cache.levelList.length){
+					alert("你還沒建立階層!!");
+					return
+				}
 				var level_id=$scope.cache.levelList[$scope.cache.levelList.length-1].data.id;
 				var wid=$scope.cache.webList.select;
 				var add_relation_object={
@@ -234,6 +237,7 @@ angular.module('app').component("searchRelation",{
 				var list=yield tagName.nameToId(name);
 				
 				add_relation_object.id=list.pop().id;
+				
 				var where_list=[
 					{field:'wid',type:0,value:wid},
 					{field:'source_id',type:0,value:source_id},
@@ -248,9 +252,10 @@ angular.module('app').component("searchRelation",{
 					});
 				}
 				add_relation_object.child_id=item.id;
-				var res=yield tagRelation.add(add_relation_object);
-				get_tag_name([res]);
-				$scope.cache.id_search.result[source_id].push(res);
+				
+				var result=yield tagRelation.add(add_relation_object);
+				get_tag_name([result]);
+				$scope.cache.id_search.result[source_id].push(result);
 				tag_search_id();
 				$scope.$apply();
 			}(name,source_id))
@@ -268,13 +273,16 @@ angular.module('app').component("searchRelation",{
 				$scope.$apply();
 			})
 		}
-		
-		$scope.$watch("cache.levelList",function(levelList){
+		var watch_last_level=function(levelList){
 			var tag_name=$scope.cache.tag_name;
+			var levelList=$scope.cache.levelList;
+			if(!tag_name)return;
 			if(!levelList)return;
 			
-			
 			$scope.$watch("cache.levelList["+(levelList.length-1)+"].list",function(curr,prev){				
+				if(!curr)return;
+				if(!prev)return;
+				
 				if(curr.length==prev.length)return;
 				for(var i in curr){
 					var tag=tag_name[curr[i].id];
@@ -300,7 +308,7 @@ angular.module('app').component("searchRelation",{
 			})
 			
 			$scope.$watch("cache.levelList["+(levelList.length-1)+"].select",function(curr,prev){
-				
+
 				var prev_tag=tag_name[prev];
 				var curr_tag=tag_name[curr];
 				
@@ -327,6 +335,7 @@ angular.module('app').component("searchRelation",{
 							$scope.cache.tag_search.search.splice(index,1)
 					}
 					else{
+						if($scope.cache.levelList.length!=1)
 						if(index==-1){
 							$scope.cache.tag_search.search.push({name:list[0]})
 						}
@@ -346,7 +355,9 @@ angular.module('app').component("searchRelation",{
 				}
 				
 			},1);
-		});
+		}
+		$scope.$watch("cache.levelList",watch_last_level);
+		$scope.$watch("cache.tag_name",watch_last_level);
 		
 	}],
 })

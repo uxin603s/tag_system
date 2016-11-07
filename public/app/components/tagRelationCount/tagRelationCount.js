@@ -203,7 +203,6 @@ angular.module("app").component("tagRelationCount",{
 			tagName.nameToId(name)
 			.then(function(list){
 				var child_id=list.pop().id;
-				// var child_id=item;
 					
 				if($scope.$ctrl.levelIndex==0){
 					return child_id;

@@ -11,11 +11,13 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 						return val.data.id==arg.level_id;
 					}).list;
 					
-					var find_data=list.find(function(value){
-						return value.id==arg.id
-					})
-					if(find_data){
-						find_data.count++;
+					if(list){
+						var find_data=list.find(function(value){
+							return value.id==arg.id
+						})
+						if(find_data){
+							find_data.count++;
+						}
 					}
 					resolve(arg);
 				}else{
@@ -37,11 +39,16 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 						return val.data.id==arg.level_id;
 					}).list;
 					
-					var find_data=list.find(function(value){
+					var index=list.findIndex(function(value){
 						return value.id==arg.id
 					})
-					if(find_data){
-						find_data.count--;
+					
+					if(index!=-1){
+						if(arg.auto_delete){
+							list.splice(index,1)
+						}else{
+							list[index].count--;
+						}
 					}
 					
 					return resolve(arg);

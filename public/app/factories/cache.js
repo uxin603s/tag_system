@@ -12,6 +12,7 @@ angular.module('app').factory('cache',['$rootScope',function($rootScope){
 			$rootScope.$apply();
 		}
 		setInterval(function(){
+			
 			cache.cache_time=Math.floor(Date.now()/1000);
 			localforage.setItem(location.pathname+"cache",angular.copy(cache));
 		},500)
