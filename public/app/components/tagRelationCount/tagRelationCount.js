@@ -31,73 +31,48 @@ angular.module("app").component("tagRelationCount",{
 			},"json")
 		}
 		
-		
-		
-		var search_tag_name=function(){
-			return new Promise(function(resolve,reject) {
-				if($scope.tag.name){
-					//搜尋模式
-					tagName.nameToId("%"+$scope.tag.name+"%",1)
-					.then(function(list){
-						if(list.length){
-							resolve(list.map(function(val){
-								return val.id;
-							}));
-						}
-					})
-				}else{
-					resolve();
-				}
-			});
-		}
-		var search_select_tag=function(ids){
-			return new Promise(function(resolve,reject) {
-				ids || (ids=[])
-				if($scope.$ctrl.levelIndex==0){
-					// console.log(1)
-					resolve(ids);
-				}
-				else if(!isNaN(cache.levelList[$scope.$ctrl.levelIndex-1].select)){
-					// console.log(2)
-					var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
-					var level_id=levelList_data.data.id;
-					var id=levelList_data.select;
-					var where_list=[
-						{field:'level_id',type:0,value:level_id},
-						{field:'id',type:0,value:id},
-					];
-					for(var i in ids){
-						where_list.push({field:'child_id',type:0,value:ids[i]})
-					}
-					return tagRelation.get(where_list)
-					.then(function(res){
-						var child_ids=[];
-						if(res.status){
-							for(var i in res.list){
-								child_ids.push(res.list[i].child_id);
-							}
-							resolve(child_ids);
-						}else{
-							reject("沒有關聯");
-						}
-						
-					});
-				}else{
-					$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
-					reject("沒選東西");
-				}
-				$scope.$apply();
-			});
-		}
-		
 		$scope.get=function(){
 			clearTimeout($scope.Timer);
 			$scope.Timer=setTimeout(function(){
-				search_tag_name()
-				.then(function(ids){
-					return search_select_tag(ids);
-				})
-				.then(function(ids){
+				promiseRecursive(function* (){
+					var ids;
+					if($scope.tag.name){//搜尋模式
+						var list=yield tagName.nameToId("%"+$scope.tag.name+"%",1)
+						if(list.length){
+							var ids=list.map(function(val){
+								return val.id;
+							});
+						}
+					}
+					if($scope.$ctrl.levelIndex){
+						if(isNaN(cache.levelList[$scope.$ctrl.levelIndex-1].select)){
+							$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
+							$scope.$apply();
+							yield Promise.reject("沒選上一層");
+						}else{
+							var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
+							var level_id=levelList_data.data.id;
+							var id=levelList_data.select;
+							var where_list=[
+								{field:'level_id',type:0,value:level_id},
+								{field:'id',type:0,value:id},
+							];
+							for(var i in ids){
+								where_list.push({field:'child_id',type:0,value:ids[i]})
+							}
+							var res= yield tagRelation.get(where_list);
+							var child_ids=[];
+							if(res.status){
+								var ids=res.list.map(function(val){
+									return val.child_id;
+								})
+							}else{
+								$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
+								$scope.$apply();
+								yield Promise.reject("沒有關聯");
+							}
+						}
+					}
 					var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex];
 					var level_id=levelList_data.data.id;
 					var where_list=[
@@ -108,41 +83,20 @@ angular.module("app").component("tagRelationCount",{
 							where_list.push({field:'id',type:0,value:ids[i]})
 						}
 					}
-					return tagRelationCount.get(where_list);
-				})
-				.then(function(res){
-					$scope.cache.tag_name || ($scope.cache.tag_name={});
+					var res=yield tagRelationCount.get(where_list);
+					// console.log($scope.$ctrl.levelIndex,res)
 					if(res.status){
-						var where_list=[];
-						for(var i in res.list){
-							var id=res.list[i].id;
-							if(!$scope.cache.tag_name[id]){
-								where_list.push({field:'id',type:0,value:id})
-							}
-						}
+						// console.log(res.list);
 						$scope.cache.levelList[$scope.$ctrl.levelIndex].list=res.list;
+						var ids=res.list.map(function(val){
+							return val.id;
+						})
+						yield tagName.idToName(ids);
 						$scope.$apply();
-						if(where_list.length){
-							return tagName.getList(where_list);
-						}else{
-							return Promise.reject("不需要tagName");
-						}
 					}else{
-						return Promise.reject("沒有資料")
+						yield Promise.reject("tagRelationCount 沒資料");
 					}
-					
-				})
-				.then(function(list){
-					for(var i in list){
-						var data=list[i];
-						$scope.cache.tag_name[data.id]=data.name;
-					}
-					$scope.$apply();
-				})
-				.catch(function(message){
-					// $scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
-					// console.log(message)
-				})
+				}())
 			},500)
 		}
 		
@@ -162,90 +116,86 @@ angular.module("app").component("tagRelationCount",{
 		});
 		
 		$scope.add=function(name){
-			tagName.nameToId(name)
-			.then(function(list){
+			promiseRecursive(function* (name){
+				var list=yield tagName.nameToId(name);
 				var child_id=list.pop().id;
 					
-				if($scope.$ctrl.levelIndex==0){
-					return child_id;
-				}else if(isNaN(cache.levelList[$scope.$ctrl.levelIndex-1].select)){
-					return Promise.reject("請選擇上一層")
-				}else{
-					if(cache.levelList[$scope.$ctrl.levelIndex-1].select==child_id){
-						return Promise.reject("不能跟父層同名")
-					}else{	
-						var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
-						var level_id=levelList_data.data.id;
-						var id=levelList_data.select;
-						var add={
-							level_id:level_id,
-							id:id,
-							child_id:child_id,
+				if($scope.$ctrl.levelIndex){
+					if(isNaN(cache.levelList[$scope.$ctrl.levelIndex-1].select)){
+						var message="請選擇上一層"
+						alert(message);
+						yield Promise.reject(message);
+					}else{
+						if(cache.levelList[$scope.$ctrl.levelIndex-1].select==child_id){
+							var message="不能跟父層同名"
+							alert(message);
+							yield Promise.reject(message);
+						}else{	
+							var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
+							var level_id=levelList_data.data.id;
+							var id=levelList_data.select;
+							var add={
+								level_id:level_id,
+								id:id,
+								child_id:child_id,
+							}
+							var item=yield tagRelation.add(add);
+							var child_id=item.child_id;
 						}
-						return tagRelation.add(add)
-						.then(function(item){
-							return item.child_id;
-						})
 					}
 				}
-			})
-			.then(function(id){
+				// console.log($scope.$ctrl.levelIndex)
 				var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex];
 				var level_id=levelList_data.data.id;
-				return tagRelationCount.add({
+				
+				yield tagRelationCount.add({
 					level_id:level_id,
-					id:id,
+					id:child_id,
+				})
+				.catch(function(message){
+					alert(message)
+					console.log(message)
 				});
-			})
-			.catch(function(message){
-				alert(message)
-				console.log(message)
-			})
+				
+				// console.log($scope.tag);
+				
+				$scope.tag.name='';
+				$scope.$apply();
+			}(name))
 		}
-		
-		
-		
 		
 		$scope.del=function(index){
 			if(!confirm("確認刪除?")){
 				return;
 			}
-			
-			
-			var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex];
-			var level_id=levelList_data.data.id;
-			var id=levelList_data.list[index].id;
-			if($scope.$ctrl.levelIndex==0){
-				tagRelationCount.del({
-					level_id:level_id,
-					id:id,
-				})
-				//第一層沒有關聯;
-			}else{
+			promiseRecursive(function* (index){
+				var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex];
+				var level_id=levelList_data.data.id;
+				var id=levelList_data.list[index].id;
 				var child_level_id=level_id;
 				var child_id=id;
-				var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
-				var level_id=levelList_data.data.id;
-				var id=levelList_data.select;
-				var del={
+				
+				if($scope.$ctrl.levelIndex){//第一層沒有關聯;
+					let levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
+					let level_id=levelList_data.data.id;
+					let id=levelList_data.select;
+					var del={
+						level_id:level_id,
+						id:id,
+						child_id:child_id,
+					}
+					yield tagRelation.del(del);
+				}
+				var result=yield tagRelationCount.del({
 					level_id:level_id,
 					id:id,
-					child_id:child_id,
+				})
+				// console.log(result,del)
+				if(!result.status && del){
+					yield tagRelation.add(del);
 				}
 				
-				tagRelation.del(del)
-				.then(function(arg){
-					return tagRelationCount.del({
-						level_id:child_level_id,
-						id:child_id,
-					});
-				})
-				.catch(function(message){
-					console.log(message)
-					return tagRelation.add(del);
-				})
-				
-			}
+			}(index));
 		}
 	}]
-})
+});

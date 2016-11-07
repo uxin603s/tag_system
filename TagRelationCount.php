@@ -15,11 +15,17 @@ class TagRelationCount{
 		return compact(['status','list','sql','bind_data','pageData']);
 	}
 	public static function insert($insert){
-		DB::insert($insert,"tag_relation_count");
-		if(isset($insert['count'])){
-			$insert['count']=0;
+		
+		if(DB::insert($insert,"tag_relation_count")){
+			if(isset($insert['count'])){
+				$insert['count']=0;
+			}
+			$status=true;
+		}else{
+			$status=false;
 		}
-		return $insert;
+		
+		return compact(['status','insert']);
 	}
 	public static function delete($arg){
 		

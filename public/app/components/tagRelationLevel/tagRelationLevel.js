@@ -15,7 +15,6 @@ angular.module('app').component("tagRelationLevel",{
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
-				// console.log(res)
 				if(res.status){
 					var new_arr_count=res.list.length;
 					cache.levelList || (cache.levelList=[])
@@ -36,7 +35,6 @@ angular.module('app').component("tagRelationLevel",{
 			},"json")
 		}
 		$scope.add=function(){
-			// console.log($scope.cache)
 			var post_data={
 				func_name:'TagRelationLevel::insert',
 				arg:{
@@ -45,7 +43,6 @@ angular.module('app').component("tagRelationLevel",{
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
-				// console.log(res)
 				if(res.status){
 					cache.levelList.push({data:res.insert,list:undefined,select:undefined})
 				}
@@ -55,7 +52,3 @@ angular.module('app').component("tagRelationLevel",{
 		
 	}]
 });
-
-
-
-

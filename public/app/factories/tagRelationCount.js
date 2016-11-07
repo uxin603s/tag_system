@@ -15,17 +15,20 @@ angular.module('app').factory('tagRelationCount',['$rootScope','cache',function(
 					list.push(res);
 					$rootScope.$apply();
 				}
+				resolve();
 			},"json")
 		})
 	}
 	var del=function(arg){
-		return new Promise(function(resolve,reject) {
+		return new Promise(function(resolve,reject){
+			
 			var post_data={
 				func_name:'TagRelationCount::delete',
 				arg:arg,
 			}
+			
 			$.post("ajax.php",post_data,function(res){
-				// console.log(res)
+				
 				if(res.status){
 					var list=cache.levelList.find(function(val){
 						return val.data.id==arg.level_id;
@@ -39,11 +42,8 @@ angular.module('app').factory('tagRelationCount',['$rootScope','cache',function(
 						list.splice(index,1);
 						$rootScope.$apply();
 					}
-					resolve(arg.id);
-				}else{
-					reject("TagRelationCount刪除失敗");
 				}
-				
+				resolve(res);
 			},"json")
 		})
 	}

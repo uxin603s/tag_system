@@ -24,6 +24,7 @@
 	
 	<script src="app/directives/ngRightClick/ngRightClick.js?t<?=time()?>"></script>
 	<script src="app/directives/ngEnter/ngEnter.js?t<?=time()?>"></script>
+	<script src="app/directives/sortable/sortable.js?t<?=time()?>"></script>
 	
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.7.min.css?t=<?=time()?>" />
 	<link rel="stylesheet" type="text/css" href="css/index.css?t=<?=time()?>" />

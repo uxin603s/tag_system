@@ -8,12 +8,15 @@
 		<input type="text" 
 		ng-init="tag.name=''"
 		ng-model="tag.name" 
-		ng-enter="add(tag.name);tag.name=''"
+		ng-enter="add(tag.name);"
 		/>
-		{{cache.levelList[$ctrl.levelIndex].select}}
 	</div>
 	<div style="display:inline-block;">
 		<button
+		draggable="true"
+		sortable="cache.levelList[$ctrl.levelIndex].list"
+		index="$index"
+		ng-show="cache.tag_name[item.id]"
 		ng-click="cache.levelList[$ctrl.levelIndex].select==item.id?cache.levelList[$ctrl.levelIndex].select=undefined:cache.levelList[$ctrl.levelIndex].select=item.id"
 		ng-right-click="del($index)"
 		ng-class="cache.levelList[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"

@@ -1,4 +1,5 @@
-angular.module('app').factory('tagName',[function(){
+angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$rootScope){
+	cache.tag_name || (cache.tag_name={});
 	var insert=function(name,callback){
 		if(name===""){
 			alert("標籤不能空白")
@@ -73,13 +74,36 @@ angular.module('app').factory('tagName',[function(){
 				where_list.push({field:'name',type:2,value:name[i]})
 			}
 		}
+		
+		return getList(where_list,return_type)
+		.then(function(res){
+			cache.tag_name[res.id]=res.name;
+			$rootScope.$apply();
+			return Promise.resolve(res);
+		})
+	}
+	
+	var idToName=function(ids){
 		return new Promise(function(resolve,reject) {
-			getList(where_list,return_type).then(resolve);
+			var where_list=[];
+			for(var i in ids){
+				where_list.push({field:'id',type:0,value:ids[i]})
+			}
+			getList(where_list)
+			.then(function(list){
+				for(var i in list){
+					var data=list[i];
+					cache.tag_name[data.id]=data.name;
+				}
+				$rootScope.$apply();
+			})
+			
 		})
 	}
 	return {
 		insert:insert,
 		getList:getList,
 		nameToId:nameToId,
+		idToName:idToName,
 	}
 }])

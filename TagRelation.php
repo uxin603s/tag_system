@@ -28,7 +28,7 @@ class TagRelation{
 		
 		if($tmp=DB::select($sql,$bind_data)){
 			$status=true;
-			$list=array_column($tmp,"child_id");
+			$list=$tmp;
 		}else{
 			$status=false;
 		}

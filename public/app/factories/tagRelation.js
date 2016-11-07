@@ -41,7 +41,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 					
 					var index=list.findIndex(function(value){
 						return value.id==arg.id
-					})
+					});
 					
 					if(index!=-1){
 						if(arg.auto_delete){
@@ -50,7 +50,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 							list[index].count--;
 						}
 					}
-					return resolve(arg);
+					return resolve(res);
 				}else{
 					return reject("刪除關聯失敗");
 				}
@@ -72,9 +72,25 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			},"json")
 		});
 	}
+	var get_inter=function(require_id,option_id){
+		return new Promise(function(resolve,reject){
+			var post_data={
+				func_name:'TagRelation::getIntersection',
+				arg:{
+					require_id:require_id,
+					option_id:option_id,
+				},
+			}
+			$.post("ajax.php",post_data,function(res){
+				resolve(res);
+				$rootScope.$apply();
+			},"json");
+		});
+	}
 	return {
 		add:add,
 		del:del,
 		get:get,
+		get_inter:get_inter,
 	}
 }])

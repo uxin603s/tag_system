@@ -5,35 +5,18 @@ angular.module('app').component("searchRelation",{
 		$scope.cache=cache;
 		$scope.cache.tag_search || ($scope.cache.tag_search={});
 		$scope.cache.id_search || ($scope.cache.id_search={});
-		// $scope.cache.tag_search.search || ($scope.cache.tag_search.search=[])
-		var search_last_level=function(require_id,option_id){
-			return new Promise(function(resolve,reject){
-				var post_data={
-					func_name:'TagRelation::getIntersection',
-					arg:{
-						require_id:require_id,
-						option_id:option_id,
-					},
-				}
-				$.post("ajax.php",post_data,function(res){
-					if(res.status){
-						resolve(res.list);
-					}else{
-						reject(require_id.join(",")+" search_last_level 沒有資料")
-					}
-					$scope.$apply();
-				},"json");
-			});
-		}
+		
+		
 		var tag_search_id=function(){
+			$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
 			clearTimeout($scope.tag_search_id_timer)
 			$scope.tag_search_id_timer=setTimeout(function(){
-				var value=$scope.cache.tag_search.search.map(function(val){
-					return val.name;
-				});
-				// console.log(value)
-				tagName.nameToId(value,1)
-				.then(function(list){
+				
+				promiseRecursive(function* (){
+					var value=$scope.cache.tag_search.search.map(function(val){
+						return val.name;
+					});
+					var list= yield tagName.nameToId(value,1);
 					if($scope.cache.tag_search.search.length==list.length){
 						var require_id=[];
 						var option_id=[];
@@ -51,43 +34,37 @@ angular.module('app').component("searchRelation",{
 							}
 						}
 						
-						return search_last_level(require_id,option_id);
-					}else{
-						return Promise.reject("標籤有些不存在");
-					}
-				})
-				.then(function(list){
-					
-					if(list.length){
-						var where_list=[
-							{field:'wid',type:0,value:$scope.cache.webList.select},
-						];
-						for(var i in list){
-							where_list.push({field:'id',type:0,value:list[i]})
+						var res=yield tagRelation.get_inter(require_id,option_id);
+						if(res.status){
+							var where_list=[
+								{field:'wid',type:0,value:$scope.cache.webList.select},
+							];
+							for(var i in res.list){
+								where_list.push({field:'id',type:0,value:res.list[i].child_id})
+							}
+							var res=yield aliasList.get(where_list);//把id轉換成source_id
+							if(res.status){
+								$scope.cache.tag_search.result=res.list.map(function(value){
+									return value.source_id;
+								})
+								// console.log($scope.cache.tag_search.result)
+							}else{
+								$scope.cache.tag_search.result=[];
+							}
+							$scope.$apply()
+						}else{
+							yield Promise.reject(require_id.join(",")+" search_last_level 沒有資料")
 						}
-						return aliasList.get(where_list);//把id轉換成source_id
+						
 					}else{
-						return Promise.reject("標籤沒有命中id");
+						yield Promise.reject("標籤有些不存在");
 					}
-				})
-				.then(function(res){
-					if(res.status){
-						$scope.cache.tag_search.result=res.list.map(function(value){
-							return value.source_id;
-						})
-						$scope.$apply()
-					}
-				})
-				.catch(function(message){
-					// console.log(message)
-					$scope.cache.tag_search.result=[];
-					$scope.$apply()
-				})
+				}())
 			},500);
 		}
+		
 		$scope.$watch("cache.tag_search.search",function(value){
-			// console.log('tag_search_id')
-			$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
+			
 			if(!value)return;
 			tag_search_id();
 		},1);
@@ -139,26 +116,6 @@ angular.module('app').component("searchRelation",{
 				})
 			})
 		}
-		var get_tag_name=function(list){
-			$scope.cache.tag_name || ($scope.cache.tag_name={});
-			var where_list=[];
-			for(var i in list){
-				var id=list[i].id;
-				if(!$scope.cache.tag_name[id]){
-					where_list.push({field:'id',type:0,value:id})
-				}
-			}
-			if(where_list.length){
-				tagName.getList(where_list)
-				.then(function(list){
-					for(var i in list){
-						var data=list[i];
-						$scope.cache.tag_name[data.id]=data.name;
-					}
-					$scope.$apply();
-				});
-			}
-		}
 		var id_search_tag=function(){
 			clearTimeout($scope.id_search_tag_timer)
 			$scope.id_search_tag_timer=setTimeout(function(){
@@ -180,7 +137,7 @@ angular.module('app').component("searchRelation",{
 							return Promise.reject("id_search_tag 沒有資料");
 						}
 					}.bind(this,ids[i]))
-					.then(get_tag_name)
+					.then(tagName.idToName)
 					.catch(function(message){
 						// console.log(message)
 					})
@@ -236,7 +193,7 @@ angular.module('app').component("searchRelation",{
 					{field:'wid',type:0,value:wid},
 					{field:'source_id',type:0,value:source_id},
 				];				
-				var res=yield aliasList.get(where_list);//把source_id轉換成id
+				var res=yield aliasList.get(where_list); //把source_id轉換成id
 				if(res.status){
 					var item=res.list.pop();
 				}else{
@@ -248,7 +205,9 @@ angular.module('app').component("searchRelation",{
 				add_relation_object.child_id=item.id;
 				
 				var result=yield tagRelation.add(add_relation_object);
-				get_tag_name([result]);
+				// console.log(result);
+				
+				tagName.idToName([result]);
 				$scope.cache.id_search.result[source_id].push(result);
 				tag_search_id();
 				$scope.$apply();
@@ -271,6 +230,7 @@ angular.module('app').component("searchRelation",{
 			var tag_name=$scope.cache.tag_name;
 			var levelList=$scope.cache.levelList;
 			if(!tag_name)return;
+			if(!levelList)return;
 			if(!levelList.length)return;
 			
 			$scope.$watch("cache.levelList["+(levelList.length-1)+"].list",function(curr,prev){				
@@ -331,7 +291,7 @@ angular.module('app').component("searchRelation",{
 					else{
 						if($scope.cache.levelList.length!=1)
 						if(index==-1){
-							$scope.cache.tag_search.search.push({name:list[0]})
+							$scope.cache.tag_search.search.push({name:list[0],type:1})
 						}
 					}
 					
