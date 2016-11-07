@@ -205,13 +205,7 @@ angular.module('app').component("searchRelation",{
 			var source_id=$scope.cache.id_search.search.splice(index,1).pop();
 			delete $scope.cache.id_search.result[source_id];
 		}
-		function promiseRecursive(gen,result){
-			var next=gen.next(result);
-			if(next.done) return;
-			next.value.then(function(result){
-				promiseRecursive(gen,result);
-			});
-		}
+		
 		
 		$scope.add_relation=function(name,source_id){
 			if(!$scope.cache.webList.select){
@@ -258,7 +252,7 @@ angular.module('app').component("searchRelation",{
 				$scope.cache.id_search.result[source_id].push(result);
 				tag_search_id();
 				$scope.$apply();
-			}(name,source_id))
+			}(name,source_id));
 		}
 		
 		
@@ -277,7 +271,7 @@ angular.module('app').component("searchRelation",{
 			var tag_name=$scope.cache.tag_name;
 			var levelList=$scope.cache.levelList;
 			if(!tag_name)return;
-			if(!levelList)return;
+			if(!levelList.length)return;
 			
 			$scope.$watch("cache.levelList["+(levelList.length-1)+"].list",function(curr,prev){				
 				if(!curr)return;
