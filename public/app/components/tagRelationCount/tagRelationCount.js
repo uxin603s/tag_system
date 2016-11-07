@@ -44,6 +44,7 @@ angular.module("app").component("tagRelationCount",{
 							});
 						}
 					}
+					
 					if($scope.$ctrl.levelIndex){
 						if(isNaN(cache.levelList[$scope.$ctrl.levelIndex-1].select)){
 							$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
@@ -61,11 +62,17 @@ angular.module("app").component("tagRelationCount",{
 								where_list.push({field:'child_id',type:0,value:ids[i]})
 							}
 							var res= yield tagRelation.get(where_list);
-							var child_ids=[];
 							if(res.status){
-								var ids=res.list.map(function(val){
-									return val.child_id;
-								})
+								var alias_sort_id={};
+								var ids=[];
+								for(var i in res.list){
+									var data=res.list[i];
+									
+									var sort_id=data.sort_id;
+									var child_id=data.child_id;
+									ids.push(child_id);
+									alias_sort_id[child_id]=sort_id
+								}
 							}else{
 								$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
 								$scope.$apply();
@@ -84,16 +91,25 @@ angular.module("app").component("tagRelationCount",{
 						}
 					}
 					var res=yield tagRelationCount.get(where_list);
-					// console.log($scope.$ctrl.levelIndex,res)
 					if(res.status){
-						// console.log(res.list);
+						
+						if(alias_sort_id){
+							for(var i in res.list){
+								res.list[i].sort_id=alias_sort_id[res.list[i].id]
+							}
+						}
+						res.list.sort(function(a,b){
+							return a.sort_id-b.sort_id;
+						})
 						$scope.cache.levelList[$scope.$ctrl.levelIndex].list=res.list;
+						
 						var ids=res.list.map(function(val){
 							return val.id;
 						})
 						yield tagName.idToName(ids);
 						$scope.$apply();
-					}else{
+					}
+					else{
 						yield Promise.reject("tagRelationCount 沒資料");
 					}
 				}())
@@ -113,6 +129,73 @@ angular.module("app").component("tagRelationCount",{
 					delete $scope.cache.levelList[$scope.$ctrl.levelIndex].select;
 				}
 			})
+			$scope.$watch("cache.levelList["+($scope.$ctrl.levelIndex)+"].list",function(curr,prev){
+				return
+				if(!curr)return;
+				if(!prev)return;
+				
+				clearTimeout($scope.sort_id_timer);
+				$scope.sort_id_timer=setTimeout(function(){
+					for(var i in curr){
+						if(curr[i])
+						if(prev[i])
+						if(curr[i].sort_id!=prev[i].sort_id){
+							// console.log(curr[i],prev[i])
+							if($scope.$ctrl.levelIndex){
+								var id=$scope.cache.levelList[$scope.$ctrl.levelIndex-1].select;
+								var level_id=$scope.cache.levelList[$scope.$ctrl.levelIndex-1].data.id;
+								var child_id=curr[i].id
+								var sort_id=curr[i].sort_id
+								//update tagRelation
+								//id,child_id,level_id
+								
+								tagRelation.ch({
+									update:{
+										sort_id:sort_id
+									},
+									where:{
+										id:id,
+										level_id:level_id,
+										child_id:child_id,
+									},
+								})
+								.then(function(res){
+									console.log(res);
+								})
+								// console.log(id,child_id,level_id,sort_id)
+							}else{
+								//update tagRelationCount
+								//id,level_id
+								var id=curr[i].id
+								var level_id=$scope.cache.levelList[$scope.$ctrl.levelIndex].data.id;
+								var sort_id=curr[i].sort_id;
+								tagRelationCount.ch({
+									update:{
+										sort_id:sort_id
+									},
+									where:{
+										id:id,
+										level_id:level_id,
+									},
+								})
+								.then(function(res){
+									console.log(res);
+								})
+								// console.log(id,level_id,sort_id)
+							}
+						}
+					}
+				},500)
+				if(!$scope.tag.name){
+					curr.sort(function(a,b){
+						return a.sort_id-b.sort_id;
+					})
+					
+					curr.map(function(val,key){
+						val.sort_id=key;
+					})
+				}
+			},1)
 		});
 		
 		$scope.add=function(name){
@@ -138,7 +221,9 @@ angular.module("app").component("tagRelationCount",{
 								level_id:level_id,
 								id:id,
 								child_id:child_id,
+								sort_id:99999,
 							}
+							
 							var item=yield tagRelation.add(add);
 							var child_id=item.child_id;
 						}

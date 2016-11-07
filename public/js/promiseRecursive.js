@@ -6,6 +6,6 @@ function promiseRecursive(gen,result){
 		promiseRecursive(gen,result);
 	})
 	.catch(function(message){
-		console.log(message);
+		// console.log(message);
 	})
 }

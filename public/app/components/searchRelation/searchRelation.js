@@ -13,10 +13,16 @@ angular.module('app').component("searchRelation",{
 			$scope.tag_search_id_timer=setTimeout(function(){
 				
 				promiseRecursive(function* (){
+					if(!$scope.cache.tag_search.search.length){
+						yield Promise.reject("搜不到標籤");
+					}
+					
 					var value=$scope.cache.tag_search.search.map(function(val){
 						return val.name;
 					});
+					
 					var list= yield tagName.nameToId(value,1);
+					// console.log($scope.cache.tag_search.search.length,list)
 					if($scope.cache.tag_search.search.length==list.length){
 						var require_id=[];
 						var option_id=[];
@@ -52,9 +58,10 @@ angular.module('app').component("searchRelation",{
 								$scope.cache.tag_search.result=[];
 							}
 							$scope.$apply()
-						}else{
-							yield Promise.reject(require_id.join(",")+" search_last_level 沒有資料")
 						}
+						// else{
+							// yield Promise.reject(require_id.join(",")+" search_last_level 沒有資料")
+						// }
 						
 					}else{
 						yield Promise.reject("標籤有些不存在");
@@ -312,6 +319,52 @@ angular.module('app').component("searchRelation",{
 		}
 		$scope.$watch("cache.levelList",watch_last_level);
 		$scope.$watch("cache.tag_name",watch_last_level);
+		
+		$scope.$watch("cache.id_search.result",function(result){
+			if(!result)return;
+			for(var i in result)
+			$scope.$watch("cache.id_search.result["+i+"]",function(curr,prev){
+				clearTimeout($scope.result_timer)
+				$scope.result_timer=setTimeout(function(){
+					if(!curr)return;
+					if(!prev)return;
+					
+					for(var i in curr){
+						if(curr[i].sort_id!=prev[i].sort_id){
+							var data=curr[i];
+							var id=data.id;
+							var level_id=data.level_id;
+							var child_id=data.child_id
+							var sort_id=data.sort_id
+							
+							tagRelation.ch({
+								update:{
+									sort_id:sort_id
+								},
+								where:{
+									id:id,
+									level_id:level_id,
+									child_id:child_id,
+								},
+							})
+							.then(function(res){
+								console.log(res);
+							})
+							console.log(id,child_id,level_id,sort_id)
+						}
+					}
+					curr.sort(function(a,b){
+						return a.sort_id-b.sort_id;
+					})
+					curr.map(function(val,key){
+						val.sort_id=key;
+					})
+				},500)
+				
+			
+			},1)
+			
+		})
 		
 	}],
 })

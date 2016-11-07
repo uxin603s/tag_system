@@ -37,7 +37,9 @@ class TagRelation{
 	public static function getList($arg){
 		$bind_data=[];
 		$where_str=MysqlCompact::where($arg['where_list'],self::$filter_field,$bind_data);		
-		$sql="select * from tag_relation {$where_str}";
+		$sql="select * from tag_relation {$where_str}
+		order by sort_id 
+		";
 		if($tmp=DB::select($sql,$bind_data)){
 			$status=true;
 			$list=$tmp;
@@ -90,5 +92,12 @@ class TagRelation{
 		}
 		return compact(['status','delete']);
 	}
-	
+	public static function update($arg){
+		if(DB::update($arg['update'],$arg['where'],"tag_relation")){
+			$status=true;
+		}else{
+			$status=false;
+		}
+		return compact(['status','arg']);
+	}
 }

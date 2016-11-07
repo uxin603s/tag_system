@@ -4,7 +4,9 @@ class TagRelationCount{
 	public static function getList($arg){
 		$bind_data=[];
 		$where_str=MysqlCompact::where($arg['where_list'],self::$filter_field,$bind_data);		
-		$sql="select * from tag_relation_count {$where_str} order by id desc,count desc";//
+		$sql="select * from tag_relation_count {$where_str} 
+		order by sort_id 
+		";
 		
 		if($tmp=DB::select($sql,$bind_data)){
 			$status=true;
@@ -14,6 +16,7 @@ class TagRelationCount{
 		}
 		return compact(['status','list','sql','bind_data','pageData']);
 	}
+	
 	public static function insert($insert){
 		
 		if(DB::insert($insert,"tag_relation_count")){
@@ -67,5 +70,13 @@ class TagRelationCount{
 		}
 		
 		return compact(['arg','tmp','where','status','message','ggwp','tmp1','p_level_id']);
+	}
+	public static function update($arg){
+		if(DB::update($arg['update'],$arg['where'],"tag_relation_count")){
+			$status=true;
+		}else{
+			$status=false;
+		}
+		return compact(['status','arg']);
 	}
 }

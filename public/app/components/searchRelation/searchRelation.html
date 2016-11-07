@@ -46,11 +46,19 @@
 			ng-model="tag_name"
 			/>
 			<button 
+			
+			draggable="true"
+			sortable="tag"
+			index="$index"
+			field="sort_id"
+			
 			ng-right-click="del_relation($index,source_id)"
 			class="btn btn-primary"
-			ng-repeat="item in tag">
+			ng-repeat="item in tag"
+			>
 			{{cache.tag_name[item.id]}}
 			</button>
+			{{tag}}
 		</div>
 	</div>
 </div>

@@ -4,7 +4,7 @@ angular.module('app').directive('sortable',['$interval','$parse','$timeout',func
 		scope:{
 			index:'=',
 			sortable:'=',
-			field:'='
+			field:'@'
 		},
         link:function($scope,$element,$attrs,$ngModel){
 			$($element).on('dragstart',function(e){

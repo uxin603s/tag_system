@@ -87,10 +87,23 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			},"json");
 		});
 	}
+	var ch=function(arg){
+		return new Promise(function(resolve,reject) {
+			var post_data={
+				func_name:'TagRelation::update',
+				arg:arg,
+			}
+			$.post("ajax.php",post_data,function(res){
+				resolve(res);
+				$rootScope.$apply();
+			},"json")
+		});
+	}
 	return {
 		add:add,
 		del:del,
 		get:get,
 		get_inter:get_inter,
+		ch:ch,
 	}
 }])

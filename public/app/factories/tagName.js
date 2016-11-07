@@ -76,10 +76,13 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 		}
 		
 		return getList(where_list,return_type)
-		.then(function(res){
-			cache.tag_name[res.id]=res.name;
+		.then(function(list){
+			for(var i in list){
+				var data=list[i];
+				cache.tag_name[data.id]=data.name;
+			}
 			$rootScope.$apply();
-			return Promise.resolve(res);
+			return Promise.resolve(list);
 		})
 	}
 	

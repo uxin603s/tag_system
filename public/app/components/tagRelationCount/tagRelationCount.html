@@ -16,6 +16,8 @@
 		draggable="true"
 		sortable="cache.levelList[$ctrl.levelIndex].list"
 		index="$index"
+		field="sort_id"
+		
 		ng-show="cache.tag_name[item.id]"
 		ng-click="cache.levelList[$ctrl.levelIndex].select==item.id?cache.levelList[$ctrl.levelIndex].select=undefined:cache.levelList[$ctrl.levelIndex].select=item.id"
 		ng-right-click="del($index)"
@@ -24,7 +26,7 @@
 		class="btn" 
 		>{{cache.tag_name[item.id]}}({{item.count}})</button>
 	</div>
-	
+	{{cache.levelList[$ctrl.levelIndex].list}}
 	<tag-relation-count
 	ng-if="cache.levelList[$ctrl.levelIndex+1].data"
 	level-index="$ctrl.levelIndex+1"
