@@ -44,10 +44,9 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 					});
 					
 					if(index!=-1){
-						if(arg.auto_delete){
+						list[index].count--;
+						if(arg.auto_delete && list[index].count==0){
 							list.splice(index,1)
-						}else{
-							list[index].count--;
 						}
 					}
 					return resolve(res);

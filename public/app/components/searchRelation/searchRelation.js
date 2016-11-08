@@ -8,7 +8,6 @@ angular.module('app').component("searchRelation",{
 		
 		
 		var tag_search_id=function(){
-			$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
 			clearTimeout($scope.tag_search_id_timer)
 			$scope.tag_search_id_timer=setTimeout(function(){
 				
@@ -71,7 +70,7 @@ angular.module('app').component("searchRelation",{
 		}
 		
 		$scope.$watch("cache.tag_search.search",function(value){
-			
+			$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
 			if(!value)return;
 			tag_search_id();
 		},1);
@@ -136,7 +135,10 @@ angular.module('app').component("searchRelation",{
 							if(Object.keys($scope.cache.id_search.result).length==ids.length){
 								$scope.$apply();
 							}
-							return res.list;
+							return res.list.map(function(val){
+								return val.id;
+							})
+							// return res.list;
 						}else{
 							// console.log(id)
 							$scope.cache.id_search.result[id]=[];
@@ -324,13 +326,18 @@ angular.module('app').component("searchRelation",{
 			if(!result)return;
 			for(var i in result)
 			$scope.$watch("cache.id_search.result["+i+"]",function(curr,prev){
-				clearTimeout($scope.result_timer)
-				$scope.result_timer=setTimeout(function(){
-					if(!curr)return;
-					if(!prev)return;
+				
+				if(!curr)return;
+				if(!prev)return;
+				var timer_name='result_timer';
+				// console.log(timer_name);
+				
+				clearTimeout($scope[timer_name])
+				$scope[timer_name]=setTimeout(function(){
 					
 					for(var i in curr){
 						if(curr[i].sort_id!=prev[i].sort_id){
+							
 							var data=curr[i];
 							var id=data.id;
 							var level_id=data.level_id;
@@ -350,20 +357,21 @@ angular.module('app').component("searchRelation",{
 							.then(function(res){
 								console.log(res);
 							})
-							console.log(id,child_id,level_id,sort_id)
+							// console.log(id,child_id,level_id,sort_id)
 						}
 					}
-					curr.sort(function(a,b){
-						return a.sort_id-b.sort_id;
-					})
-					curr.map(function(val,key){
-						val.sort_id=key;
-					})
 				},500)
 				
-			
+					
+					
+				curr.sort(function(a,b){
+					return a.sort_id-b.sort_id;
+				})
+				curr.map(function(val,key){
+					val.sort_id=key;
+				})
+				
 			},1)
-			
 		})
 		
 	}],

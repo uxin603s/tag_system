@@ -42,6 +42,8 @@ angular.module("app").component("tagRelationCount",{
 							var ids=list.map(function(val){
 								return val.id;
 							});
+						}else{
+							yield Promise.reject("搜尋不到標籤");
 						}
 					}
 					
@@ -91,6 +93,7 @@ angular.module("app").component("tagRelationCount",{
 						}
 					}
 					var res=yield tagRelationCount.get(where_list);
+					// console.log(where_list,res)
 					if(res.status){
 						
 						if(alias_sort_id){
@@ -110,6 +113,8 @@ angular.module("app").component("tagRelationCount",{
 						$scope.$apply();
 					}
 					else{
+						$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
+						$scope.$apply();
 						yield Promise.reject("tagRelationCount 沒資料");
 					}
 				}())
@@ -130,7 +135,7 @@ angular.module("app").component("tagRelationCount",{
 				}
 			})
 			$scope.$watch("cache.levelList["+($scope.$ctrl.levelIndex)+"].list",function(curr,prev){
-				return
+				// return
 				if(!curr)return;
 				if(!prev)return;
 				
