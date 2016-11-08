@@ -17,7 +17,19 @@ angular.module('app').component("tagRelationLevel",{
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
-					cache.levelList=res.list
+					cache.levelList=res.list;
+					cache.treeData=[];
+					if(cache.levelList.length>2){
+						
+					}else{
+						var tree=[];
+						for(var i in cache.levelList){
+							tree.push({list:[],select:undefined});
+						}
+						
+						// for(var i=0;i<2;i++)
+						cache.treeData.push(angular.copy(tree));
+					}
 				}else{
 					cache.levelList=[];
 				}

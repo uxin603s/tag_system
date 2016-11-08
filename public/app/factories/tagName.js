@@ -1,5 +1,5 @@
 angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$rootScope){
-	cache.tag_name || (cache.tag_name={});
+	cache.tagName || (cache.tagName={});
 	var insert=function(name,callback){
 		if(name===""){
 			alert("標籤不能空白")
@@ -79,7 +79,7 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 		.then(function(list){
 			for(var i in list){
 				var data=list[i];
-				cache.tag_name[data.id]=data.name;
+				cache.tagName[data.id]=data.name;
 			}
 			$rootScope.$apply();
 			return Promise.resolve(list);
@@ -96,7 +96,7 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 			.then(function(list){
 				for(var i in list){
 					var data=list[i];
-					cache.tag_name[data.id]=data.name;
+					cache.tagName[data.id]=data.name;
 				}
 				$rootScope.$apply();
 			})

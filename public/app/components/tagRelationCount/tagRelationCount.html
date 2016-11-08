@@ -14,22 +14,23 @@
 	<div style="display:inline-block;">
 		<button
 		draggable="true"
-		sortable="$ctrl.cache.levelList[$ctrl.levelIndex].list"
+		sortable="$ctrl.treeData[$ctrl.levelIndex].list"
 		index="$index"
 		field="sort_id"
 		
-		ng-show="$ctrl.cache.tag_name[item.id]"
-		ng-click="$ctrl.cache.levelList[$ctrl.levelIndex].select==item.id?$ctrl.cache.levelList[$ctrl.levelIndex].select=undefined:$ctrl.cache.levelList[$ctrl.levelIndex].select=item.id"
+		ng-show="cache.tagName[item.id]"
+		ng-click="$ctrl.treeData[$ctrl.levelIndex].select==item.id?$ctrl.treeData[$ctrl.levelIndex].select=undefined:$ctrl.treeData[$ctrl.levelIndex].select=item.id"
 		ng-right-click="del($index)"
-		ng-class="$ctrl.cache.levelList[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"
-		ng-repeat="item in $ctrl.cache.levelList[$ctrl.levelIndex].list"
+		ng-class="$ctrl.treeData[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"
+		ng-repeat="item in $ctrl.treeData[$ctrl.levelIndex].list"
 		class="btn" 
-		>{{$ctrl.cache.tag_name[item.id]}}({{item.count}})</button>
+		>{{cache.tagName[item.id]}}({{item.count}})</button>
 	</div>
-	
+	{{$ctrl.treeData[$ctrl.levelIndex]}}
 	<tag-relation-count
-	ng-if="$ctrl.cache.levelList[$ctrl.levelIndex+1]"
+	ng-if="$ctrl.levelList[$ctrl.levelIndex+1]"
 	level-index="$ctrl.levelIndex+1"
-	cache="$ctrl.cache"
+	level-list="$ctrl.levelList"
+	tree-data="$ctrl.treeData"
 	></tag-relation-count>
 </div>

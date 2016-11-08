@@ -6,12 +6,14 @@
 		class="btn btn-primary"
 		>新增階層</button>
 	</div>	
-	<div class="col-xs-12 bottom_line" ng-init="data={};">
-		{{cache}}
+	<div class="col-xs-12 bottom_line" >
 		<tag-relation-count
-		ng-if="0 && cache.tagType.select && cache.levelList[0].data && cache"
-		cache="cache"
+		ng-if="cache.tagType.select && cache.levelList.length"
+		ng-repeat="item in cache.treeData"
+		tree-data="item"
+		level-list="cache.levelList"
 		level-index="0"
+		
 		></tag-relation-count>
 	</div>			
 </div>
