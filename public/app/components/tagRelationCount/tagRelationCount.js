@@ -1,13 +1,13 @@
 angular.module("app").component("tagRelationCount",{
 	bindings:{
+		data:"=",
 		levelIndex:"=",
+		cache:"=",
 	},
 	templateUrl:'app/components/tagRelationCount/tagRelationCount.html?t='+Date.now(),
 	controller:["$scope","cache","tagName","tagRelation","tagRelationCount",function($scope,cache,tagName,tagRelation,tagRelationCount){
-		$scope.cache=cache;
 		$scope.tag={};
-		
-		$scope.delete_level=function(id){
+		$scope.delete_level=function(){
 			if(!confirm("確認刪除?")){
 				return;
 			}
@@ -15,17 +15,12 @@ angular.module("app").component("tagRelationCount",{
 				func_name:'TagRelationLevel::delete',
 				arg:{
 					id:id,
-					tid:$scope.cache.tagType.select,
+					tid:$ctrl.cache.levelList[$ctrl.levelIndex].id,
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
-					var index=$scope.cache.levelList.findIndex(function(value){
-						return value.data.id==id;
-					});
-					if(index!=-1){
-						$scope.cache.levelList.splice(index,1);
-					}
+					$scope.$ctrl.cache.levelList.splice($ctrl.levelIndex,1);
 					$scope.$apply();
 				}
 			},"json")
@@ -48,12 +43,12 @@ angular.module("app").component("tagRelationCount",{
 					}
 					
 					if($scope.$ctrl.levelIndex){
-						if(isNaN(cache.levelList[$scope.$ctrl.levelIndex-1].select)){
-							$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
+						if(isNaN($scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex-1].select)){
+							$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex].list=[];
 							$scope.$apply();
 							yield Promise.reject("沒選上一層");
 						}else{
-							var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
+							var levelList_data=$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex-1];
 							var level_id=levelList_data.data.id;
 							var id=levelList_data.select;
 							var where_list=[
@@ -76,13 +71,13 @@ angular.module("app").component("tagRelationCount",{
 									alias_sort_id[child_id]=sort_id
 								}
 							}else{
-								$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
+								$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex].list=[];
 								$scope.$apply();
 								yield Promise.reject("沒有關聯");
 							}
 						}
 					}
-					var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex];
+					var levelList_data=$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex];
 					var level_id=levelList_data.data.id;
 					var where_list=[
 						{field:'level_id',type:0,value:level_id},
@@ -104,7 +99,7 @@ angular.module("app").component("tagRelationCount",{
 						res.list.sort(function(a,b){
 							return a.sort_id-b.sort_id;
 						})
-						$scope.cache.levelList[$scope.$ctrl.levelIndex].list=res.list;
+						$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex].list=res.list;
 						
 						var ids=res.list.map(function(val){
 							return val.id;
@@ -113,7 +108,7 @@ angular.module("app").component("tagRelationCount",{
 						$scope.$apply();
 					}
 					else{
-						$scope.cache.levelList[$scope.$ctrl.levelIndex].list=[];
+						$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex].list=[];
 						$scope.$apply();
 						yield Promise.reject("tagRelationCount 沒資料");
 					}
@@ -122,19 +117,26 @@ angular.module("app").component("tagRelationCount",{
 		}
 		
 		$scope.$watch("tag.name",$scope.get,1);
-		$scope.$watch("cache.levelList",function(levelList){
+		$scope.$watch("$scope.$ctrl.cache.levelList",function(levelList){
 			if(!levelList)return;
 			
-			$scope.$watch("cache.levelList["+($scope.$ctrl.levelIndex-1)+"].select",function(select){
+			$scope.$watch("$scope.$ctrl.cache.levelList["+($scope.$ctrl.levelIndex-1)+"].select",function(select){
+				if($scope.$ctrl.levelIndex-1<0)return
 				$scope.get();
-				// console.log("第"+$scope.$ctrl.levelIndex+"層，select",select)
+				
+				// console.log("第"+($scope.$ctrl.levelIndex-1)+"層，select",select)
 			},1);
-			$scope.$watch("cache.levelList["+($scope.$ctrl.levelIndex)+"].list.length",function(length){
-				if(length==0){
-					delete $scope.cache.levelList[$scope.$ctrl.levelIndex].select;
+			$scope.$watch("$scope.$ctrl.cache.levelList["+($scope.$ctrl.levelIndex)+"].list",function(curr,prev){
+				if(!$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex].list.some(function(val){
+					return val.id==$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex].select
+				})){
+					delete $scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex].select;
+				}
+				if(curr.length==0){
+					delete $scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex].select;
 				}
 			})
-			$scope.$watch("cache.levelList["+($scope.$ctrl.levelIndex)+"].list",function(curr,prev){
+			$scope.$watch("$scope.$ctrl.cache.levelList["+($scope.$ctrl.levelIndex)+"].list",function(curr,prev){
 				// return
 				if(!curr)return;
 				if(!prev)return;
@@ -147,8 +149,8 @@ angular.module("app").component("tagRelationCount",{
 						if(curr[i].sort_id!=prev[i].sort_id){
 							// console.log(curr[i],prev[i])
 							if($scope.$ctrl.levelIndex){
-								var id=$scope.cache.levelList[$scope.$ctrl.levelIndex-1].select;
-								var level_id=$scope.cache.levelList[$scope.$ctrl.levelIndex-1].data.id;
+								var id=$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex-1].select;
+								var level_id=$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex-1].data.id;
 								var child_id=curr[i].id
 								var sort_id=curr[i].sort_id
 								//update tagRelation
@@ -172,7 +174,7 @@ angular.module("app").component("tagRelationCount",{
 								//update tagRelationCount
 								//id,level_id
 								var id=curr[i].id
-								var level_id=$scope.cache.levelList[$scope.$ctrl.levelIndex].data.id;
+								var level_id=$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex].data.id;
 								var sort_id=curr[i].sort_id;
 								tagRelationCount.ch({
 									update:{
@@ -209,19 +211,20 @@ angular.module("app").component("tagRelationCount",{
 				var child_id=list.pop().id;
 					
 				if($scope.$ctrl.levelIndex){
-					if(isNaN(cache.levelList[$scope.$ctrl.levelIndex-1].select)){
+					if(isNaN($scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex-1].select)){
 						var message="請選擇上一層"
 						alert(message);
 						yield Promise.reject(message);
 					}else{
-						if(cache.levelList[$scope.$ctrl.levelIndex-1].select==child_id){
+						if($scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex-1].select==child_id){
 							var message="不能跟父層同名"
 							alert(message);
 							yield Promise.reject(message);
 						}else{	
-							var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
+							var levelList_data=$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex-1];
 							var level_id=levelList_data.data.id;
 							var id=levelList_data.select;
+							var list=levelList_data.list;
 							var add={
 								level_id:level_id,
 								id:id,
@@ -229,19 +232,20 @@ angular.module("app").component("tagRelationCount",{
 								sort_id:99999,
 							}
 							
-							var item=yield tagRelation.add(add);
+							var item=yield tagRelation.add(add,list);
 							var child_id=item.child_id;
 						}
 					}
 				}
 				// console.log($scope.$ctrl.levelIndex)
-				var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex];
+				var levelList_data=$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex];
+				var list=levelList_data.list;
 				var level_id=levelList_data.data.id;
 				
 				yield tagRelationCount.add({
 					level_id:level_id,
 					id:child_id,
-				})
+				},list)
 				.catch(function(message){
 					alert(message)
 					console.log(message)
@@ -259,30 +263,32 @@ angular.module("app").component("tagRelationCount",{
 				return;
 			}
 			promiseRecursive(function* (index){
-				var levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex];
+				var levelList_data=$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex];
 				var level_id=levelList_data.data.id;
 				var id=levelList_data.list[index].id;
+				var list=levelList_data.list;
 				var child_level_id=level_id;
 				var child_id=id;
 				
 				if($scope.$ctrl.levelIndex){//第一層沒有關聯;
-					let levelList_data=$scope.cache.levelList[$scope.$ctrl.levelIndex-1];
+					let levelList_data=$scope.$ctrl.cache.levelList[$scope.$ctrl.levelIndex-1];
 					let level_id=levelList_data.data.id;
 					let id=levelList_data.select;
+					let list=levelList_data.list;
 					var del={
 						level_id:level_id,
 						id:id,
 						child_id:child_id,
 					}
-					yield tagRelation.del(del);
+					yield tagRelation.del(del,list);
 				}
 				var result=yield tagRelationCount.del({
 					level_id:level_id,
 					id:id,
-				})
+				},list)
 				// console.log(result,del)
 				if(!result.status && del){
-					yield tagRelation.add(del);
+					yield tagRelation.add(del,list);
 				}
 				
 			}(index));

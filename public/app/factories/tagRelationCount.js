@@ -1,5 +1,5 @@
-angular.module('app').factory('tagRelationCount',['$rootScope','cache',function($rootScope,cache){
-	var add=function(arg){
+angular.module('app').factory('tagRelationCount',['$rootScope',function($rootScope){
+	var add=function(arg,list){
 		return new Promise(function(resolve,reject) {
 			var post_data={
 				func_name:'TagRelationCount::insert',
@@ -7,21 +7,16 @@ angular.module('app').factory('tagRelationCount',['$rootScope','cache',function(
 			}
 			$.post("ajax.php",post_data,function(res){
 				
-				var list=cache.levelList.find(function(val){
-					return val.data.id==arg.level_id;
-				}).list;
 				
-				if(list){
-					list.push(res);
-					$rootScope.$apply();
-				}
+				list.push(res);
+				$rootScope.$apply();
+				
 				resolve();
 			},"json")
 		})
 	}
-	var del=function(arg){
+	var del=function(arg,list){
 		return new Promise(function(resolve,reject){
-			
 			var post_data={
 				func_name:'TagRelationCount::delete',
 				arg:arg,
@@ -30,10 +25,6 @@ angular.module('app').factory('tagRelationCount',['$rootScope','cache',function(
 			$.post("ajax.php",post_data,function(res){
 				
 				if(res.status){
-					var list=cache.levelList.find(function(val){
-						return val.data.id==arg.level_id;
-					}).list;
-					
 					var index=list.findIndex(function(val){
 						return arg.id==val.id;
 					})

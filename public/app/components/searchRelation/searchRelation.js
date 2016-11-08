@@ -212,8 +212,8 @@ angular.module('app').component("searchRelation",{
 					});
 				}
 				add_relation_object.child_id=item.id;
-				
-				var result=yield tagRelation.add(add_relation_object);
+				var list=cache.levelList[levelList.length-1].list
+				var result=yield tagRelation.add(add_relation_object,list);
 				// console.log(result);
 				
 				tagName.idToName([result]);
@@ -228,7 +228,8 @@ angular.module('app').component("searchRelation",{
 			if(!confirm("確認刪除關聯?"))return;
 			var del=angular.copy($scope.cache.id_search.result[source_id][index]);
 			del.auto_delete=1;
-			tagRelation.del(del)
+			var list=cache.levelList[levelList.length-1].list
+			tagRelation.del(del,list)
 			.then(function(){
 				$scope.cache.id_search.result[source_id].splice(index,1);
 				tag_search_id();

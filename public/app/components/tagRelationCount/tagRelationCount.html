@@ -1,7 +1,7 @@
 <div class="col-xs-12 " >	
 	<div style="display:inline-block;">
 		<button 
-		ng-right-click="delete_level(cache.levelList[$ctrl.levelIndex].data.id)"
+		ng-right-click="delete_level()"
 		class="btn btn-primary">
 		第{{$ctrl.levelIndex+1}}層
 		</button>
@@ -14,23 +14,22 @@
 	<div style="display:inline-block;">
 		<button
 		draggable="true"
-		sortable="cache.levelList[$ctrl.levelIndex].list"
+		sortable="$ctrl.cache.levelList[$ctrl.levelIndex].list"
 		index="$index"
 		field="sort_id"
 		
-		ng-show="cache.tag_name[item.id]"
-		ng-click="cache.levelList[$ctrl.levelIndex].select==item.id?cache.levelList[$ctrl.levelIndex].select=undefined:cache.levelList[$ctrl.levelIndex].select=item.id"
+		ng-show="$ctrl.cache.tag_name[item.id]"
+		ng-click="$ctrl.cache.levelList[$ctrl.levelIndex].select==item.id?$ctrl.cache.levelList[$ctrl.levelIndex].select=undefined:$ctrl.cache.levelList[$ctrl.levelIndex].select=item.id"
 		ng-right-click="del($index)"
-		ng-class="cache.levelList[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"
-		ng-repeat="item in cache.levelList[$ctrl.levelIndex].list"
+		ng-class="$ctrl.cache.levelList[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"
+		ng-repeat="item in $ctrl.cache.levelList[$ctrl.levelIndex].list"
 		class="btn" 
-		>{{cache.tag_name[item.id]}}({{item.count}})</button>
+		>{{$ctrl.cache.tag_name[item.id]}}({{item.count}})</button>
 	</div>
-	<div class="hidden">
-	{{cache.levelList[$ctrl.levelIndex].list}}
-	</div>
+	
 	<tag-relation-count
-	ng-if="cache.levelList[$ctrl.levelIndex+1].data"
+	ng-if="$ctrl.cache.levelList[$ctrl.levelIndex+1]"
 	level-index="$ctrl.levelIndex+1"
+	cache="$ctrl.cache"
 	></tag-relation-count>
 </div>

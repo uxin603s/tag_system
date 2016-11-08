@@ -1,5 +1,5 @@
 angular.module('app').factory('tagRelation',['$rootScope','cache',function($rootScope,cache){
-	var add=function(arg){
+	var add=function(arg,list){
 		return new Promise(function(resolve,reject) {
 			var post_data={
 				func_name:'TagRelation::insert',
@@ -7,18 +7,13 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
-					var list=cache.levelList.find(function(val){
-						return val.data.id==arg.level_id;
-					}).list;
-					
-					if(list){
-						var find_data=list.find(function(value){
-							return value.id==arg.id
-						})
-						if(find_data){
-							find_data.count++;
-						}
+					var find_data=list.find(function(value){
+						return value.id==arg.id
+					})
+					if(find_data){
+						find_data.count++;
 					}
+					
 					resolve(arg);
 				}else{
 					reject("新增關聯失敗");
@@ -27,7 +22,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			},"json")
 		})
 	}
-	var del=function(arg){
+	var del=function(arg,list){
 		return new Promise(function(resolve,reject) {
 			var post_data={
 				func_name:'TagRelation::delete',
@@ -35,9 +30,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
-					var list=cache.levelList.find(function(val){
-						return val.data.id==arg.level_id;
-					}).list;
+					
 					
 					var index=list.findIndex(function(value){
 						return value.id==arg.id
