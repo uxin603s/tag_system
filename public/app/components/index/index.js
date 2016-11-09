@@ -1,7 +1,8 @@
 angular.module('app').component("index",{
 	bindings:{},
 	templateUrl:'app/components/index/index.html',
-	controller:[function(){
+	controller:['$scope','cache',function($scope,cache){
+		$scope.cache=cache;
 	}],
 })
 

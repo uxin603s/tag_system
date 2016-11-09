@@ -84,11 +84,11 @@ angular.module("app").component("tagRelationCount",{
 								res.list[i].sort_id=alias_sort_id[res.list[i].id]
 							}
 						}
-						res.list.sort(function(a,b){
-							return a.sort_id-b.sort_id;
-						})
+						
 						$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list=res.list;
-						$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].select=res.list[0].id
+						
+						if($scope.$ctrl.levelList.length-1!=$scope.$ctrl.levelIndex)
+							$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].select=res.list[0].id
 						var ids=res.list.map(function(val){
 							return val.id;
 						})
@@ -124,23 +124,25 @@ angular.module("app").component("tagRelationCount",{
 			}
 		})
 		$scope.$watch("$ctrl.treeData["+($scope.$ctrl.levelIndex)+"].list",function(curr,prev){
+			// return
 			if(!curr)return;
 			if(!prev)return;
+			if(curr.length!=prev.length)return;
 			if($scope.tag.name)return;
 			clearTimeout($scope.sort_id_timer);
 			$scope.sort_id_timer=setTimeout(function(){
 				for(var i in curr){
-					if(curr[i])
-					if(prev[i])
-					if(curr[i].sort_id!=prev[i].sort_id){
+					
+					if(curr[i].id!=prev[i].id){
 						// console.log(curr[i],prev[i])
+						curr[i].sort_id=i
+						// console.log(sort_id)
 						if($scope.$ctrl.levelIndex){
 							var id=$scope.$ctrl.treeData[$scope.$ctrl.levelIndex-1].select;
 							var level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex-1].id;
 							var child_id=curr[i].id
-							var sort_id=curr[i].sort_id
-							//update tagRelation
-							//id,child_id,level_id
+							var sort_id=curr[i].sort_id;
+							
 							
 							tagRelation.ch({
 								update:{
@@ -153,15 +155,15 @@ angular.module("app").component("tagRelationCount",{
 								},
 							})
 							.then(function(res){
-								console.log(res);
+								// console.log(res);
 							})
 							// console.log(id,child_id,level_id,sort_id)
 						}else{
-							//update tagRelationCount
-							//id,level_id
+							
 							var id=curr[i].id
 							var level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex].id;
 							var sort_id=curr[i].sort_id;
+							
 							tagRelationCount.ch({
 								update:{
 									sort_id:sort_id
@@ -179,17 +181,6 @@ angular.module("app").component("tagRelationCount",{
 					}
 				}
 			},500)
-			
-			
-			
-			curr.sort(function(a,b){
-				return a.sort_id-b.sort_id;
-			})
-			
-			curr.map(function(val,key){
-				val.sort_id=key;
-			})
-			
 		},1)
 
 		

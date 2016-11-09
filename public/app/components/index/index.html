@@ -1,9 +1,16 @@
 <div>
 	<tag-type></tag-type>
 	
-	<tag-relation-level></tag-relation-level>
+	<tag-relation-level
+	ng-if="cache.tagType.list[cache.tagType.select]"
+	></tag-relation-level>
 	
-	<web-list ng-if="1" ></web-list>
+	<web-list 
+	ng-if="cache.tagType.list[cache.tagType.select]"
 	
-	<search-relation ng-if="0" ></search-relation>
+	></web-list>
+	
+	<search-relation 
+	ng-if="0" 
+	></search-relation>
 </div>

@@ -1,6 +1,6 @@
 <?php
 class TagType{
-	public static $white_field=["id","name","comment"];
+	public static $white_field=["id","name","sort_id","lock_lv1"];
 	public static function filter_field($array){
 		$data=[];
 		foreach(self::$white_field as $field){
@@ -12,7 +12,7 @@ class TagType{
 	}
 	public static function getList($arg){
 		$status=false;
-		if($tmp=DB::select("select * from tag_type ")){
+		if($tmp=DB::select("select * from tag_type order by sort_id")){
 			$status=true;
 			$list=$tmp;
 		}
@@ -42,7 +42,7 @@ class TagType{
 			$status=false;
 			$message="修改失敗";
 		}
-		return compact(['status','message']);
+		return compact(['status','message','arg','update','where']);
 	}
 	
 	public static function delete($where){

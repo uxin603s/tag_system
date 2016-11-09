@@ -9,11 +9,12 @@
 	</div>
 	<div style="display:inline-block;">
 		<button
+		
 		draggable="true"
 		sortable="$ctrl.treeData[$ctrl.levelIndex].list"
 		index="$index"
-		field="sort_id"
 		
+		ng-if="$ctrl.treeData[$ctrl.levelIndex].list.length<=10"
 		ng-show="cache.tagName[item.id]"
 		ng-click="$ctrl.treeData[$ctrl.levelIndex].select==item.id?$ctrl.treeData[$ctrl.levelIndex].select=undefined:$ctrl.treeData[$ctrl.levelIndex].select=item.id"
 		ng-right-click="del($index)"
@@ -21,8 +22,14 @@
 		ng-repeat="item in $ctrl.treeData[$ctrl.levelIndex].list"
 		class="btn" 
 		>{{cache.tagName[item.id]}}({{item.count}})</button>
+		<select 
+		ng-if="$ctrl.treeData[$ctrl.levelIndex].list.length>10"
+		ng-options="item.id as cache.tagName[item.id] for item in $ctrl.treeData[$ctrl.levelIndex].list" 
+		ng-model="$ctrl.treeData[$ctrl.levelIndex].select"></select>
 	</div>
-	{{$ctrl.treeData[$ctrl.levelIndex]}}
+	<div class="hidden">
+	{{$ctrl.treeData[$ctrl.levelIndex].list}}
+	</div>
 	<tag-relation-count
 	ng-if="$ctrl.levelList[$ctrl.levelIndex+1]"
 	level-index="$ctrl.levelIndex+1"
