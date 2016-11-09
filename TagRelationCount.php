@@ -14,7 +14,7 @@ class TagRelationCount{
 		}else{
 			$status=false;
 		}
-		return compact(['status','list','sql','bind_data','pageData']);
+		return compact(['status','list','sql','bind_data','pageData','arg']);
 	}
 	
 	public static function insert($insert){

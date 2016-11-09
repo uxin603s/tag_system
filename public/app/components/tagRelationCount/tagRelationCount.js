@@ -8,24 +8,7 @@ angular.module("app").component("tagRelationCount",{
 	controller:["$scope","cache","tagName","tagRelation","tagRelationCount",function($scope,cache,tagName,tagRelation,tagRelationCount){
 		$scope.cache=cache;
 		$scope.tag={};
-		$scope.delete_level=function(){
-			if(!confirm("確認刪除?")){
-				return;
-			}
-			var post_data={
-				func_name:'TagRelationLevel::delete',
-				arg:{
-					id:id,
-					tid:$ctrl.levelList[$ctrl.levelIndex].id,
-				},
-			}
-			$.post("ajax.php",post_data,function(res){
-				if(res.status){
-					$scope.$ctrl.levelList.splice($ctrl.levelIndex,1);
-					$scope.$apply();
-				}
-			},"json")
-		}
+		
 		
 		$scope.get=function(){
 			clearTimeout($scope.Timer);
@@ -105,7 +88,7 @@ angular.module("app").component("tagRelationCount",{
 							return a.sort_id-b.sort_id;
 						})
 						$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list=res.list;
-						
+						$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].select=res.list[0].id
 						var ids=res.list.map(function(val){
 							return val.id;
 						})
@@ -141,10 +124,9 @@ angular.module("app").component("tagRelationCount",{
 			}
 		})
 		$scope.$watch("$ctrl.treeData["+($scope.$ctrl.levelIndex)+"].list",function(curr,prev){
-			// return
 			if(!curr)return;
 			if(!prev)return;
-			
+			if($scope.tag.name)return;
 			clearTimeout($scope.sort_id_timer);
 			$scope.sort_id_timer=setTimeout(function(){
 				for(var i in curr){
@@ -197,15 +179,17 @@ angular.module("app").component("tagRelationCount",{
 					}
 				}
 			},500)
-			if(!$scope.tag.name){
-				curr.sort(function(a,b){
-					return a.sort_id-b.sort_id;
-				})
-				
-				curr.map(function(val,key){
-					val.sort_id=key;
-				})
-			}
+			
+			
+			
+			curr.sort(function(a,b){
+				return a.sort_id-b.sort_id;
+			})
+			
+			curr.map(function(val,key){
+				val.sort_id=key;
+			})
+			
 		},1)
 
 		
