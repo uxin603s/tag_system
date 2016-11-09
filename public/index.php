@@ -20,7 +20,9 @@
 	<script src="app/components/tagRelationLevel/tagRelationLevel.js?t<?=time()?>"></script>
 	<script src="app/components/tagRelationCount/tagRelationCount.js?t<?=time()?>"></script>
 	<script src="app/components/webList/webList.js?t<?=time()?>"></script>
-	<script src="app/components/searchRelation/searchRelation.js?t<?=time()?>"></script>
+	
+	<script src="app/components/idSearch/idSearch.js?t<?=time()?>"></script>
+	<script src="app/components/tagSearch/tagSearch.js?t<?=time()?>"></script>
 	
 	
 	<script src="app/directives/ngRightClick/ngRightClick.js?t<?=time()?>"></script>

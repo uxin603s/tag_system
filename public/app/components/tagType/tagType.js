@@ -3,7 +3,7 @@ angular.module('app').component("tagType",{
 	templateUrl:'app/components/tagType/tagType.html?t='+Date.now(),
 	controller:["$scope","cache",function($scope,cache){
 		$scope.cache=cache;
-		$scope.cache.tagType || ($scope.cache.tagType={});
+		
 		$scope.$watch("cache.tagType.list",function(curr,prev){
 			if(!curr)return;
 			if(!prev)return;
@@ -65,6 +65,7 @@ angular.module('app').component("tagType",{
 			},"json")
 		}
 		$scope.get=function(){
+			$scope.cache.tagType || ($scope.cache.tagType={});
 			var post_data={
 				func_name:'TagType::getList',
 				arg:{}
@@ -95,6 +96,7 @@ angular.module('app').component("tagType",{
 			},"json")
 		}
 		$scope.get();
+		
 		
 	}],
 })

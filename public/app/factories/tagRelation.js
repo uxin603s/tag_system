@@ -7,13 +7,14 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
-					var find_data=list.find(function(value){
-						return value.id==arg.id
-					})
-					if(find_data){
-						find_data.count++;
+					if(list){
+						var find_data=list.find(function(value){
+							return value.id==arg.id
+						})
+						if(find_data){
+							find_data.count++;
+						}
 					}
-					
 					resolve(arg);
 				}else{
 					reject("新增關聯失敗");
@@ -30,16 +31,16 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
-					
-					
-					var index=list.findIndex(function(value){
-						return value.id==arg.id
-					});
-					
-					if(index!=-1){
-						list[index].count--;
-						if(arg.auto_delete && list[index].count==0){
-							list.splice(index,1)
+					if(list){
+						var index=list.findIndex(function(value){
+							return value.id==arg.id
+						});
+						
+						if(index!=-1){
+							list[index].count--;
+							if(arg.auto_delete && list[index].count==0){
+								list.splice(index,1)
+							}
 						}
 					}
 					return resolve(res);

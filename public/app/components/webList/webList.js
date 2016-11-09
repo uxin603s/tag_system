@@ -3,8 +3,9 @@ angular.module('app').component("webList",{
 	templateUrl:'app/components/webList/webList.html?t='+Date.now(),
 	controller:["$scope","cache","tagName",function($scope,cache,tagName){
 		$scope.cache=cache;
-		$scope.cache.webList || ($scope.cache.webList={});
+		
 		$scope.get=function(){
+			$scope.cache.webList || ($scope.cache.webList={});
 			var post_data={
 				func_name:'WebList::getList',
 				arg:{}
@@ -12,6 +13,7 @@ angular.module('app').component("webList",{
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
 					$scope.cache.webList.list=res.list;
+					$scope.cache.webList.select=0;
 				}else{
 					$scope.cache.webList.list=[];
 				}

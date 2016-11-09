@@ -1,16 +1,20 @@
-<div>
-	<tag-type></tag-type>
-	
-	<tag-relation-level
-	ng-if="cache.tagType.list[cache.tagType.select]"
-	></tag-relation-level>
-	
-	<web-list 
-	ng-if="cache.tagType.list[cache.tagType.select]"
-	
-	></web-list>
-	
-	<search-relation 
-	ng-if="0" 
-	></search-relation>
-</div>
+<tag-type></tag-type>
+
+<tag-relation-level
+ng-if="cache.tagType.list[cache.tagType.select]"
+></tag-relation-level>
+
+<web-list 
+ng-if="cache.tagType.list[cache.tagType.select]"
+></web-list>
+
+
+
+
+<tag-search
+ng-if="cache.tagType.list[cache.tagType.select] && cache.webList.list[cache.webList.select]"
+></tag-search>
+
+<id-search
+ng-if="cache.tagType.list[cache.tagType.select] && cache.webList.list[cache.webList.select]"
+></id-search>
