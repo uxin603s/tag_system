@@ -1,6 +1,6 @@
 <?php
 class TagRelationCount{
-	public static $filter_field=['id','level_id','count'];
+	public static $filter_field=['id','level_id','count','sort_id'];
 	public static function getList($arg){
 		$bind_data=[];
 		$where_str=MysqlCompact::where($arg['where_list'],self::$filter_field,$bind_data);		

@@ -1,6 +1,6 @@
 <?php
 class TagRelation{
-	public static $filter_field=['id','level_id','child_id'];
+	public static $filter_field=['id','level_id','child_id','sort_id'];
 	public static function getIntersection($arg){
 		if(empty($arg['require_id'])){
 			$arg['require_id']=[];

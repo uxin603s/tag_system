@@ -2,7 +2,13 @@ angular.module('app').component("tagType",{
 	bindings:{},
 	templateUrl:'app/components/tagType/tagType.html?t='+Date.now(),
 	controller:["$scope","cache",function($scope,cache){
+		
 		$scope.cache=cache;
+		location.search.match(/tid=(\d+?)/g)
+		if(RegExp.$1){
+			$scope.uri_tid=RegExp.$1
+		}
+		
 		
 		$scope.$watch("cache.tagType.list",function(curr,prev){
 			if(!curr)return;
@@ -73,7 +79,14 @@ angular.module('app').component("tagType",{
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
 					$scope.cache.tagType.list=res.list;
-					$scope.cache.tagType.select=0;
+					if($scope.uri_tid){
+						$scope.cache.tagType.select=$scope.cache.tagType.list.findIndex(function(val){
+							return val.id==$scope.uri_tid;
+						});
+						
+					}else{
+						$scope.cache.tagType.select=0;
+					}
 				}else{
 					$scope.cache.tagType.list=[];
 				}

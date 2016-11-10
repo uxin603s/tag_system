@@ -1,11 +1,11 @@
-<div class="col-xs-12 bottom_line">
+<div class="col-xs-12 bottom_line" ng-if="!uri_wid">
 	<button 
 	ng-click="cache.webList.select==$index?cache.webList.select=undefined:cache.webList.select=$index"
 	ng-class="cache.webList.select==$index?'btn-danger':'btn-primary'"
 	class="btn"	
 	ng-right-click="del($index)"
 	ng-repeat="item in cache.webList.list">
-	{{item.name}}
+	{{item.id}}:{{item.name}}
 	</button>
 	<textarea 
 	placeholder="網站名稱"

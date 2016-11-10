@@ -1,3 +1,10 @@
+
+<button
+ng-click="cache.mode.select==item.select?cache.mode.select=undefined:cache.mode.select=item.select"
+ng-class="cache.mode.select==item.select?'btn-danger':'btn-primary'"
+class="btn"
+ng-repeat="item in cache.mode.list"
+>{{item.name}}</button>
 <tag-type></tag-type>
 
 <tag-relation-level
@@ -12,9 +19,9 @@ ng-if="cache.tagType.list[cache.tagType.select]"
 
 
 <tag-search
-ng-if="cache.tagType.list[cache.tagType.select] && cache.webList.list[cache.webList.select]"
+ng-if="cache.mode.select==2 && cache.tagType.list[cache.tagType.select] && cache.webList.list[cache.webList.select]"
 ></tag-search>
 
 <id-search
-ng-if="cache.tagType.list[cache.tagType.select] && cache.webList.list[cache.webList.select]"
+ng-if="cache.mode.select==3 && cache.tagType.list[cache.tagType.select] && cache.webList.list[cache.webList.select]"
 ></id-search>
