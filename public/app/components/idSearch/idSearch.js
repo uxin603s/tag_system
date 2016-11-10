@@ -79,10 +79,7 @@ angular.module('app').component("idSearch",{
 
 		$scope.add_relation=function(name,source_id){
 			promiseRecursive(function* (name,source_id){
-				if(!$scope.cache.levelList.length){
-					alert("你還沒建立階層!!");
-					return
-				}
+				
 				var level_id=$scope.cache.levelList[$scope.cache.levelList.length-1].id;
 				var wid=$scope.cache.webList.select;
 				var add_relation_object={
@@ -130,13 +127,15 @@ angular.module('app').component("idSearch",{
 
 
 		$scope.del_relation=function(index,source_id){
-			if(!confirm("確認刪除關聯?"))return;
+			// if(!confirm("確認刪除關聯?"))return;
 			var del=angular.copy($scope.cache.id_search.result[source_id][index]);
 			del.auto_delete=1;
 			
 			
 			tagRelation.del(del)
 			.then(function(){
+				$scope.cache.id_search.result[source_id].splice(index,1);
+				$scope.$apply();
 				cache.treeData.map(function(tree){
 					var index=tree[tree.length-1].list.findIndex(function(val){
 						return val.id==del.id && val.level_id==del.level_id;
@@ -145,7 +144,6 @@ angular.module('app').component("idSearch",{
 						tree[tree.length-1].list[index].count--;
 					}
 				})
-				$scope.cache.id_search.result[source_id].splice(index,1);
 				$scope.$apply();
 			})
 		}
@@ -190,5 +188,59 @@ angular.module('app').component("idSearch",{
 			},1)
 		});
 		
+		$scope.$watch("cache.tag_search.clickSearch",function(curr,prev){
+			// if(JSON.stringify(curr)==JSON.stringify(prev))return;
+			
+			clearTimeout($scope.clickSearch_timer)
+			$scope.clickSearch_timer=setTimeout(function(){
+			
+				var select=cache.id_search.select;
+				var prevClickSearch=prev.filter(function(val){
+					return !val.type;
+				});
+				var currClickSearch=curr.filter(function(val){
+					return !val.type;
+				});
+				var add=[];
+				
+				for(var i in currClickSearch){
+					add.push(currClickSearch[i].name);
+				}
+				
+				var del=[];
+				for(var i in prevClickSearch){
+					if(add.indexOf(prevClickSearch[i].name)==-1)
+						del.push(prevClickSearch[i].name);
+				}
+				// console.log(add,del)
+				// return
+				if(!select)return;
+				
+				var result=cache.id_search.result;
+				var list=result[select];
+				
+				
+				for(var i in del){
+					var name=del[i];
+					var index=list.findIndex(function(val){
+						return $scope.cache.tagName[val.id]==name;
+					})
+					if(index!=-1)
+						$scope.del_relation(index,select);
+				}
+				
+				
+			
+				for(var i in add){
+					var name=add[i];
+					var index=list.findIndex(function(val){
+						return $scope.cache.tagName[val.id]==name;
+					})
+					if(index==-1)
+						$scope.add_relation(name,select);
+				}
+				$scope.$apply();
+			},500)
+		},1)
 	}],
 })

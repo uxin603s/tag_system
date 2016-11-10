@@ -141,10 +141,8 @@ angular.module("app").component("tagRelationCount",{
 			$scope.sort_id_timer=setTimeout(function(){
 				for(var i in curr){
 					
-					if(curr[i].id!=prev[i].id){
-						// console.log(curr[i],prev[i])
-						curr[i].sort_id=i
-						// console.log(sort_id)
+					if(curr[i].sort_id!=prev[i].sort_id){
+						curr[i].sort_id=i;
 						if($scope.$ctrl.levelIndex){
 							var id=$scope.$ctrl.treeData[$scope.$ctrl.levelIndex-1].select;
 							var level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex-1].id;
@@ -282,96 +280,6 @@ angular.module("app").component("tagRelationCount",{
 				
 			}(index));
 		}
-		
-		
-		//tag_search
-		$scope.cache.tag_search || ($scope.cache.tag_search={})
-		$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
-		if($scope.$ctrl.levelList.length-2==$scope.$ctrl.levelIndex){
-			$scope.$watch("$ctrl.treeData["+$scope.$ctrl.levelIndex+"].select",function(curr,prev){
-				if(cache.mode.select!=2)return
-				
-				var flag=$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list.some(function(val){
-					return val.id==curr && val.count==0;
-				});
-				var tag=$scope.cache.tagName[prev];
-				var index=$scope.cache.tag_search.search.findIndex(function(val){
-					return val.name==tag;
-				});
-				if(index!=-1){
-					$scope.cache.tag_search.search.splice(index,1);
-				}
-				if(flag){
-					
-					var tag=$scope.cache.tagName[curr];
-					var index=$scope.cache.tag_search.search.findIndex(function(val){
-						return val.name==tag;
-					});
-					if(index==-1){
-						$scope.cache.tag_search.search.push({name:tag});
-					}
-				}
-				
-			})
-		}
-		if($scope.$ctrl.levelList.length-1==$scope.$ctrl.levelIndex){
-			$scope.$watch("$ctrl.treeData["+$scope.$ctrl.levelIndex+"].list",function(curr,prev){
-				if(cache.mode.select!=2)return
-				for(var i in prev){
-					var tag=$scope.cache.tagName[prev[i].id];
-					var index=$scope.cache.tag_search.search.findIndex(function(val){
-						return val.name==tag;
-					});
-					if(index!=-1){
-						$scope.cache.tag_search.search.splice(index,1);
-					}
-				}
-				for(var i in curr){
-					var tag=$scope.cache.tagName[curr[i].id];
-					var index=$scope.cache.tag_search.search.findIndex(function(val){
-						return val.name==tag;
-					});
-					if(index==-1){
-						$scope.cache.tag_search.search.push({name:tag,type:1})
-					}
-				}
-				
-			},1)
-			$scope.$watch("$ctrl.treeData["+$scope.$ctrl.levelIndex+"].select",function(select){
-				if(cache.mode.select!=2)return
-				var list=$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list;
-				for(var i in list){
-					var tag=$scope.cache.tagName[list[i].id];
-					var index=$scope.cache.tag_search.search.findIndex(function(val){
-						return val.name==tag;
-					});
-					if(index!=-1){
-						$scope.cache.tag_search.search.splice(index,1);
-					}
-				}
-				if(select){
-					var tag=$scope.cache.tagName[select];
-					var index=$scope.cache.tag_search.search.findIndex(function(val){
-						return val.name==tag;
-					});
-					if(index==-1){
-						$scope.cache.tag_search.search.push({name:tag})
-					}
-				}else{
-					var list=$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list;
-					for(var i in list){
-						var tag=$scope.cache.tagName[list[i].id];
-						var index=$scope.cache.tag_search.search.findIndex(function(val){
-							return val.name==tag;
-						});
-						if(index==-1){
-							$scope.cache.tag_search.search.push({name:tag,type:1});
-						}
-					}
-				}
-			})
-		}
-		
 		
 		
 	}]

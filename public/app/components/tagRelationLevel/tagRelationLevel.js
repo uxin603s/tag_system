@@ -127,5 +127,38 @@ angular.module('app').component("tagRelationLevel",{
 			$scope.watch_lock_lv1=$scope.$watch("cache.tagType.list["+cache.tagType.select+"].lock_lv1",watch_levelList);
 			$scope.get();
 		});
+		
+		$scope.$watch("cache.treeData",function(treeData){
+			clearTimeout($scope.watch_treeDataTimer);
+			$scope.watch_treeDataTimer=setTimeout(function(){
+				// console.log('cache.treeData')
+				$scope.cache.tag_search.clickSearch=[];
+				for(var i in treeData){
+					var tree=angular.copy(treeData[i]);
+					var last=tree.length-1;
+					var select=tree[last].select;
+					if(select){
+						var name=$scope.cache.tagName[select];
+						var index=$scope.cache.tag_search.clickSearch.findIndex(function(val){
+							return val.name==name;
+						})
+						if(index==-1)
+							$scope.cache.tag_search.clickSearch.push({name:name});
+					}else{
+						var list=tree[last].list;
+						for(var j in list){
+							var id=list[j].id;
+							var name=$scope.cache.tagName[id];
+							var index=$scope.cache.tag_search.clickSearch.findIndex(function(val){
+								return val.name==name;
+							})
+							if(index==-1)
+								$scope.cache.tag_search.clickSearch.push({name:name,type:1});
+						}
+					}
+				}
+				$scope.$apply();
+			},500)
+		},1)
 	}]
 });

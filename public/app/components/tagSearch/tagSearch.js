@@ -5,6 +5,36 @@ angular.module('app').component("tagSearch",{
 		$scope.cache=cache;
 		$scope.cache.tag_search || ($scope.cache.tag_search={});
 		$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
+		$scope.cache.tag_search.absoluteSearch || ($scope.cache.tag_search.absoluteSearch=[]);
+		$scope.cache.tag_search.clickSearch || ($scope.cache.tag_search.clickSearch=[]);
+		$scope.cache.tag_search.diffSearch || ($scope.cache.tag_search.diffSearch=[]);
+		
+		var interSearch=function(){
+			clearTimeout($scope.interSearchTimer);
+			$scope.interSearchTimer=setTimeout(function(){
+				var absoluteSearch=angular.copy(cache.tag_search.absoluteSearch);
+				var clickSearch=angular.copy(cache.tag_search.clickSearch);
+				$scope.cache.tag_search.diffSearch=[];
+				for(var i in clickSearch){
+					var index=absoluteSearch.findIndex(function(val){
+						return val.name==clickSearch[i].name;
+					})
+					if(index==-1){
+						$scope.cache.tag_search.diffSearch.push(clickSearch[i]);
+						absoluteSearch.push(clickSearch[i]);
+					}
+				}
+				
+				$scope.cache.tag_search.search=absoluteSearch;
+				$scope.$apply();
+				tag_search_id();
+				
+			},500)
+			
+		}
+		
+		$scope.$watch("cache.tag_search.absoluteSearch",interSearch,1)
+		$scope.$watch("cache.tag_search.clickSearch",interSearch,1)
 		
 		var tag_search_id=function(){
 			clearTimeout($scope.tag_search_id_timer)
@@ -62,24 +92,24 @@ angular.module('app').component("tagSearch",{
 			},500);
 		}
 		
-		$scope.$watch("cache.tag_search.search",function(value){
-			
-			if(!value)return;
-			tag_search_id();
-		},1);
+		// $scope.$watch("cache.tag_search.search",function(value){
+			// if(!value)return;
+			// tag_search_id();
+		// },1);
 		
 		$scope.add_tag_search=function(name){
-			
-			var index=$scope.cache.tag_search.search.findIndex(function(val){
+			var index=$scope.cache.tag_search.absoluteSearch.findIndex(function(val){
 				return val.name==name;
 			})
 			if(index==-1){
-				$scope.cache.tag_search.search.push({name:name});
+				$scope.cache.tag_search.absoluteSearch.push({name:name});
 			}
 		}
 		$scope.del_tag_search=function(index){
-			$scope.cache.tag_search.search.splice(index,1);
+			$scope.cache.tag_search.absoluteSearch.splice(index,1);
 		}
+		
+		
 		
 	}],
 })

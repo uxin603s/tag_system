@@ -10,8 +10,12 @@
 	ng-click="item.type=!item.type"
 	ng-class="item.type?'btn-danger':'btn-primary'"
 	ng-right-click="del_tag_search($index)"
-	ng-repeat="item in cache.tag_search.search"
+	ng-repeat="item in cache.tag_search.absoluteSearch"
 	class="btn"
+	>{{item.name}}</button><button 
+	ng-right-click=""
+	ng-repeat="item in cache.tag_search.diffSearch"
+	class="btn btn-default"
 	>{{item.name}}</button>
 	<br/>
 	source_id:
