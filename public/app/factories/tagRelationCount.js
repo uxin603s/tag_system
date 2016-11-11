@@ -44,39 +44,42 @@ angular.module('app').factory('tagRelationCount',['$rootScope','cache',function(
 	var get=function(where_list,use_cache){
 		return new Promise(function(resolve,reject) {
 			// cache.tagRelationCountList={};
-			if(use_cache){
-				console.log('使用了快取');
+			if(!use_cache){
+				// console.log('使用了快取');
 				var result=[];
 				var id=[];
-				var list=undefined;
+				var list={};
 				for(var i in where_list){
 					var data=where_list[i];
 					var field=data.field;
 					var value=data.value;
 					if(field=='level_id'){
-						if(cache.tagRelationCountList[value])
+						if(cache.tagRelationCountList[value]){
 							list=angular.copy(cache.tagRelationCountList[value]);
+						}else{
+							list={};
+						}
 					}else if(field=='id'){
 						id.push(value)
 					}
 				}
-				if(list){
-					for(var i in id){
+				
+				for(var i in id){
+					if(list[id[i]])
 						result.push(list[id[i]])
-					}
-					
-					if(!id.length){
-						for(var i in list){
-							result.push(list[i])
-						}
-					}
-					if(result.length){
-						var result={status:true,list:result}
-						return resolve(result);
+				}
+				
+				if(!id.length){
+					for(var i in list){
+						result.push(list[i])
 					}
 				}
+				if(result.length){
+					var result={status:true,list:result}
+					return resolve(result);
+				}
 			}
-			
+			// console.log('gg')
 			var post_data={
 				func_name:'TagRelationCount::getList',
 				arg:{

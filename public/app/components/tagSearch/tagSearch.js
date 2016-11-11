@@ -41,7 +41,8 @@ angular.module('app').component("tagSearch",{
 			$scope.tag_search_id_timer=setTimeout(function(){
 				promiseRecursive(function* (){
 					if(!$scope.cache.tag_search.search.length){
-						$scope.cache.tag_search.result=[]
+						$scope.cache.tag_search.result=[];
+						$scope.$apply()
 						yield Promise.reject("搜不到標籤");
 					}
 					
@@ -86,6 +87,7 @@ angular.module('app').component("tagSearch",{
 							$scope.$apply()
 						}
 					}else{
+						// $scope.cache.tag_search.result=[];
 						yield Promise.reject("標籤有些不存在");
 					}
 				}())

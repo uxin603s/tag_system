@@ -55,8 +55,8 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 	var get=function(where_list,use_cache){
 		// console.log(where_list)
 		return new Promise(function(resolve,reject) {
-			if(use_cache){
-				console.log('使用了快取');
+			if(!use_cache){
+				// console.log('使用了快取');
 				var result=[];
 				var id=[];
 				var list=undefined;
@@ -89,7 +89,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 					}
 					if(result.length){
 						var result={status:true,list:result}
-						console.log(result)
+						// console.log(result)
 						return resolve(result);
 					}
 				}
