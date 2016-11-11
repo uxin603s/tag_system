@@ -8,4 +8,5 @@ function promiseRecursive(gen,result){
 	.catch(function(message){
 		// console.log(message);
 	})
+	return next.value;
 }

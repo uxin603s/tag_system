@@ -1,3 +1,17 @@
+<div
+class="bottom_line hidden"
+ng-repeat="(level_id,item) in cache.tagRelationCountList">
+{{level_id}}:{{item}}
+</div>
+<div
+class="bottom_line hidden"
+ng-repeat="(level_id,item) in cache.tagRelationList">
+{{level_id}}:{{item}}
+</div>
+
+<div class="bottom_line hidden" >
+{{cache.tagRelationCountList[cache.levelList[0].id]}}
+</div>
 
 <button
 ng-click="cache.mode.select==item.select?cache.mode.select=undefined:cache.mode.select=item.select"

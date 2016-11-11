@@ -10,7 +10,7 @@ angular.module('app').component("idSearch",{
 			return new Promise(function(resolve,reject){
 				promiseRecursive(function* (){
 					var where_list=[
-						{field:'wid',type:0,value:$scope.cache.webList.select},
+						{field:'wid',type:0,value:$scope.cache.webList.list[$scope.cache.webList.select].id},
 						{field:'source_id',type:0,value:source_id},
 					];
 					var res=yield aliasList.get(where_list)//把source_id轉換成id
@@ -87,10 +87,10 @@ angular.module('app').component("idSearch",{
 		}
 
 		$scope.add_relation=function(name,source_id){
-			promiseRecursive(function* (name,source_id){
+			return promiseRecursive(function* (name,source_id){
 				
 				var level_id=$scope.cache.levelList[$scope.cache.levelList.length-1].id;
-				var wid=$scope.cache.webList.select;
+				var wid=$scope.cache.webList.list[$scope.cache.webList.select].id;
 				var add_relation_object={
 					level_id:level_id,
 				};
@@ -125,8 +125,13 @@ angular.module('app').component("idSearch",{
 				
 				var result=yield tagRelation.add(add_relation_object);
 				
-				$scope.cache.id_search.result[source_id].push(result);
-				
+				$scope.cache.id_search.result[source_id].push(add_relation_object);
+				$scope.cache.id_search.result[source_id].map(function(val,key){
+					val.sort_id=key
+				})
+				$scope.cache.id_search.result[source_id].sort(function(a,b){
+					return a.sort_id-b.sort_id;
+				})
 				tagName.idToName([result]);
 				
 				tag_search_id();
@@ -170,7 +175,7 @@ angular.module('app').component("idSearch",{
 					for(var i in curr){
 						if(curr[i])
 						if(prev[i])
-						if(curr[i].id!=prev[i].id){
+						if(curr[i].sort_id!=prev[i].sort_id || curr[i].id!=prev[i].id){
 							var id=curr[i].id;
 							var level_id=curr[i].level_id;
 							var child_id=curr[i].child_id
@@ -196,6 +201,7 @@ angular.module('app').component("idSearch",{
 				},500)				
 			},1)
 		});
+		
 		var prev={};
 		var watch_select=function(){
 			// if(JSON.stringify(curr)==JSON.stringify(prev))return;
@@ -226,15 +232,20 @@ angular.module('app').component("idSearch",{
 					}
 					
 					var del=[];
+					if(false)
 					for(var i in prevClickSearch){
 						if(add.indexOf(prevClickSearch[i].name)==-1)
 							del.push(prevClickSearch[i].name);
 					}
-					// console.log(add,del)
-					// return
 					
+					// console.log(add,del)
 					
 					var result=cache.id_search.result;
+					// console.log(result)
+					
+					if(!result[select]){
+						result[select]=[];
+					}
 					var list=result[select];
 					
 					
@@ -248,19 +259,21 @@ angular.module('app').component("idSearch",{
 					}
 					
 					
-				
-					for(var i in add){
-						var name=add[i];
-						var index=list.findIndex(function(val){
-							return $scope.cache.tagName[val.id]==name;
-						})
-						if(index==-1)
-							$scope.add_relation(name,select);
-					}
+					promiseRecursive(function* (add,list,select){
+						for(var i in add){
+							var name=add[i];
+							var index=list.findIndex(function(val){
+								return $scope.cache.tagName[val.id]==name;
+							})
+							if(index==-1)
+								yield $scope.add_relation(name,select);
+						}
+					}(add,list,select))
 				}
 				$scope.$apply();
 			},500)
 		}
+		
 		$scope.$watch("cache.id_search.select",watch_select,1)
 		$scope.$watch("cache.tag_search.clickSearch",watch_select,1)
 	}],

@@ -76,6 +76,7 @@ angular.module('app').component("tagRelationLevel",{
 						for(var i in list){
 							tree[0].list=list;
 							tree[0].select=list[i].id;
+							tree[0].count=list[i].count;
 							treeData.push(angular.copy(tree));
 						}
 						if(cache.treeData){
@@ -129,6 +130,7 @@ angular.module('app').component("tagRelationLevel",{
 		});
 		
 		$scope.$watch("cache.treeData",function(treeData){
+			if(!$scope.cache.tag_search)return;
 			clearTimeout($scope.watch_treeDataTimer);
 			$scope.watch_treeDataTimer=setTimeout(function(){
 				// console.log('cache.treeData')
@@ -146,14 +148,28 @@ angular.module('app').component("tagRelationLevel",{
 							$scope.cache.tag_search.clickSearch.push({name:name});
 					}else{
 						var list=tree[last].list;
-						for(var j in list){
-							var id=list[j].id;
-							var name=$scope.cache.tagName[id];
-							var index=$scope.cache.tag_search.clickSearch.findIndex(function(val){
-								return val.name==name;
-							})
-							if(index==-1)
-								$scope.cache.tag_search.clickSearch.push({name:name,type:1});
+						
+						if(list.length){
+							for(var j in list){
+								var id=list[j].id;
+								var name=$scope.cache.tagName[id];
+								var index=$scope.cache.tag_search.clickSearch.findIndex(function(val){
+									return val.name==name;
+								})
+								if(index==-1)
+									$scope.cache.tag_search.clickSearch.push({name:name,type:1});
+							}
+						}else{
+							var select=tree[last-1].select;
+							if(select){
+								var name=$scope.cache.tagName[select];
+								var index=$scope.cache.tag_search.clickSearch.findIndex(function(val){
+									return val.name==name;
+								})
+								if(index==-1)
+									$scope.cache.tag_search.clickSearch.push({name:name});
+							}
+							// console.log(select)
 						}
 					}
 				}

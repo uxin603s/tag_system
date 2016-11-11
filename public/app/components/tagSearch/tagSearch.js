@@ -70,7 +70,7 @@ angular.module('app').component("tagSearch",{
 						var res=yield tagRelation.get_inter(require_id,option_id);
 						if(res.status){
 							var where_list=[
-								{field:'wid',type:0,value:$scope.cache.webList.select},
+								{field:'wid',type:0,value:$scope.cache.webList.list[$scope.cache.webList.select].id},
 							];
 							for(var i in res.list){
 								where_list.push({field:'id',type:0,value:res.list[i].child_id})

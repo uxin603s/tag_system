@@ -32,6 +32,7 @@ angular.module("app").component("tagRelationCount",{
 							
 							$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list=[];
 							$scope.$apply();
+							// console.log($scope.$ctrl.treeData[$scope.$ctrl.levelIndex-1],$scope.$ctrl.levelIndex)
 							yield Promise.reject("沒選上一層");
 						}else{
 							var level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex-1].id;
@@ -74,11 +75,8 @@ angular.module("app").component("tagRelationCount",{
 						}
 					}
 					var res=yield tagRelationCount.get(where_list);
-					// console.log(where_list,res)
-					// console.log(res)
-					// return
+					
 					if(res.status){
-						
 						if(alias_sort_id){
 							for(var i in res.list){
 								res.list[i].sort_id=alias_sort_id[res.list[i].id]
