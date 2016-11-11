@@ -2,7 +2,7 @@
 	<button 
 	ng-click="cache.webList.select==$index?cache.webList.select=undefined:cache.webList.select=$index"
 	ng-class="cache.webList.select==$index?'btn-danger':'btn-primary'"
-	class="btn"	
+	class="btn btn-sm"	
 	ng-right-click="del($index)"
 	ng-repeat="item in cache.webList.list">
 	{{item.id}}:{{item.name}}

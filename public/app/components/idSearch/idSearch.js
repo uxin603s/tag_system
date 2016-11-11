@@ -5,6 +5,7 @@ angular.module('app').component("idSearch",{
 		$scope.cache=cache;
 		$scope.cache.id_search || ($scope.cache.id_search={});
 		$scope.cache.id_search.search || ($scope.cache.id_search.search=[]);
+		$scope.cache.id_search.select || ($scope.cache.id_search.select=[]);
 		var get_id_relation_tag=function(source_id,callback){
 			return new Promise(function(resolve,reject){
 				promiseRecursive(function* (){
@@ -75,7 +76,15 @@ angular.module('app').component("idSearch",{
 			var source_id=$scope.cache.id_search.search.splice(index,1).pop();
 			delete $scope.cache.id_search.result[source_id];
 		}
-
+		$scope.select_id_search=function(item){
+			var index=cache.id_search.select.indexOf(item);
+			if(index==-1){
+				cache.id_search.select.push(item)
+			}else{
+				cache.id_search.select.splice(index,1)
+			}
+			
+		}
 
 		$scope.add_relation=function(name,source_id){
 			promiseRecursive(function* (name,source_id){
@@ -155,7 +164,7 @@ angular.module('app').component("idSearch",{
 			$scope.$watch("cache.id_search.result["+i+"]",function(curr,prev){
 				if(!curr)return;
 				if(!prev)return;
-				if(curr.length!=prev.length)return;
+				// if(curr.length!=prev.length)return;
 				clearTimeout($scope.result_timer)
 				$scope.result_timer=setTimeout(function(){
 					for(var i in curr){
@@ -187,63 +196,67 @@ angular.module('app').component("idSearch",{
 				},500)				
 			},1)
 		});
-		var prev=undefined;
+		var prev={};
 		var watch_select=function(){
 			// if(JSON.stringify(curr)==JSON.stringify(prev))return;
 			
 			clearTimeout($scope.clickSearch_timer)
 			$scope.clickSearch_timer=setTimeout(function(){
 			
-				var select=cache.id_search.select;
-				if(!select)return;
+				var select_arr=cache.id_search.select;
 				
-				var curr=cache.tag_search.clickSearch
-				var currClickSearch=curr.filter(function(val){
-					return !val.type;
-				});
-				// console.log(prev)
-				if(prev)
-				var prevClickSearch=prev.filter(function(val){
-					return !val.type;
-				});
-				prev=curr;
-				var add=[];
+				for(var i in select_arr){
+					var select=select_arr[i];
 				
-				for(var i in currClickSearch){
-					add.push(currClickSearch[i].name);
-				}
+					var curr=angular.copy(cache.tag_search.clickSearch);
+					var currClickSearch=curr.filter(function(val){
+						return !val.type;
+					});
+					// console.log(prev)
+					if(prev[i]){
+						var prevClickSearch=prev[i].filter(function(val){
+							return !val.type;
+						});
+					}
+					prev[i]=curr;
+					var add=[];
+					
+					for(var i in currClickSearch){
+						add.push(currClickSearch[i].name);
+					}
+					
+					var del=[];
+					for(var i in prevClickSearch){
+						if(add.indexOf(prevClickSearch[i].name)==-1)
+							del.push(prevClickSearch[i].name);
+					}
+					// console.log(add,del)
+					// return
+					
+					
+					var result=cache.id_search.result;
+					var list=result[select];
+					
+					
+					for(var i in del){
+						var name=del[i];
+						var index=list.findIndex(function(val){
+							return $scope.cache.tagName[val.id]==name;
+						})
+						if(index!=-1)
+							$scope.del_relation(index,select);
+					}
+					
+					
 				
-				var del=[];
-				for(var i in prevClickSearch){
-					if(add.indexOf(prevClickSearch[i].name)==-1)
-						del.push(prevClickSearch[i].name);
-				}
-				// console.log(add,del)
-				// return
-				
-				
-				var result=cache.id_search.result;
-				var list=result[select];
-				
-				
-				for(var i in del){
-					var name=del[i];
-					var index=list.findIndex(function(val){
-						return $scope.cache.tagName[val.id]==name;
-					})
-					if(index!=-1)
-						$scope.del_relation(index,select);
-				}
-				
-				
-			
-				for(var i in add){
-					var name=add[i];
-					var index=list.findIndex(function(val){
-						return $scope.cache.tagName[val.id]==name;
-					})
-					if(index==-1)
-						$scope.add_relation(name,select);
+					for(var i in add){
+						var name=add[i];
+						var index=list.findIndex(function(val){
+							return $scope.cache.tagName[val.id]==name;
+						})
+						if(index==-1)
+							$scope.add_relation(name,select);
+					}
 				}
 				$scope.$apply();
 			},500)

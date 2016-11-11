@@ -1,4 +1,5 @@
 angular.module('app').factory('tagRelation',['$rootScope','cache',function($rootScope,cache){
+	cache.tagRelationList || (cache.tagRelationList={})
 	var add=function(arg,list){
 		return new Promise(function(resolve,reject) {
 			var post_data={
@@ -60,6 +61,9 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
+				console.log('需要快取',res)
+				// console.log(res)
+				// cache.tagRelationList
 				resolve(res);
 				$rootScope.$apply();
 			},"json")

@@ -2,7 +2,7 @@
 <button
 ng-click="cache.mode.select==item.select?cache.mode.select=undefined:cache.mode.select=item.select"
 ng-class="cache.mode.select==item.select?'btn-danger':'btn-primary'"
-class="btn"
+class="btn btn-sm"
 ng-repeat="item in cache.mode.list"
 >{{item.name}}</button>
 <tag-type></tag-type>

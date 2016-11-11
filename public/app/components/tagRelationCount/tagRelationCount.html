@@ -19,7 +19,7 @@
 		ng-right-click="del($index)"
 		ng-class="$ctrl.treeData[$ctrl.levelIndex].select==item.id?'btn-danger':'btn-primary'"
 		ng-repeat="item in $ctrl.treeData[$ctrl.levelIndex].list"
-		class="btn" 
+		class="btn btn-sm" 
 		>{{cache.tagName[item.id]}}({{item.count}})</button>
 		
 		<select 

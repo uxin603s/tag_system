@@ -92,10 +92,7 @@ angular.module('app').component("tagSearch",{
 			},500);
 		}
 		
-		// $scope.$watch("cache.tag_search.search",function(value){
-			// if(!value)return;
-			// tag_search_id();
-		// },1);
+		
 		
 		$scope.add_tag_search=function(name){
 			var index=$scope.cache.tag_search.absoluteSearch.findIndex(function(val){

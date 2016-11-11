@@ -1,4 +1,5 @@
-angular.module('app').factory('tagRelationCount',['$rootScope',function($rootScope){
+angular.module('app').factory('tagRelationCount',['$rootScope','cache',function($rootScope,cache){
+	cache.tagRelationCountList || (cache.tagRelationCountList={})
 	var add=function(arg,list){
 		return new Promise(function(resolve,reject) {
 			var post_data={
@@ -7,8 +8,9 @@ angular.module('app').factory('tagRelationCount',['$rootScope',function($rootSco
 			}
 			$.post("ajax.php",post_data,function(res){
 				
-				
-				list.push(res);
+				if(list){
+					list.push(res);
+				}
 				$rootScope.$apply();
 				
 				resolve();
@@ -39,6 +41,7 @@ angular.module('app').factory('tagRelationCount',['$rootScope',function($rootSco
 		})
 	}
 	var get=function(where_list){
+		// console.log(where_list)
 		return new Promise(function(resolve,reject) {
 			var post_data={
 				func_name:'TagRelationCount::getList',
@@ -47,6 +50,11 @@ angular.module('app').factory('tagRelationCount',['$rootScope',function($rootSco
 				},
 			}
 			$.post("ajax.php",post_data,function(res){
+				console.log('需要快取',res)
+				// for(var i in res.list){
+					// console.log(res.list[i])
+				// }
+				
 				resolve(res);
 				$rootScope.$apply();
 			},"json")
