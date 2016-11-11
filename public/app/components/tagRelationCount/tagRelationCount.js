@@ -12,106 +12,106 @@ angular.module("app").component("tagRelationCount",{
 		
 		$scope.get=function(){
 			
-			clearTimeout($scope.Timer);
-			$scope.Timer=setTimeout(function(){
-				promiseRecursive(function* (){
+			
+			promiseRecursive(function* (){
+				
+				var ids;
+				if($scope.tag.name){//搜尋模式
+					var list=yield tagName.nameToId("%"+$scope.tag.name+"%",1)
 					
-					var ids;
-					if($scope.tag.name){//搜尋模式
-						var list=yield tagName.nameToId("%"+$scope.tag.name+"%",1)
-						if(list.length){
-							var ids=list.map(function(val){
-								return val.id;
-							});
-						}else{
-							yield Promise.reject("搜尋不到標籤");
-						}
-					}
-					
-					if($scope.$ctrl.levelIndex){
-						if(isNaN($scope.$ctrl.treeData[$scope.$ctrl.levelIndex-1].select)){
-							
-							$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list=[];
-							$scope.$apply();
-							// console.log($scope.$ctrl.treeData[$scope.$ctrl.levelIndex-1],$scope.$ctrl.levelIndex)
-							yield Promise.reject("沒選上一層");
-						}else{
-							var level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex-1].id;
-							var id=$scope.$ctrl.treeData[$scope.$ctrl.levelIndex-1].select;
-							var where_list=[
-								{field:'level_id',type:0,value:level_id},
-								{field:'id',type:0,value:id},
-							];
-							for(var i in ids){
-								where_list.push({field:'child_id',type:0,value:ids[i]})
-							}
-							var res= yield tagRelation.get(where_list);
-							if(res.status){
-								var alias_sort_id={};
-								var ids=[];
-								for(var i in res.list){
-									var data=res.list[i];
-									
-									var sort_id=data.sort_id;
-									var child_id=data.child_id;
-									ids.push(child_id);
-									alias_sort_id[child_id]=sort_id
-								}
-							}else{
-								$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list=[];
-								$scope.$apply();
-								yield Promise.reject("沒有關聯");
-							}
-						}
-					}
-					
-					var level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex].id;
-					
-					var where_list=[
-						{field:'level_id',type:0,value:level_id},
-					];
-					if(ids){
-						for(var i in ids){
-							where_list.push({field:'id',type:0,value:ids[i]})
-						}
-					}
-					var res=yield tagRelationCount.get(where_list);
-					
-					if(res.status){
-						if(alias_sort_id){
-							for(var i in res.list){
-								res.list[i].sort_id=alias_sort_id[res.list[i].id]
-							}
-						}
-						res.list.sort(function(a,b){
-							return a.sort_id-b.sort_id;
-						})
-						$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list=res.list;
-						
-						if($scope.$ctrl.levelList.length-1!=$scope.$ctrl.levelIndex && !$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].select){
-							if(res.list[0].count){
-								$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].select=res.list[0].id
-							}
-						}
-						
-						var ids=res.list.map(function(val){
+					if(list.length){
+						var ids=list.map(function(val){
 							return val.id;
-						})
-						yield tagName.idToName(ids);
-						
-						$scope.$apply();
+						});
+					}else{
+						yield Promise.reject("搜尋不到標籤");
 					}
-					else{
-						$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list=[];
-						$scope.$apply();
-						yield Promise.reject("tagRelationCount 沒資料");
+				}
+				if($scope.$ctrl.levelIndex){
+					if(isNaN($scope.$ctrl.treeData[$scope.$ctrl.levelIndex-1].select)){
+						yield Promise.reject("沒選上一層");
+					}else{
+						var level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex-1].id;
+						var id=$scope.$ctrl.treeData[$scope.$ctrl.levelIndex-1].select;
+						var where_list=[
+							{field:'level_id',type:0,value:level_id},
+							{field:'id',type:0,value:id},
+						];
+						for(var i in ids){
+							where_list.push({field:'child_id',type:0,value:ids[i]})
+						}
+						var res= yield tagRelation.get(where_list);
+						if(res.status){
+							var alias_sort_id={};
+							var ids=[];
+							for(var i in res.list){
+								var data=res.list[i];
+								
+								var sort_id=data.sort_id;
+								var child_id=data.child_id;
+								ids.push(child_id);
+								alias_sort_id[child_id]=sort_id
+							}
+						}else{
+							yield Promise.reject("沒有關聯");
+						}
+					}
+				}
+				
+				var level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex].id;
+				
+				var where_list=[
+					{field:'level_id',type:0,value:level_id},
+				];
+				if(ids){
+					for(var i in ids){
+						where_list.push({field:'id',type:0,value:ids[i]})
+					}
+				}
+				var res=yield tagRelationCount.get(where_list);
+				
+				if(res.status){
+					if(alias_sort_id){
+						for(var i in res.list){
+							res.list[i].sort_id=alias_sort_id[res.list[i].id]
+						}
+					}
+					res.list.sort(function(a,b){
+						return a.sort_id-b.sort_id;
+					})
+					$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list=res.list;
+					
+					if($scope.$ctrl.levelList.length-1!=$scope.$ctrl.levelIndex && !$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].select){
+						if(res.list[0].count){
+							$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].select=res.list[0].id
+						}
 					}
 					
-				}())
-			},0)
+					var ids=res.list.map(function(val){
+						return val.id;
+					})
+					yield tagName.idToName(ids);
+					$scope.$apply();
+				}
+				else{
+					yield Promise.reject("tagRelationCount 沒資料");
+				}
+				
+			}())
+			.catch(function(message){
+				// console.log(message)
+				$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].list=[];
+				$scope.$apply()
+			})
 		}
 		
-		$scope.$watch("tag.name",$scope.get,1);
+		$scope.$watch("tag.name",function(){
+			clearTimeout($scope.tagNameTimer);
+			$scope.tagNameTimer=setTimeout(function(){
+				$scope.get();
+				$scope.$apply();
+			},500)
+		},1);
 		
 			
 		$scope.$watch("$ctrl.treeData["+($scope.$ctrl.levelIndex-1)+"].select",function(select){

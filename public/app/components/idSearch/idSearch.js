@@ -61,7 +61,7 @@ angular.module('app').component("idSearch",{
 						// console.log(message)
 					})
 				}
-			},500);
+			},0);
 		}
 		$scope.$watch("cache.id_search.search",function(value){
 			if(!value)return;
@@ -198,7 +198,7 @@ angular.module('app').component("idSearch",{
 							}.bind(this,i));
 						}
 					}
-				},500)				
+				},0)				
 			},1)
 		});
 		
@@ -271,7 +271,7 @@ angular.module('app').component("idSearch",{
 					}(add,list,select))
 				}
 				$scope.$apply();
-			},500)
+			},0)
 		}
 		
 		$scope.$watch("cache.id_search.select",watch_select,1)
