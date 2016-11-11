@@ -29,7 +29,7 @@ angular.module('app').component("tagSearch",{
 				$scope.$apply();
 				tag_search_id();
 				
-			},500)
+			},0)
 			
 		}
 		
@@ -91,7 +91,7 @@ angular.module('app').component("tagSearch",{
 						yield Promise.reject("標籤有些不存在");
 					}
 				}())
-			},500);
+			},0);
 		}
 		
 		

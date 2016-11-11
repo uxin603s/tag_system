@@ -54,6 +54,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 	}
 	var get=function(where_list,use_cache){
 		// console.log(where_list)
+		
 		return new Promise(function(resolve,reject) {
 			if(!use_cache){
 				// console.log('使用了快取');

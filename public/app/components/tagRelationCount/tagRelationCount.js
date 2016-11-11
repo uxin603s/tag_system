@@ -11,6 +11,7 @@ angular.module("app").component("tagRelationCount",{
 		
 		
 		$scope.get=function(){
+			
 			clearTimeout($scope.Timer);
 			$scope.Timer=setTimeout(function(){
 				promiseRecursive(function* (){
@@ -92,12 +93,12 @@ angular.module("app").component("tagRelationCount",{
 								$scope.$ctrl.treeData[$scope.$ctrl.levelIndex].select=res.list[0].id
 							}
 						}
-							
 						
 						var ids=res.list.map(function(val){
 							return val.id;
 						})
 						yield tagName.idToName(ids);
+						
 						$scope.$apply();
 					}
 					else{
@@ -105,8 +106,9 @@ angular.module("app").component("tagRelationCount",{
 						$scope.$apply();
 						yield Promise.reject("tagRelationCount 沒資料");
 					}
+					
 				}())
-			},500)
+			},0)
 		}
 		
 		$scope.$watch("tag.name",$scope.get,1);
