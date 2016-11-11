@@ -187,20 +187,26 @@ angular.module('app').component("idSearch",{
 				},500)				
 			},1)
 		});
-		
-		$scope.$watch("cache.tag_search.clickSearch",function(curr,prev){
+		var prev=undefined;
+		var watch_select=function(){
 			// if(JSON.stringify(curr)==JSON.stringify(prev))return;
 			
 			clearTimeout($scope.clickSearch_timer)
 			$scope.clickSearch_timer=setTimeout(function(){
 			
 				var select=cache.id_search.select;
-				var prevClickSearch=prev.filter(function(val){
-					return !val.type;
-				});
+				if(!select)return;
+				
+				var curr=cache.tag_search.clickSearch
 				var currClickSearch=curr.filter(function(val){
 					return !val.type;
 				});
+				// console.log(prev)
+				if(prev)
+				var prevClickSearch=prev.filter(function(val){
+					return !val.type;
+				});
+				prev=curr;
 				var add=[];
 				
 				for(var i in currClickSearch){
@@ -214,7 +220,7 @@ angular.module('app').component("idSearch",{
 				}
 				// console.log(add,del)
 				// return
-				if(!select)return;
+				
 				
 				var result=cache.id_search.result;
 				var list=result[select];
@@ -241,6 +247,8 @@ angular.module('app').component("idSearch",{
 				}
 				$scope.$apply();
 			},500)
-		},1)
+		}
+		$scope.$watch("cache.id_search.select",watch_select,1)
+		$scope.$watch("cache.tag_search.clickSearch",watch_select,1)
 	}],
 })

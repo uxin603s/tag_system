@@ -31,6 +31,11 @@
 	
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.7.min.css?t=<?=time()?>" />
 	<link rel="stylesheet" type="text/css" href="css/index.css?t=<?=time()?>" />
+<style>
+.btn{
+	padding:4px 6px;
+}
+</style>
 </head>
 <body ng-app="app" class="container" style="overflow-y: scroll;" >
 	<index></index>
