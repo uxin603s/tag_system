@@ -41,8 +41,6 @@ angular.module('app').component("tagSearch",{
 			$scope.tag_search_id_timer=setTimeout(function(){
 				promiseRecursive(function* (){
 					if(!$scope.cache.tag_search.search.length){
-						$scope.cache.tag_search.result=[];
-						$scope.$apply()
 						yield Promise.reject("搜不到標籤");
 					}
 					
@@ -69,6 +67,7 @@ angular.module('app').component("tagSearch",{
 						}
 						
 						var res=yield tagRelation.get_inter(require_id,option_id);
+						// console.log(res)
 						if(res.status){
 							var where_list=[
 								{field:'wid',type:0,value:$scope.cache.webList.list[$scope.cache.webList.select].id},
@@ -77,20 +76,25 @@ angular.module('app').component("tagSearch",{
 								where_list.push({field:'id',type:0,value:res.list[i].child_id})
 							}
 							var res=yield aliasList.get(where_list);//把id轉換成source_id
+							// console.log(res)
 							if(res.status){
 								$scope.cache.tag_search.result=res.list.map(function(value){
 									return value.source_id;
 								})
 							}else{
-								$scope.cache.tag_search.result=[];
+								yield Promise.reject("aliasList沒資料");
 							}
 							$scope.$apply()
+						}else{
+							yield Promise.reject("tagRelation沒資料");
 						}
-					}else{
-						// $scope.cache.tag_search.result=[];
-						yield Promise.reject("標籤有些不存在");
 					}
 				}())
+				.catch(function(message){
+					$scope.cache.tag_search.result=[];
+					$scope.$apply();
+					// console.log(message)
+				})
 			},0);
 		}
 		

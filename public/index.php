@@ -21,6 +21,8 @@
 	<script src="app/components/tagRelationCount/tagRelationCount.js?t<?=time()?>"></script>
 	<script src="app/components/webList/webList.js?t<?=time()?>"></script>
 	
+	<script src="app/components/tagRecusion/tagRecusion.js?t<?=time()?>"></script>
+	
 	<script src="app/components/idSearch/idSearch.js?t<?=time()?>"></script>
 	<script src="app/components/tagSearch/tagSearch.js?t<?=time()?>"></script>
 	

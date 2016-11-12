@@ -9,12 +9,8 @@ angular.module("app").component("tagRelationCount",{
 		$scope.cache=cache;
 		$scope.tag={};
 		
-		
 		$scope.get=function(){
-			
-			
 			promiseRecursive(function* (){
-				
 				var ids;
 				if($scope.tag.name){//搜尋模式
 					var list=yield tagName.nameToId("%"+$scope.tag.name+"%",1)

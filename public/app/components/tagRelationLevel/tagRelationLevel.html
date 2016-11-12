@@ -21,19 +21,13 @@
 <div
 	class="col-xs-12 bottom_line" 
 	
-	ng-repeat="treeData in cache.treeData"
+	ng-repeat="select in cache.selectList"
 >
-	<button 
-	ng-if="cache.tagType.list[cache.tagType.select].lock_lv1"
-	class="btn btn-primary btn-sm">
-	{{cache.tagName[treeData[0].select]}}
-	({{treeData[0].count}})
-	</button>
+	<tag-recusion
+	ng-if="cache.levelList.length"
+	select="select"
+	level-index="0"
+	></tag-recusion>
 	
-	<tag-relation-count
-	ng-if="cache.tagType.list[cache.tagType.select] && cache.levelList.length"
-	tree-data="treeData"
-	level-list="cache.levelList"
-	level-index="cache.tagType.list[cache.tagType.select].lock_lv1?1:0"
-	></tag-relation-count>
+	
 </div>			

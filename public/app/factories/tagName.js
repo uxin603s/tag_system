@@ -53,9 +53,11 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 						}
 						for(var i in insert_arr){
 							insert(insert_arr[i],function(res){
-								list.push(res)
-								if(where_list.length==list.length){
-									resolve && resolve(list)
+								if(res.status){
+									list.push(res.insert)
+									if(where_list.length==list.length){
+										resolve && resolve(list)
+									}
 								}
 							})
 						}

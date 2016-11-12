@@ -7,9 +7,15 @@ class TagName{
 		$time=time();
 		$insert['created_time_int']=$time;
 		$insert['created_time']=date("Y-m-d H:i:s",$time);
-		$insert['id']=DB::insert($insert,"tag_name");
 		
-		return $insert;
+		if($id=DB::insert($insert,"tag_name")){
+			$insert['id']=$id;
+			$status=true;
+		}else{
+			$status=false;
+		}
+		
+		return compact(['status','insert']);
 	}
 	public static function getList($arg){
 		$bind_data=[];
