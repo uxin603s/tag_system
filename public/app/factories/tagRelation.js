@@ -24,7 +24,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 		});
 	}
 
-	var add=function(arg,list){
+	var add=function(arg){
 		return new Promise(function(resolve,reject) {
 			var post_data={
 				func_name:'TagRelation::insert',
@@ -32,21 +32,18 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
-					if(list){
-						// if(cache.tagRelationCountList[arg.level_id])
-						// if(cache.tagRelationCountList[arg.level_id][arg.id])
-							// cache.tagRelationCountList[arg.level_id][arg.id].count++
-						
-						var find_data=list.find(function(value){
-							return value.id==arg.id
-						})
-						if(find_data){
-							find_data.count++;
-						}
-					}
-					resolve(arg);
-				}else{
-					reject("新增關聯失敗");
+					var data=res.insert;
+					var level_id=data.level_id;
+					var id=data.id;
+					var child_id=data.child_id;
+					
+					cache.count[level_id][id].count++;
+					cache.relation[level_id][id] || (cache.relation[level_id][id]={})
+					cache.relation[level_id][id][child_id]=data;
+					resolve(data);
+				}
+				else{
+					reject("新增relation失敗");
 				}
 				$rootScope.$apply();
 			},"json")
@@ -60,19 +57,15 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
-					if(list){
-						var index=list.findIndex(function(value){
-							return value.id==arg.id
-						});
-						
-						if(index!=-1){
-							list[index].count--;
-							if(arg.auto_delete && list[index].count==0){
-								list.splice(index,1)
-							}
-						}
-					}
-					return resolve(res);
+					var data=res.delete;
+					var level_id=data.level_id;
+					var id=data.id;
+					var child_id=data.child_id;
+					
+					cache.count[level_id][id].count--;
+					
+					delete cache.relation[level_id][id][child_id];
+					resolve(data);
 				}else{
 					return reject("刪除關聯失敗");
 				}

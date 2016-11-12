@@ -21,11 +21,12 @@
 <div
 	class="col-xs-12 bottom_line" 
 	
-	ng-repeat="select in cache.selectList"
+	ng-repeat="selectList in cache.selectList"
 >
+{{selectList}}
 	<tag-recusion
 	ng-if="cache.levelList.length"
-	select="select"
+	select-list="selectList"
 	level-index="0"
 	></tag-recusion>
 	

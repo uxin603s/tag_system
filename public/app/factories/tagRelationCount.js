@@ -32,12 +32,17 @@ angular.module('app').factory('tagRelationCount',['$rootScope','cache','tagName'
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
-					var insert=res.insert;
-					cache.count[insert.level_id][insert.id]=insert;
-					tagName.idToName([insert.id]);
-					$rootScope.$apply();
+					var data=res.insert;
+					var level_id=data.level_id;
+					var id=data.id;
+					
+					cache.count[level_id][id]=data;
+					tagName.idToName([id]);
+					resolve(data);
+				}else{
+					reject("新增count失敗");
 				}
-				resolve(res);
+				$rootScope.$apply();
 			},"json")
 		})
 	}

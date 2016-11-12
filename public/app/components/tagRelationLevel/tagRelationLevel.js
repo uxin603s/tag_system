@@ -5,9 +5,8 @@ angular.module('app').component("tagRelationLevel",{
 		$scope.cache=cache;
 		cache.count || (cache.count={})
 		cache.relation || (cache.relation={})
-		cache.selectList=[
-			[]
-		];
+		cache.selectList || (cache.selectList=[]);
+		
 		$scope.get=function(){
 			var post_data={
 				func_name:'TagRelationLevel::getList',
@@ -18,10 +17,16 @@ angular.module('app').component("tagRelationLevel",{
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
 					cache.levelList=res.list;
+					var select=[]
 					for(var i in res.list){
 						cache.count[res.list[i].id]={};
 						cache.relation[res.list[i].id]={};
+						select.push(undefined)
 					}
+					cache.selectList=[]
+					
+					cache.selectList.push(angular.copy(select))
+					// console.log(cache.selectList)
 				}else{
 					cache.levelList=[];
 					cache.count={};

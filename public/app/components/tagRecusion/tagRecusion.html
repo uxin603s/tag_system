@@ -2,6 +2,7 @@
 	<input 
 	type="text" 
 	ng-model="search.tagName"
+	ng-enter="add()"
 	/>
 	<button
 	draggable="true"
@@ -10,14 +11,14 @@
 	
 	ng-show="cache.tagName[item.id].indexOf(search.tagName)!=-1"
 	ng-class="
-	$ctrl.select[$ctrl.levelIndex]==item.id?
+	$ctrl.selectList[$ctrl.levelIndex]==item.id?
 	'btn-danger':
 	'btn-primary'
 	"
 	ng-click="
-	$ctrl.select[$ctrl.levelIndex]==item.id?
-	$ctrl.select[$ctrl.levelIndex]=undefined:
-	$ctrl.select[$ctrl.levelIndex]=item.id
+	$ctrl.selectList[$ctrl.levelIndex]==item.id?
+	$ctrl.selectList[$ctrl.levelIndex]=undefined:
+	$ctrl.selectList[$ctrl.levelIndex]=item.id
 	"
 	ng-right-click="del($index)"
 	ng-repeat="item in list"
@@ -25,10 +26,11 @@
 	>{{cache.tagName[item.id]}}
 	({{item.count}})
 	</button>
-	{{list}}
+	{{$ctrl.selectList[$ctrl.levelIndex]}}
 	<tag-recusion
-	ng-if="childIds"
-	select="$ctrl.select"
+	ng-if="$ctrl.selectList[$ctrl.levelIndex] && cache.levelList[$ctrl.levelIndex+1]"
+	select="$ctrl.selectList[$ctrl.levelIndex]"
+	select-list="$ctrl.selectList"
 	child-ids="childIds"
 	level-index="$ctrl.levelIndex+1"
 	></tag-recusion>
