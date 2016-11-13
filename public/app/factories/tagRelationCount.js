@@ -1,6 +1,35 @@
 angular.module('app').factory('tagRelationCount',['$rootScope','cache','tagName',function($rootScope,cache,tagName){
 	var get=function(where_list){
-		return new Promise(function(resolve,reject) {	
+		return new Promise(function(resolve,reject) {
+			var level_id;
+			var ids=[];
+			for(var i in where_list){
+				var field=where_list[i].field
+				var value=where_list[i].value
+				if(field=="level_id"){
+					level_id=value;
+				}
+				if(field=="id"){
+					ids.push(value)
+				}
+			}
+			var count=cache.count[level_id];
+			if(count){
+				var list=[];
+				if(ids.length){
+					for(var i in ids){
+						list.push(count[ids[i]])
+					}
+				}else{
+					for(var i in count){
+						list.push(count[i])
+					}
+				}
+				console.log('use cache')
+				return resolve({status:true,list:list})
+				// return {status:true,list:list}
+				// console.log(list)
+			}			
 			var post_data={
 				func_name:'TagRelationCount::getList',
 				arg:{

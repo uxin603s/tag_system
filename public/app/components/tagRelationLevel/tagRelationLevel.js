@@ -116,7 +116,7 @@ angular.module('app').component("tagRelationLevel",{
 			clearTimeout($scope.watch_select_list_timer);
 			$scope.watch_select_list_timer=setTimeout(function(){
 				
-				if(cache.selectList)return;
+				// if(cache.selectList.length)return;
 				
 				var tree=[];
 				for(var i in cache.levelList){
