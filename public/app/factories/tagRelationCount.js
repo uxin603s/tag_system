@@ -14,21 +14,25 @@ angular.module('app').factory('tagRelationCount',['$rootScope','cache','tagName'
 				}
 			}
 			var count=cache.count[level_id];
-			if(count){
+			// console.log(count)
+			if(count && Object.keys(count).length){
 				var list=[];
 				if(ids.length){
 					for(var i in ids){
-						list.push(count[ids[i]])
+						if(count[ids[i]])
+							list.push(count[ids[i]])
 					}
 				}else{
 					for(var i in count){
-						list.push(count[i])
+						if(count[i])
+							list.push(count[i])
 					}
 				}
-				console.log('use cache')
-				return resolve({status:true,list:list})
-				// return {status:true,list:list}
-				// console.log(list)
+				
+				if(list.length){
+					// console.log('use cache')
+					return resolve({status:true,list:list})
+				}
 			}			
 			var post_data={
 				func_name:'TagRelationCount::getList',

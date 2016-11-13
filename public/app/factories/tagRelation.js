@@ -1,6 +1,31 @@
 angular.module('app').factory('tagRelation',['$rootScope','cache',function($rootScope,cache){
 	var get=function(where_list){
 		return new Promise(function(resolve,reject) {
+			var level_id;
+			var id;
+			for(var i in where_list){
+				var field=where_list[i].field
+				var value=where_list[i].value
+				if(field=="level_id"){
+					level_id=value;
+				}
+				if(field=="id"){
+					id=value;
+				}
+				
+			}
+			var relation=cache.relation[level_id];
+			if(relation && Object.keys(relation).length){
+				if(relation[id] && Object.keys(relation[id]).length){
+					var list=[];
+					for(var i in relation[id]){
+						list.push(relation[id][i]);
+					}
+					console.log("use cache")
+					return resolve({status:true,list:list})
+				}
+			}
+			
 			var post_data={
 				func_name:'TagRelation::getList',
 				arg:{
