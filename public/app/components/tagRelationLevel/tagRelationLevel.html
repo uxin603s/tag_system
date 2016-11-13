@@ -18,17 +18,14 @@
 	class="btn btn-primary btn-sm"
 	>新增階層</button>
 </div>
+{{cache.clickSearch}}
 <div
 	class="col-xs-12 bottom_line" 
-	
 	ng-repeat="selectList in cache.selectList"
 >
-{{selectList}}
-	<tag-recusion
-	ng-if="cache.levelList.length"
+	<tag-recusion	
+	ng-if="cache.levelList.length && selectList[0]"
 	select-list="selectList"
 	level-index="0"
 	></tag-recusion>
-	
-	
 </div>			

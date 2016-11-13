@@ -15,6 +15,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 						var id=data.id;
 						var child_id=data.child_id;
 						var level_id=data.level_id;
+						cache.relation[level_id] || (cache.relation[level_id]={});
 						cache.relation[level_id][id] || (cache.relation[level_id][id]={})
 						cache.relation[level_id][id][child_id]=data;
 					}
@@ -38,6 +39,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 					var child_id=data.child_id;
 					
 					cache.count[level_id][id].count++;
+					cache.relation[level_id] || (cache.relation[level_id]={});
 					cache.relation[level_id][id] || (cache.relation[level_id][id]={})
 					cache.relation[level_id][id][child_id]=data;
 					resolve(data);

@@ -1,7 +1,7 @@
 angular.module('app').component("tagRelationLevel",{
 	bindings:{},
 	templateUrl:'app/components/tagRelationLevel/tagRelationLevel.html?t='+Date.now(),
-	controller:["$scope","cache","tagRelationCount","tagName",function($scope,cache,tagRelationCount,tagName){
+	controller:["$scope","cache","tagRelationCount","tagName","tagRelation",function($scope,cache,tagRelationCount,tagName,tagRelation){
 		$scope.cache=cache;
 		cache.count || (cache.count={})
 		cache.relation || (cache.relation={})
@@ -17,16 +17,7 @@ angular.module('app').component("tagRelationLevel",{
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
 					cache.levelList=res.list;
-					var select=[]
-					for(var i in res.list){
-						cache.count[res.list[i].id]={};
-						cache.relation[res.list[i].id]={};
-						select.push(undefined)
-					}
-					cache.selectList=[]
 					
-					cache.selectList.push(angular.copy(select))
-					// console.log(cache.selectList)
 				}else{
 					cache.levelList=[];
 					cache.count={};
@@ -69,123 +60,133 @@ angular.module('app').component("tagRelationLevel",{
 				}
 			},"json")
 		}
-		// var watch_levelList=function(){
-			// if(!cache.levelList)return;
-			// var tree=[];
-			// for(var i in cache.levelList){
-				// tree.push({list:[],select:undefined});
-			// }
-			
-			
-			// if(cache.tagType.list[cache.tagType.select].lock_lv1){
-				// var compare=function(a,b){
-					// return angular.copy(JSON.stringify(a))==angular.copy(JSON.stringify(b));
-				// }
-				// tagRelationCount.get([
-					// {field:'level_id',type:0,value:cache.levelList[0].id},
-				// ])
-				// .then(function(res){
-					// var treeData=[];
-					// if(res.status){
-						// var list=res.list;
-						// for(var i in list){
-							// tree[0].list=list;
-							// tree[0].select=list[i].id;
-							// tree[0].count=list[i].count;
-							// treeData.push(angular.copy(tree));
-						// }
-						// if(cache.treeData){
-							// if(treeData.length!=cache.treeData.length){
-								// cache.treeData=treeData;
-							// }else{
-								// for(var i in treeData){
-									// if(compare(treeData[i][0],cache.treeData[i][0])){
-										// cache.treeData[i][0]=treeData[i][0];
-									// }
-								// }
-							// }
-						// }else{
-							// cache.treeData=treeData;
-						// }
-						// tagName.idToName(list.map(function(val){return val.id}));
-						// $scope.$apply();
-					// }
+		$scope.$watch("cache.selectList",function(){
+			clearTimeout($scope.watch_treeDataTimer);
+			$scope.watch_treeDataTimer=setTimeout(function(){
+				$scope.cache.clickSearch=[];
+				for(var i in cache.selectList){
+					var selectList=angular.copy(cache.selectList[i]);
+					var last=cache.levelList.length-1;
+					var select=selectList[last].select;
+					if(select){
+						var name=$scope.cache.tagName[select];
+						var index=$scope.cache.clickSearch.findIndex(function(val){
+							return val.name==name;
+						})
+						if(index==-1)
+							$scope.cache.clickSearch.push({name:name});
+					}else{		
+						var p_last_level_id=cache.levelList[last-1].id;
+						var select=selectList[last-1].select;
+						if(cache.relation[p_last_level_id]){
+							var list=cache.relation[p_last_level_id][select];
+								
+							if(list && Object.keys(list).length){
+								for(var id in list){
+									var name=$scope.cache.tagName[id];
+									var index=$scope.cache.clickSearch.findIndex(function(val){
+										return val.name==name;
+									})
+									if(index==-1)
+										$scope.cache.clickSearch.push({name:name,type:1});
+								}
+							}else{
+								
+								if(select && last-1){
+									var name=$scope.cache.tagName[select];
+									var index=$scope.cache.clickSearch.findIndex(function(val){
+										return val.name==name;
+									})
+									if(index==-1)
+										$scope.cache.clickSearch.push({name:name});
+								}
+							}
+						}
+					}
+				}
+				$scope.$apply();
+			},500)
+		},1)
+		var watch_select_list=function(){
+			if(!cache.levelList)return;
+			if(!cache.tagType.list)return;
+			// console.log('watch_select_list')
+			clearTimeout($scope.watch_select_list_timer);
+			$scope.watch_select_list_timer=setTimeout(function(){
+				var tree=[];
+				for(var i in cache.levelList){
+					tree.push({});
+				}
+				if(cache.tagType.list[cache.tagType.select].lock_lv1*1){
 					
-				// })
-			// }else{
-				// var treeData=[];
-				// treeData.push(angular.copy(tree));
-				// if(cache.treeData){
-
-					// if(treeData[0].length!=cache.treeData[0].length){
-						// cache.treeData=treeData;
-					// }
-					// if(treeData.length!=cache.treeData.length){
-						// cache.treeData=treeData;
-					// }
-				// }else{
-					// cache.treeData=treeData;
-				// }
-				
-			// }
-			
-		// }
-		// $scope.$watch("cache.levelList",function(val){
-			// if(!val)return;
-			// watch_levelList();
-		// },1)
-		// $scope.$watch("cache.tagType.select",function(){
-			// $scope.watch_lock_lv1 && $scope.watch_lock_lv1();
-			
-			// if(!cache.tagType.list[cache.tagType.select])return;
-			// $scope.watch_lock_lv1=$scope.$watch("cache.tagType.list["+cache.tagType.select+"].lock_lv1",watch_levelList);
-			// $scope.get();
-		// });
-		
-		// $scope.$watch("cache.treeData",function(treeData){
-			// if(!$scope.cache.tag_search)return;
-			// clearTimeout($scope.watch_treeDataTimer);
-			// $scope.watch_treeDataTimer=setTimeout(function(){
-				// $scope.cache.tag_search.clickSearch=[];
-				// for(var i in treeData){
-					// var tree=angular.copy(treeData[i]);
-					// var last=tree.length-1;
-					// var select=tree[last].select;
-					// if(select){
-						// var name=$scope.cache.tagName[select];
-						// var index=$scope.cache.tag_search.clickSearch.findIndex(function(val){
-							// return val.name==name;
-						// })
-						// if(index==-1)
-							// $scope.cache.tag_search.clickSearch.push({name:name});
-					// }else{
-						// var list=tree[last].list;
+					promiseRecursive(function* (){
 						
-						// if(list.length){
-							// for(var j in list){
-								// var id=list[j].id;
-								// var name=$scope.cache.tagName[id];
-								// var index=$scope.cache.tag_search.clickSearch.findIndex(function(val){
-									// return val.name==name;
-								// })
-								// if(index==-1)
-									// $scope.cache.tag_search.clickSearch.push({name:name,type:1});
-							// }
-						// }else{
-							// var select=tree[last-1].select;
-							// if(select){
-								// var name=$scope.cache.tagName[select];
-								// var index=$scope.cache.tag_search.clickSearch.findIndex(function(val){
-									// return val.name==name;
-								// })
-								// if(index==-1)
-									// $scope.cache.tag_search.clickSearch.push({name:name});
-							// }
-						// }
-					// }
-				// }
-				// $scope.$apply();
-			// },500)
-		// },1)
+						var level_id=cache.levelList[0].id
+						var res=yield tagRelationCount.get([
+							{field:'level_id',type:0,value:level_id},
+						]);
+						var selectList=[];
+						
+						if(res.status){
+							var list=res.list;
+							for(var i in list){
+								var select=list[i].id
+								for(var j in tree){
+									// console.log(j,select)
+									tree[j].select=select;
+									var where_list=[]
+									where_list.push({field:'level_id',type:0,value:level_id})
+									where_list.push({field:'id',type:0,value:select})
+									var res=yield tagRelation.get(where_list);
+									// console.log(res)
+									cache.relation[level_id] || (cache.relation[level_id]={})
+									cache.relation[level_id][select] || (cache.relation[level_id][select]={})
+									if(res.status){
+										tree[j].childIds=cache.relation[level_id][select];
+									}else{
+										tree[j].childIds={};
+									}
+									break;
+								}
+								selectList.push(angular.copy(tree));
+								
+								
+							}
+							// console.log(cache.selectList)
+							// console.log(selectList)
+							cache.selectList.splice(0,cache.selectList.length)
+							
+							for(var i in selectList){
+								cache.selectList.push(selectList[i]);
+							}
+							
+							yield tagName.idToName(list.map(function(val){return val.id}));
+							$scope.$apply();
+						}
+					}())
+				}else{
+					
+					var selectList=[];
+					selectList.push(angular.copy(tree));
+					// console.log(selectList)
+					if(cache.selectList && cache.selectList[0]){
+						// console.log(cache.selectList[0])
+						if(selectList[0].length!=cache.selectList[0].length){
+							cache.selectList=selectList;
+						}
+						if(selectList.length!=cache.selectList.length){
+							cache.selectList=selectList;
+						}
+					}else{
+						cache.selectList=selectList;
+					}
+					$scope.$apply();
+				}
+			},0)
+		}
+		
+		$scope.$watch("cache.levelList",watch_select_list,1)
+		$scope.$watch("cache.tagType.list",watch_select_list,1)
+		
 	}]
 });
