@@ -144,15 +144,6 @@ angular.module('app').component("idSearch",{
 			.then(function(){
 				$scope.cache.id_search.result[source_id].splice(index,1);
 				$scope.$apply();
-				cache.treeData.map(function(tree){
-					var index=tree[tree.length-1].list.findIndex(function(val){
-						return val.id==del.id && val.level_id==del.level_id;
-					});
-					if(index!=-1){
-						tree[tree.length-1].list[index].count--;
-					}
-				})
-				$scope.$apply();
 			})
 		}
 

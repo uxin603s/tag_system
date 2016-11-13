@@ -105,7 +105,7 @@ angular.module('app').component("tagRelationLevel",{
 					}
 				}
 				$scope.$apply();
-			},500)
+			},0)
 		},1)
 		var watch_select_list=function(){
 			if(!cache.levelList)return;
