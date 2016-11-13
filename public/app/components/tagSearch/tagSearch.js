@@ -6,14 +6,14 @@ angular.module('app').component("tagSearch",{
 		$scope.cache.tag_search || ($scope.cache.tag_search={});
 		$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
 		$scope.cache.tag_search.absoluteSearch || ($scope.cache.tag_search.absoluteSearch=[]);
-		$scope.cache.tag_search.clickSearch || ($scope.cache.tag_search.clickSearch=[]);
+		$scope.cache.clickSearch || ($scope.cache.clickSearch=[]);
 		$scope.cache.tag_search.diffSearch || ($scope.cache.tag_search.diffSearch=[]);
 		
 		var interSearch=function(){
 			clearTimeout($scope.interSearchTimer);
 			$scope.interSearchTimer=setTimeout(function(){
 				var absoluteSearch=angular.copy(cache.tag_search.absoluteSearch);
-				var clickSearch=angular.copy(cache.tag_search.clickSearch);
+				var clickSearch=angular.copy(cache.clickSearch);
 				$scope.cache.tag_search.diffSearch=[];
 				for(var i in clickSearch){
 					var index=absoluteSearch.findIndex(function(val){
@@ -34,7 +34,7 @@ angular.module('app').component("tagSearch",{
 		}
 		
 		$scope.$watch("cache.tag_search.absoluteSearch",interSearch,1)
-		$scope.$watch("cache.tag_search.clickSearch",interSearch,1)
+		$scope.$watch("cache.clickSearch",interSearch,1)
 		
 		var tag_search_id=function(){
 			clearTimeout($scope.tag_search_id_timer)

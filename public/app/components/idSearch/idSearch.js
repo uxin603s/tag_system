@@ -115,13 +115,7 @@ angular.module('app').component("idSearch",{
 				add_relation_object.child_id=item.id;
 				add_relation_object.sort_id=$scope.cache.id_search.result[source_id].length
 				
-				cache.treeData.map(function(tree){
-					var find_data=tree[tree.length-1].list.find(function(val){
-						return val.id==add_relation_object.id && val.level_id==add_relation_object.level_id;
-					});
-					if(find_data)
-						find_data.count++;
-				})
+				
 				
 				var result=yield tagRelation.add(add_relation_object);
 				
@@ -134,7 +128,7 @@ angular.module('app').component("idSearch",{
 				})
 				tagName.idToName([result]);
 				
-				tag_search_id();
+				
 				$scope.$apply();
 			}(name,source_id));
 		}
@@ -214,7 +208,7 @@ angular.module('app').component("idSearch",{
 				for(var i in select_arr){
 					var select=select_arr[i];
 				
-					var curr=angular.copy(cache.tag_search.clickSearch);
+					var curr=angular.copy(cache.clickSearch);
 					var currClickSearch=curr.filter(function(val){
 						return !val.type;
 					});
@@ -238,7 +232,7 @@ angular.module('app').component("idSearch",{
 							del.push(prevClickSearch[i].name);
 					}
 					
-					// console.log(add,del)
+					// console.log(add)
 					
 					var result=cache.id_search.result;
 					// console.log(result)
@@ -275,6 +269,6 @@ angular.module('app').component("idSearch",{
 		}
 		
 		$scope.$watch("cache.id_search.select",watch_select,1)
-		$scope.$watch("cache.tag_search.clickSearch",watch_select,1)
+		$scope.$watch("cache.clickSearch",watch_select,1)
 	}],
 })

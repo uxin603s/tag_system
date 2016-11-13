@@ -111,8 +111,13 @@ angular.module('app').component("tagRelationLevel",{
 			if(!cache.levelList)return;
 			if(!cache.tagType.list)return;
 			// console.log('watch_select_list')
+			
+			
 			clearTimeout($scope.watch_select_list_timer);
 			$scope.watch_select_list_timer=setTimeout(function(){
+				
+				if(cache.selectList)return;
+				
 				var tree=[];
 				for(var i in cache.levelList){
 					tree.push({});
@@ -149,11 +154,8 @@ angular.module('app').component("tagRelationLevel",{
 									break;
 								}
 								selectList.push(angular.copy(tree));
-								
-								
 							}
-							// console.log(cache.selectList)
-							// console.log(selectList)
+							
 							cache.selectList.splice(0,cache.selectList.length)
 							
 							for(var i in selectList){
@@ -168,17 +170,9 @@ angular.module('app').component("tagRelationLevel",{
 					
 					var selectList=[];
 					selectList.push(angular.copy(tree));
-					// console.log(selectList)
-					if(cache.selectList && cache.selectList[0]){
-						// console.log(cache.selectList[0])
-						if(selectList[0].length!=cache.selectList[0].length){
-							cache.selectList=selectList;
-						}
-						if(selectList.length!=cache.selectList.length){
-							cache.selectList=selectList;
-						}
-					}else{
-						cache.selectList=selectList;
+					cache.selectList.splice(0,cache.selectList.length)
+					for(var i in selectList){
+						cache.selectList.push(selectList[i]);
 					}
 					$scope.$apply();
 				}
