@@ -116,14 +116,15 @@ angular.module("app").component("tagRecusion",{
 			// })
 		}
 		var watch_data=function(){
-			var select=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select;
-			if(!select){
-				$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds={};
-				return;
-			}
 			clearTimeout($scope.watch_data_timer)
 			$scope.watch_data_timer=setTimeout(function(){
 				promiseRecursive(function* (){
+					var select=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select;
+					if(!select){
+						$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds={};
+						return;
+					}
+					
 					var where_list=[]
 					where_list.push({field:'level_id',type:0,value:$scope.level_id})
 					where_list.push({field:'id',type:0,value:select})
@@ -133,16 +134,15 @@ angular.module("app").component("tagRecusion",{
 					}else{
 						$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds={};
 					}
+					if($scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1]){
+						var select=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1].select;
+						var childIds=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds;
+						if(!childIds[select]){
+							delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1].select;
+						}
+					}
 					$scope.$apply();
 				}())
-				if(!cache.count[$scope.level_id][select]){
-					delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select;
-				}
-				
-				if(!cache.relation[$scope.level_id][select]){
-					if($scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1])
-					delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1].select;
-				}
 			},0)
 		}
 		$scope.$watch("cache.count["+$scope.level_id+"]",watch_data,1)

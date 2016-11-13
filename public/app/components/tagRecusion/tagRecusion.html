@@ -44,7 +44,10 @@
 		>{{cache.tagName[item.id]}}({{item.count}})
 		</button>
 	</div>
-	
+	<div class="hidden">
+	{{$ctrl.selectList[$ctrl.levelIndex].select}}
+	{{$ctrl.selectList[$ctrl.levelIndex].childIds}}
+	</div>
 	<tag-recusion
 	ng-if="
 	$ctrl.selectList[$ctrl.levelIndex] 
