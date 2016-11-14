@@ -12,12 +12,23 @@ angular.module('app').component("index",{
 			select:undefined,
 		})
 		
-		$scope.cache.mode.width=window.innerWidth
-		$scope.cache.mode.height=window.innerHeight;
+		
+		
+		
+		
 		window.onresize = function(e) {
-			$scope.cache.mode.width=window.innerWidth
-			$scope.cache.mode.height=window.innerHeight;
 			
+			clearTimeout($scope.resizeTimer)
+			$scope.resizeTimer=setTimeout(function(){
+				var w=document.documentElement.scrollWidth;
+				var h=document.documentElement.scrollHeight;
+				postMessageHelper.slave('tagSystem-resize',{
+					w:w,
+					h:h,
+				})
+				$scope.cache.mode.width=w;
+				$scope.cache.mode.height=h;
+			},500)
 			$scope.$apply();
 		};
 		var get_tree=function(levelIndex,ids){
@@ -65,10 +76,23 @@ angular.module('app').component("index",{
 		
 		$scope.$watch("cache.tag_search.result",function(value){
 			if(!value)return;
-			postMessageHelper.slave('tagSystem',value)
+			postMessageHelper.slave('tagSystem-search',value)
 		})
-		
-		
+		$scope.$watch("cache",function(value){
+			// console.log(value)
+			clearTimeout($scope.resizeTimer)
+			$scope.resizeTimer=setTimeout(function(){
+				var w=document.documentElement.scrollWidth;
+				var h=document.documentElement.scrollHeight;
+				postMessageHelper.slave('tagSystem-resize',{
+					w:w,
+					h:h,
+				})
+				$scope.cache.mode.width=w;
+				$scope.cache.mode.height=h;
+			},500)
+			
+		},1)
 		
 	}],
 })

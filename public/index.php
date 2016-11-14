@@ -6,7 +6,7 @@
 	<script src="js/angular-1.5.8.min.js?t=<?=time()?>"></script>
 	<script src="js/localForage-1.4.2.min.js?t=<?=time()?>"></script>
 	<script src="js/promiseRecursive.js?t=<?=time()?>"></script>
-	<script src="js/postMessageHelper/postMessageHelper.js?t=<?=time()?>"></script>
+	<script src="../../postMessageHelper/postMessageHelper.js?t=<?=time()?>"></script>
 	
 	<script src="app/app.js?t=<?=time()?>"></script>
 	
