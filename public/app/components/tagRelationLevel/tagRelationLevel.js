@@ -92,7 +92,7 @@ angular.module('app').component("tagRelationLevel",{
 								}
 							}else{
 								
-								if(select && last-1){
+								if(select && last){
 									var name=$scope.cache.tagName[select];
 									var index=$scope.cache.clickSearch.findIndex(function(val){
 										return val.name==name;

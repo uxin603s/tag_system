@@ -27,7 +27,7 @@
 		sortable="list"
 		index="$index"
 		
-		ng-show="cache.tagName[item.id].indexOf(search.tagName)!=-1"
+		ng-show="cache.tagName[item.id].indexOf(search.tagName)!=-1 && cache.mode.width>500"
 		ng-class="
 		$ctrl.selectList[$ctrl.levelIndex].select==item.id?
 		'btn-danger':
@@ -43,6 +43,14 @@
 		class="btn btn-sm" 
 		>{{cache.tagName[item.id]}}({{item.count}})
 		</button>
+		<select 
+		
+		ng-show="cache.mode.width<=500 && list.length"
+		ng-options="item.id as cache.tagName[item.id] for item in list"
+		ng-model="$ctrl.selectList[$ctrl.levelIndex].select"
+		>
+		<option value="">無</option>
+		</select>
 	</div>
 	<div class="hidden">
 	{{$ctrl.selectList[$ctrl.levelIndex].select}}
