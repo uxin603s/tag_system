@@ -21,7 +21,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 					for(var i in relation[id]){
 						list.push(relation[id][i]);
 					}
-					console.log("use cache")
+					// console.log("use cache")
 					return resolve({status:true,list:list})
 				}
 			}
@@ -63,7 +63,8 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 					var id=data.id;
 					var child_id=data.child_id;
 					
-					cache.count[level_id][id].count++;
+					if(cache.count[level_id][id])
+						cache.count[level_id][id].count++;
 					cache.relation[level_id] || (cache.relation[level_id]={});
 					cache.relation[level_id][id] || (cache.relation[level_id][id]={})
 					cache.relation[level_id][id][child_id]=data;
@@ -89,7 +90,8 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 					var id=data.id;
 					var child_id=data.child_id;
 					
-					cache.count[level_id][id].count--;
+					if(cache.count[level_id][id])
+						cache.count[level_id][id].count--;
 					
 					delete cache.relation[level_id][id][child_id];
 					resolve(data);

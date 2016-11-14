@@ -1,0 +1,19 @@
+{{$ctrl.sourceId}}:
+<input 
+placeholder="輸入tag_name"
+type="text" 
+ng-enter="add_relation(tag_name);tag_name='';"
+ng-model="tag_name"
+/>
+<button 
+
+draggable="true"
+sortable="$ctrl.list"
+index="$index"
+
+ng-right-click="del_relation($index)"
+class="btn btn-primary btn-sm"
+ng-repeat="item in $ctrl.list"
+>
+{{cache.tagName[item.id]}}({{item.sort_id}})
+</button>

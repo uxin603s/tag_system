@@ -89,11 +89,21 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 	}
 	
 	var idToName=function(ids){
-		return new Promise(function(resolve,reject) {
+		return new Promise(function(ids,resolve,reject) {
 			var where_list=[];
 			for(var i in ids){
-				where_list.push({field:'id',type:0,value:ids[i]})
+				if(cache.tagName[ids[i]]){
+					
+					// console.log(ids[i])
+					// console.log('use cache')
+				}else{
+					where_list.push({field:'id',type:0,value:ids[i]});
+					// console.log('no cache')
+				}
 			}
+			
+			if(!ids.length)return;
+			
 			getList(where_list)
 			.then(function(list){
 				for(var i in list){
@@ -101,9 +111,10 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 					cache.tagName[data.id]=data.name;
 				}
 				$rootScope.$apply();
+				resolve()
 			})
-			
-		})
+			resolve()
+		}.bind(this,ids))
 	}
 	return {
 		insert:insert,

@@ -26,6 +26,8 @@
 	<script src="app/components/idSearch/idSearch.js?t<?=time()?>"></script>
 	<script src="app/components/tagSearch/tagSearch.js?t<?=time()?>"></script>
 	
+	<script src="app/components/idRelation/idRelation.js?t<?=time()?>"></script>
+	
 	
 	<script src="app/directives/ngRightClick/ngRightClick.js?t<?=time()?>"></script>
 	<script src="app/directives/ngEnter/ngEnter.js?t<?=time()?>"></script>
