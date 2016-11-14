@@ -48,8 +48,11 @@ angular.module("app").component("tagRecusion",{
 			})
 			if(!$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select){
 				if($scope.list.length)
-					if($scope.cache.levelList.length-1!=$scope.$ctrl.levelIndex)
-						$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select=$scope.list[0].id;
+					if($scope.cache.levelList.length-1!=$scope.$ctrl.levelIndex){
+						if(count[$scope.list[0].id].count){
+							$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select=$scope.list[0].id;
+						}
+					}
 			}
 			$scope.watch_sort=$scope.$watch("list",function(curr,prev){
 				if(!curr)return;
