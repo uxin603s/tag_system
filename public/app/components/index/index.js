@@ -17,6 +17,7 @@ angular.module('app').component("index",{
 		window.onresize = function(e) {
 			$scope.cache.mode.width=window.innerWidth
 			$scope.cache.mode.height=window.innerHeight;
+			
 			$scope.$apply();
 		};
 		var get_tree=function(levelIndex,ids){
@@ -63,49 +64,55 @@ angular.module('app').component("index",{
 		$scope.$watch("cache.tagRelationCountList",watch_tree,1);
 		
 		
-		var pmHelp=function(source,sendData,callback){
-			if(!sendData.id)
-				sendData.id=Date.now();
-			
-			// console.log(sendData);
-			source.postMessage(sendData,"*")
+		var pmHelp=function(pack,callback){
+			if(!pack.id){
+				pack.id=Date.now();
+			}
+			var send={
+				sendData:pack.sendData,
+				id:pack.id,
+			}
+			pack.source.postMessage(send,"*");
 			window.addEventListener("message",function(e){
-				if(e.data.id==sendData.id){
-					callback && callback(e.data)
+				if(e.data.id==pack.id){
+					callback && callback(e.data.sendData)
 				}
 			},false)
+			return pack.id;
 		}
 		
 		
 		
 		window.addEventListener("message",function(e){
+			// console.log(e.data)
+			if(e.data.sendData.status==0){
+				var pack={
+					source:e.source,
+					sendData:{status:1,type:'tagSystem'},
+					id:e.data.id
+				}
+				pmHelp(pack)
+				$scope.pack={
+					source:e.source,
+					id:e.data.id
+				}
+			}
 			
-			if(e.data.status==0){
-				// console.log(e.source)
-				pmHelp(e.source,{status:1,type:'tagSystem',id:e.data.id,})
-			}
-			$scope.pm={
-				source:e.source,
-				id:e.data.id
-			}
 			watch_cache_tag_search();
 			$scope.$apply()
 		},false);
 		
 		var watch_cache_tag_search=function(){
-			// console.log('cache.tag_search')
-			if(!cache.tag_search)return
-				
-			// cache.tag_search || (cache.tag_search={})
-			// cache.tag_search.result || (cache.tag_search.result=[])
-			if($scope.pm){
-				var data=cache.tag_search.result;
-				pmHelp($scope.pm.source,{
+			// console.log(cache.tag_search)
+			if(!cache.tag_search)return;
+			if($scope.pack){
+				$scope.pack.sendData={
 					status:2,
 					type:'tagSystem',
-					data:data,
-					id:$scope.pm.id,
-				})
+					data:cache.tag_search.result,
+					id:$scope.pack.id,
+				}
+				pmHelp($scope.pack)
 			}
 		}
 		$scope.$watch("cache.tag_search.result",watch_cache_tag_search,1)
