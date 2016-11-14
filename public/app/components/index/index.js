@@ -78,8 +78,9 @@ angular.module('app').component("index",{
 			if(!value)return;
 			postMessageHelper.slave('tagSystem-search',value)
 		})
-		$scope.$watch("cache",function(value){
-			// console.log(value)
+		$scope.document=document.documentElement;
+		var watchWH=function(value){
+			
 			clearTimeout($scope.resizeTimer)
 			$scope.resizeTimer=setTimeout(function(){
 				var w=document.documentElement.scrollWidth;
@@ -90,9 +91,12 @@ angular.module('app').component("index",{
 				})
 				$scope.cache.mode.width=w;
 				$scope.cache.mode.height=h;
-			},500)
+			},50)
 			
-		},1)
+		}
+		$scope.$watch("document.scrollHeight",watchWH)
+		$scope.$watch("document.scrollWidth",watchWH)
+		
 		
 	}],
 })
