@@ -63,15 +63,9 @@ angular.module('app').component("index",{
 		$scope.$watch("cache.tagRelationList",watch_tree,1);
 		$scope.$watch("cache.tagRelationCountList",watch_tree,1);
 		
-		
-		
-
-		
 		$scope.$watch("cache.tag_search.result",function(value){
 			if(!value)return;
-			
 			postMessageHelper.slave('tagSystem',value)
-			
 		})
 		
 		
