@@ -64,58 +64,15 @@ angular.module('app').component("index",{
 		$scope.$watch("cache.tagRelationCountList",watch_tree,1);
 		
 		
-		var pmHelp=function(pack,callback){
-			if(!pack.id){
-				pack.id=Date.now();
-			}
-			var send={
-				sendData:pack.sendData,
-				id:pack.id,
-			}
-			pack.source.postMessage(send,"*");
-			window.addEventListener("message",function(e){
-				if(e.data.id==pack.id){
-					callback && callback(e.data.sendData)
-				}
-			},false)
-			return pack.id;
-		}
 		
+
 		
-		
-		window.addEventListener("message",function(e){
-			// console.log(e.data)
-			if(e.data.sendData.status==0){
-				var pack={
-					source:e.source,
-					sendData:{status:1,type:'tagSystem'},
-					id:e.data.id
-				}
-				pmHelp(pack)
-				$scope.pack={
-					source:e.source,
-					id:e.data.id
-				}
-			}
+		$scope.$watch("cache.tag_search.result",function(value){
+			if(!value)return;
 			
-			watch_cache_tag_search();
-			$scope.$apply()
-		},false);
-		
-		var watch_cache_tag_search=function(){
-			// console.log(cache.tag_search)
-			if(!cache.tag_search)return;
-			if($scope.pack){
-				$scope.pack.sendData={
-					status:2,
-					type:'tagSystem',
-					data:cache.tag_search.result,
-					id:$scope.pack.id,
-				}
-				pmHelp($scope.pack)
-			}
-		}
-		$scope.$watch("cache.tag_search.result",watch_cache_tag_search,1)
+			postMessageHelper.slave('tagSystem',value)
+			
+		})
 		
 		
 		
