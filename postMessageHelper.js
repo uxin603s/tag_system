@@ -1,5 +1,6 @@
 var postMessageHelper={
 	connect:{},
+	timer:{},
 	master:function(pack,callback){
 		if(pack.token){
 			var status=2;
@@ -37,8 +38,8 @@ var postMessageHelper={
 	slave:function(connect,sendData){
 		var self=this;
 		if(this.connect[connect]){
-			clearTimeout($scope.post_message_slave_timer);
-			$scope.post_message_slave_timer=setTimeout(function(){
+			clearTimeout(this.timer[connect]);
+			this.timer[connect]=setTimeout(function(){
 				var pack=self.connect[connect];
 				pack.sendData=sendData;
 				self.master(pack)
