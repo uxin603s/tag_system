@@ -30,11 +30,11 @@ ng-if="cache.tagType.list[cache.tagType.select]"
 ng-if="cache.tagType.list[cache.tagType.select]"
 ></web-list>
 
-
-
-
 <tag-search
-ng-if="cache.mode.select==2 && cache.tagType.list[cache.tagType.select] && cache.webList.list[cache.webList.select]"
+ng-if="
+cache.mode.select==2 
+&& cache.tagType.list[cache.tagType.select] 
+&& cache.webList.list[cache.webList.select]"
 ></tag-search>
 
 <id-search

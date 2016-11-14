@@ -17,9 +17,15 @@ angular.module('app').component("webList",{
 				if(res.status){
 					$scope.cache.webList.list=res.list;
 					if($scope.uri_wid){
-						$scope.cache.webList.select=$scope.cache.webList.list.findIndex(function(val){
+						
+						var index=$scope.cache.webList.list.findIndex(function(val){
 							return val.id==$scope.uri_wid;
 						});
+						if(index==-1){
+							alert("沒有這個網站")
+						}else{
+							$scope.cache.webList.select=index;
+						}
 						
 					}else{
 						$scope.cache.webList.select=0;

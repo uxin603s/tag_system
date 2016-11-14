@@ -12,25 +12,6 @@ angular.module('app').component("index",{
 			select:undefined,
 		})
 		
-		
-		
-		
-		
-		window.onresize = function(e) {
-			
-			clearTimeout($scope.resizeTimer)
-			$scope.resizeTimer=setTimeout(function(){
-				var w=document.documentElement.scrollWidth;
-				var h=document.documentElement.scrollHeight;
-				postMessageHelper.slave('tagSystem-resize',{
-					w:w,
-					h:h,
-				})
-				$scope.cache.mode.width=w;
-				$scope.cache.mode.height=h;
-			},500)
-			$scope.$apply();
-		};
 		var get_tree=function(levelIndex,ids){
 			if(!cache.levelList[levelIndex])return
 			var level_id=cache.levelList[levelIndex].id;
@@ -57,17 +38,11 @@ angular.module('app').component("index",{
 			if(!cache.tagRelationCountList)return;
 			if(!Object.keys(cache.tagRelationList).length)return;
 			if(!Object.keys(cache.tagRelationCountList).length)return;
-			// cache.levelList
 			clearTimeout($scope.watch_tree_timer)
 			$scope.watch_tree_timer=setTimeout(function(){
-				// console.log(cache.tagRelationCountList,cache.levelList[0])
 				var ids=Object.keys(cache.tagRelationCountList[cache.levelList[0].id]);
-				
 				var tree=get_tree(0,ids);
-				// console.log(tree)
 			},500)
-			
-			
 		}
 		
 		$scope.$watch("cache.levelList",watch_tree,1);
@@ -79,23 +54,22 @@ angular.module('app').component("index",{
 			postMessageHelper.slave('tagSystem-search',value)
 		})
 		$scope.document=document.documentElement;
-		var watchWH=function(value){
-			
+		window.onresize=function(){
 			clearTimeout($scope.resizeTimer)
 			$scope.resizeTimer=setTimeout(function(){
-				var w=document.documentElement.scrollWidth;
-				var h=document.documentElement.scrollHeight;
+				var w=$scope.document.scrollWidth;
+				var h=$scope.document.scrollHeight;
 				postMessageHelper.slave('tagSystem-resize',{
 					w:w,
 					h:h,
 				})
 				$scope.cache.mode.width=w;
 				$scope.cache.mode.height=h;
+				$scope.$apply();
 			},50)
-			
 		}
-		$scope.$watch("document.scrollHeight",watchWH)
-		$scope.$watch("document.scrollWidth",watchWH)
+		$scope.$watch("document.scrollHeight",window.onresize)
+		$scope.$watch("document.scrollWidth",window.onresize)
 		
 		
 	}],

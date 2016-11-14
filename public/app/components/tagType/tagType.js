@@ -80,10 +80,15 @@ angular.module('app').component("tagType",{
 				if(res.status){
 					$scope.cache.tagType.list=res.list;
 					if($scope.uri_tid){
-						$scope.cache.tagType.select=$scope.cache.tagType.list.findIndex(function(val){
+						
+						var index=$scope.cache.tagType.list.findIndex(function(val){
 							return val.id==$scope.uri_tid;
 						});
-						
+						if(index==-1){
+							alert("沒有這個標籤類別")
+						}else{
+							$scope.cache.tagType.select=index;
+						}
 					}else{
 						$scope.cache.tagType.select=0;
 					}
