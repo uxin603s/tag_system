@@ -4,13 +4,14 @@ angular.module("app").component("tagRecusion",{
 		select:"=",
 		selectList:"=",
 		childIds:"=",
+		lock:"=",
 	},
 	templateUrl:'app/components/tagRecusion/tagRecusion.html?t='+Date.now(),
 	controller:["$scope","cache","tagName","tagRelation","tagRelationCount",function($scope,cache,tagName,tagRelation,tagRelationCount){
 		$scope.cache=cache;
 		$scope.level_id=cache.levelList[$scope.$ctrl.levelIndex].id;
-		cache.count[$scope.level_id] || (cache.count[$scope.level_id]={})
-		cache.relation[$scope.level_id] || (cache.relation[$scope.level_id]={})
+		// cache.count[$scope.level_id] || (cache.count[$scope.level_id]={})
+		// cache.relation[$scope.level_id] || (cache.relation[$scope.level_id]={})
 		
 		if($scope.$ctrl.levelIndex){
 			$scope.p_level_id=cache.levelList[$scope.$ctrl.levelIndex-1].id;
@@ -18,6 +19,7 @@ angular.module("app").component("tagRecusion",{
 		$scope.search={tagName:''};
 		
 		var watch_list=function (){
+			console.log('watch_data')
 			$scope.watch_sort && $scope.watch_sort();
 			var childIds=$scope.$ctrl.childIds;
 			$scope.list=[];
@@ -39,7 +41,7 @@ angular.module("app").component("tagRecusion",{
 					}
 				}
 			}
-			
+			console.log(count,childIds);
 			$scope.list.sort(function(a,b){
 				return a.sort_id-b.sort_id;
 			})
@@ -99,25 +101,7 @@ angular.module("app").component("tagRecusion",{
 			},1)
 		}
 		
-		$scope.get=function(){
-			promiseRecursive(function* (){
-				var where_list=[]
-				where_list.push({field:'level_id',type:0,value:$scope.level_id})
-				var childIds=$scope.$ctrl.childIds;
-				for(var i in childIds){
-					where_list.push({field:'id',type:0,value:i})
-				}
-				var res=yield tagRelationCount.get(where_list);
-				watch_list()
-				
-				
-				$scope.$apply();
-			}())
-			// .catch(function(message){
-				// console.log(message)
-				// $scope.$apply()
-			// })
-		}
+		
 		var watch_data=function(){
 			clearTimeout($scope.watch_data_timer)
 			$scope.watch_data_timer=setTimeout(function(){
@@ -148,16 +132,39 @@ angular.module("app").component("tagRecusion",{
 				}())
 			},0)
 		}
+		alert('改寫成只讀資料')
+		watch_list();
+		// console.log(cache.count,$scope.level_id);
+		
 		$scope.$watch("cache.count["+$scope.level_id+"]",watch_data,1)
 		$scope.$watch("cache.relation["+$scope.level_id+"]",watch_data,1)
 		$scope.$watch("$ctrl.selectList["+$scope.$ctrl.levelIndex+"].select",watch_data,1);
 		
-		if($scope.$ctrl.levelIndex){
-			$scope.$watch("$ctrl.childIds",function(){
-				$scope.get();
-			},1)
-		}else{
-			$scope.get();
+		// if($scope.$ctrl.levelIndex){
+			// $scope.$watch("$ctrl.childIds",function(){
+				// $scope.get();
+			// },1)
+		// }else{
+			// $scope.get();
+		// }
+		$scope.get=function(){
+			promiseRecursive(function* (){
+				var where_list=[]
+				where_list.push({field:'level_id',type:0,value:$scope.level_id})
+				var childIds=$scope.$ctrl.childIds;
+				for(var i in childIds){
+					where_list.push({field:'id',type:0,value:i})
+				}
+				var res=yield tagRelationCount.get(where_list);
+				watch_list()
+				
+				
+				$scope.$apply();
+			}())
+			// .catch(function(message){
+				// console.log(message)
+				// $scope.$apply()
+			// })
 		}
 		$scope.add=function(){
 			promiseRecursive(function* (){

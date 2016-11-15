@@ -25,8 +25,11 @@
 	class="col-xs-12 bottom_line" 
 	ng-repeat="selectList in cache.selectList"
 >
-	<tag-recusion	
+	<tag-recusion
+	style="display:{{cache.mode.width<=500?'inline-block;':'block'}}"
+	
 	ng-if="cache.levelList.length && selectList[0]"
+	lock="cache.tagType.list[cache.tagType.select].lock_lv1"
 	select-list="selectList"
 	level-index="0"
 	></tag-recusion>
