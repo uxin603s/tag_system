@@ -49,17 +49,20 @@ angular.module('app').component("index",{
 		$scope.$watch("cache.tagRelationList",watch_tree,1);
 		$scope.$watch("cache.tagRelationCountList",watch_tree,1);
 		
+		postMessageHelper.receive("tagSystem-search")
+		postMessageHelper.receive("tagSystem-resize")
 		$scope.$watch("cache.tag_search.result",function(value){
 			if(!value)return;
-			postMessageHelper.slave('tagSystem-search',value)
+			postMessageHelper.send('tagSystem-search',value)
 		})
 		$scope.document=document.documentElement;
 		window.onresize=function(){
+			
 			clearTimeout($scope.resizeTimer)
 			$scope.resizeTimer=setTimeout(function(){
 				var w=$scope.document.scrollWidth;
 				var h=$scope.document.scrollHeight;
-				postMessageHelper.slave('tagSystem-resize',{
+				postMessageHelper.send('tagSystem-resize',{
 					w:w,
 					h:h,
 				})

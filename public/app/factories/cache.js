@@ -14,11 +14,8 @@ angular.module('app').factory('cache',['$rootScope',function($rootScope){
 			}
 		}
 		setInterval(function(){
-			
 			cache.cache_time=Math.floor(Date.now()/1000);
-			// console.log(cache.cache_time)
 			localforage.setItem(location.pathname+"cache",angular.copy(cache));
-			// $rootScope.$apply();
 		},500)
 	});
 	return cache.data;

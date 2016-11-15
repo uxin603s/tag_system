@@ -14,12 +14,14 @@
 	style="display:inline-block;" 
 	ng-show="!$ctrl.lock && list.length"
 >
+
 	<input 
 	ng-show="cache.mode.select==1"
 	type="text" 
 	ng-model="search.tagName"
-	ng-enter="add()"
+	ng-enter="add($ctrl.levelIndex,$ctrl.select,search,$ctrl.childIds)"
 	/>
+	
 	<button
 	draggable="true"
 	sortable="list"
@@ -36,7 +38,7 @@
 	$ctrl.selectList[$ctrl.levelIndex].select=undefined:
 	$ctrl.selectList[$ctrl.levelIndex].select=item.id
 	"
-	ng-right-click="del($index)"
+	ng-right-click="del($ctrl.levelIndex,$ctrl.select,item.id)"
 	ng-repeat="item in list"
 	class="btn btn-sm" 
 	>{{cache.tagName[item.id]}}({{item.count}})
@@ -50,7 +52,7 @@
 	<option value="">無</option>
 	</select>
 </div>
-
+{{list}}
 <div class="hidden">
 {{$ctrl.selectList[$ctrl.levelIndex].select}}
 {{$ctrl.selectList[$ctrl.levelIndex].childIds}}
@@ -69,5 +71,7 @@ select-list="$ctrl.selectList"
 select="$ctrl.selectList[$ctrl.levelIndex].select"
 child-ids="$ctrl.selectList[$ctrl.levelIndex].childIds"
 level-index="$ctrl.levelIndex+1"
+func="$ctrl.func"
 ></tag-recusion>
+
 
