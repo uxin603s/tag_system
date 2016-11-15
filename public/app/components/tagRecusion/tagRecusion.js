@@ -51,14 +51,8 @@ angular.module("app").component("tagRecusion",{
 				
 			}
 			if($scope.$ctrl.func){
-				$scope.watch_sort=$scope.$watch("list",
-				$scope.$ctrl.func
-				.sort.bind(
-					this,
-					$scope.$ctrl.levelIndex,
-					$scope.$ctrl.select
-				)
-				,1)
+				var sort=$scope.$ctrl.func.sort.bind(this,$scope.$ctrl.levelIndex,$scope.$ctrl.select)
+				$scope.watch_sort=$scope.$watch("list",sort,1)
 			}
 			
 			if(!$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select){
@@ -90,21 +84,20 @@ angular.module("app").component("tagRecusion",{
 					delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select;
 				}
 			}
-			$scope.$ctrl.func && 
-			$scope.$ctrl.func
-			.get_count($scope.$ctrl.levelIndex,$scope.$ctrl.childIds);
+			if($scope.$ctrl.func)
+				$scope.$ctrl.func.get_count($scope.$ctrl.levelIndex,$scope.$ctrl.childIds);
 		},1);
 		$scope.$watch("$ctrl.selectList["+$scope.$ctrl.levelIndex+"].select",function(select){
-			$scope.$ctrl.func 
-			&& $scope.$ctrl.func
-			.get_relation($scope.$ctrl.levelIndex,select);
+			if($scope.$ctrl.func)
+				$scope.$ctrl.func.get_relation($scope.$ctrl.levelIndex,select);
+			
 			get_child($scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select)
 		},1);
 		
 		$scope.$watch("cache.count["+$scope.level_id+"]",function(count){
 			get_list();
 		},1);
-		$scope.$watch("cache.relation["+$scope.level_id+"]",function(count){
+		$scope.$watch("cache.relation["+$scope.level_id+"]",function(){
 			get_child($scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select)
 		},1);
 		
