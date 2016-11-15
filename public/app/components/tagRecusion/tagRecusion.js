@@ -11,9 +11,6 @@ angular.module("app").component("tagRecusion",{
 	controller:["$scope","cache",function($scope,cache){
 		$scope.cache=cache;
 		$scope.level_id=cache.levelList[$scope.$ctrl.levelIndex].id;		
-		if($scope.$ctrl.levelIndex){
-			$scope.p_level_id=cache.levelList[$scope.$ctrl.levelIndex-1].id;
-		}
 		
 		$scope.search={tagName:''};
 		
