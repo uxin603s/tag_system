@@ -9,22 +9,19 @@ angular.module("app").component("tagRecusion",{
 	templateUrl:'app/components/tagRecusion/tagRecusion.html?t='+Date.now(),
 	controller:["$scope","cache","tagName","tagRelation","tagRelationCount",function($scope,cache,tagName,tagRelation,tagRelationCount){
 		$scope.cache=cache;
-		$scope.level_id=cache.levelList[$scope.$ctrl.levelIndex].id;
-		// cache.count[$scope.level_id] || (cache.count[$scope.level_id]={})
-		// cache.relation[$scope.level_id] || (cache.relation[$scope.level_id]={})
-		
+		$scope.level_id=cache.levelList[$scope.$ctrl.levelIndex].id;		
 		if($scope.$ctrl.levelIndex){
 			$scope.p_level_id=cache.levelList[$scope.$ctrl.levelIndex-1].id;
 		}
+		
 		$scope.search={tagName:''};
 		
-		var watch_list=function (){
-			console.log('watch_data')
+		var get_list=function(){
 			$scope.watch_sort && $scope.watch_sort();
 			var childIds=$scope.$ctrl.childIds;
 			$scope.list=[];
 			var count=cache.count[$scope.level_id];
-			
+			if(!count)return
 			if(childIds){
 				for(var i in childIds){
 					if(count[i]){
@@ -41,7 +38,7 @@ angular.module("app").component("tagRecusion",{
 					}
 				}
 			}
-			console.log(count,childIds);
+			// console.log(count,childIds);
 			$scope.list.sort(function(a,b){
 				return a.sort_id-b.sort_id;
 			})
@@ -100,54 +97,15 @@ angular.module("app").component("tagRecusion",{
 			
 			},1)
 		}
-		
-		
-		var watch_data=function(){
-			clearTimeout($scope.watch_data_timer)
-			$scope.watch_data_timer=setTimeout(function(){
-				promiseRecursive(function* (){
-					var select=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select;
-					if(!select){
-						$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds={};
-						return;
-					}
-					
-					var where_list=[]
-					where_list.push({field:'level_id',type:0,value:$scope.level_id})
-					where_list.push({field:'id',type:0,value:select})
-					var res=yield tagRelation.get(where_list);
-					if(res.status){
-						$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds=cache.relation[$scope.level_id][select];
-					}else{
-						$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds={};
-					}
-					if($scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1]){
-						var select=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1].select;
-						var childIds=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds;
-						if(!childIds[select]){
-							delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1].select;
-						}
-					}
-					$scope.$apply();
-				}())
-			},0)
+		var get_child=function(select){
+			if(cache.relation[$scope.level_id][select]){
+				$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds=cache.relation[$scope.level_id][select];
+			}else{
+				$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds={};
+			}
 		}
-		alert('改寫成只讀資料')
-		watch_list();
-		// console.log(cache.count,$scope.level_id);
 		
-		$scope.$watch("cache.count["+$scope.level_id+"]",watch_data,1)
-		$scope.$watch("cache.relation["+$scope.level_id+"]",watch_data,1)
-		$scope.$watch("$ctrl.selectList["+$scope.$ctrl.levelIndex+"].select",watch_data,1);
-		
-		// if($scope.$ctrl.levelIndex){
-			// $scope.$watch("$ctrl.childIds",function(){
-				// $scope.get();
-			// },1)
-		// }else{
-			// $scope.get();
-		// }
-		$scope.get=function(){
+		var get_count=function(){
 			promiseRecursive(function* (){
 				var where_list=[]
 				where_list.push({field:'level_id',type:0,value:$scope.level_id})
@@ -156,16 +114,40 @@ angular.module("app").component("tagRecusion",{
 					where_list.push({field:'id',type:0,value:i})
 				}
 				var res=yield tagRelationCount.get(where_list);
-				watch_list()
-				
+				$scope.$apply();
+			}())
+		}
+		
+		var get_relation=function(select){
+			promiseRecursive(function* (){
+				var where_list=[]
+				where_list.push({field:'level_id',type:0,value:$scope.level_id})
+				where_list.push({field:'id',type:0,value:select})
+				var res=yield tagRelation.get(where_list);
 				
 				$scope.$apply();
 			}())
-			// .catch(function(message){
-				// console.log(message)
-				// $scope.$apply()
-			// })
 		}
+		$scope.$watch("$ctrl.childIds",function(){
+			get_count();
+			get_list();
+			if($scope.$ctrl.levelIndex){
+				var select=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select;
+				var childIds=$scope.$ctrl.childIds;
+				if(!childIds[select]){
+					delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select;
+				}
+			}
+		},1);
+		$scope.$watch("$ctrl.selectList["+$scope.$ctrl.levelIndex+"].select",function(select){
+			get_relation(select);
+			get_child(select)
+		},1);
+		$scope.$watch("cache.count["+$scope.level_id+"]",function(count){
+			get_list();
+		},1);
+		get_list();
+		
 		$scope.add=function(){
 			promiseRecursive(function* (){
 				if(!$scope.search.tagName){
@@ -184,32 +166,24 @@ angular.module("app").component("tagRecusion",{
 							level_id:$scope.p_level_id,
 							id:$scope.$ctrl.select,
 							child_id:child_id,
-							sort_id:Object.keys($scope.$ctrl.childIds).length,
+							sort_id:$scope.$ctrl.childIds?Object.keys($scope.$ctrl.childIds).length:0,
 						}
 						yield tagRelation.add(add);
 					}
 				}
-				cache.count[$scope.level_id] || (cache.count[$scope.level_id]={})
 				var add={
 					level_id:$scope.level_id,
 					id:child_id,
 					count:0,
-					sort_id:Object.keys(cache.count[$scope.level_id]).length,
+					sort_id:cache.count[$scope.level_id]?Object.keys(cache.count[$scope.level_id]).length:0,
 				}
 				yield tagRelationCount.add(add);
-				watch_list();
-				// $scope.get();
+				
 				$scope.search.tagName='';
 				$scope.$apply();
 			}())
-			// .catch(function(message){
-				// console.log(message)
-			// })
 		}
 		$scope.del=function(index){
-			// if(!confirm("確認刪除?")){
-				// return;
-			// }
 			promiseRecursive(function* (index){
 				var child_id=$scope.list[index].id
 				if($scope.$ctrl.levelIndex){//第一層沒有關聯;
@@ -228,11 +202,8 @@ angular.module("app").component("tagRecusion",{
 				if(!result.status && $scope.$ctrl.levelIndex){
 					yield tagRelation.add(relation_del);
 				}
-				watch_list();
 				$scope.$apply();
-				
 			}(index));
 		}
-		
 	}]
 });
