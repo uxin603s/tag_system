@@ -3,14 +3,6 @@ angular.module('app').component("index",{
 	templateUrl:'app/components/index/index.html?t='+Date.now(),
 	controller:['$scope','cache',function($scope,cache){
 		$scope.cache=cache;
-		$scope.cache.mode || ($scope.cache.mode={
-			list:[
-				{select:1,name:'階層編輯'},
-				{select:2,name:'標籤搜尋'},
-				{select:3,name:'關聯編輯'},
-			],
-			select:undefined,
-		})
 		
 		var get_tree=function(levelIndex,ids){
 			if(!cache.levelList[levelIndex])return
@@ -57,23 +49,21 @@ angular.module('app').component("index",{
 		})
 		$scope.document=document.documentElement;
 		window.onresize=function(){
-			
 			clearTimeout($scope.resizeTimer)
 			$scope.resizeTimer=setTimeout(function(){
-				var w=$scope.document.scrollWidth;
-				var h=$scope.document.scrollHeight;
+				cache.width=$scope.document.scrollWidth;
+				cache.height=$scope.document.scrollHeight;
 				postMessageHelper.send('tagSystem-resize',{
-					w:w,
-					h:h,
+					w:cache.width,
+					h:cache.height,
 				})
-				$scope.cache.mode.width=w;
-				$scope.cache.mode.height=h;
+				// console.log(cache.height);
 				$scope.$apply();
 			},50)
 		}
-		$scope.$watch("document.scrollHeight",window.onresize)
-		$scope.$watch("document.scrollWidth",window.onresize)
-		
+		$scope.$watch("document.scrollWidth",window.onresize);
+		$scope.$watch("document.scrollHeight",window.onresize);
+		$scope.$watch("cache.editMode",window.onresize);
 		
 	}],
 })

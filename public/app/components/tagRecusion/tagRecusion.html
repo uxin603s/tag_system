@@ -1,15 +1,17 @@
 <div
-ng-if="$ctrl.selectListCollect"
 ng-repeat="selectList in $ctrl.selectListCollect"
 >
 	<tag-recusion
+	class="bottom_line"
 	style="display:{{$ctrl.mode?'inline-block;':'block'}}"
 	ng-if="
 	selectList[$ctrl.levelIndex] 
+	&&
+	selectList.length==cache.levelList.length
 	"
 	
 	select-list="selectList"
-	lock="$ctrl.selectListCollect.length==1?0:1"
+	lock-lv1="$ctrl.lockLv1"
 	level-index="$ctrl.levelIndex"
 	func="$ctrl.func"
 	mode="$ctrl.mode"
@@ -21,7 +23,7 @@ ng-if="!$ctrl.selectListCollect"
 >
 	<div 
 		style="display:inline-block;" 
-		ng-show="$ctrl.lock && list.length"
+		ng-show="$ctrl.lockLv1 && list.length"
 	>
 		<button
 		class="btn btn-sm btn-primary"
@@ -30,18 +32,18 @@ ng-if="!$ctrl.selectListCollect"
 		({{cache.count[level_id][$ctrl.selectList[$ctrl.levelIndex].select].count}})
 		</button>
 	</div>
-
+	
+	<input 
+	ng-show="cache.editMode && !$ctrl.lockLv1"
+	type="text" 
+	ng-model="search.tagName"
+	ng-enter="$ctrl.func.add($ctrl.levelIndex,$ctrl.select,search,$ctrl.childIds)"
+	/>
+	
 	<div 
 		style="display:inline-block;" 
-		ng-show="!$ctrl.lock "
+		ng-show="!$ctrl.lockLv1 && list.length"
 	>
-	
-		<input 
-		ng-show="cache.mode.select==1"
-		type="text" 
-		ng-model="search.tagName"
-		ng-enter="$ctrl.func.add($ctrl.levelIndex,$ctrl.select,search,$ctrl.childIds)"
-		/>
 
 		<button
 		draggable="true"
@@ -83,6 +85,7 @@ ng-if="!$ctrl.selectListCollect"
 	{{$ctrl.selectList[$ctrl.levelIndex].select}}
 	{{$ctrl.selectList[$ctrl.levelIndex].childIds}}
 	</div>
+	
 	<tag-recusion
 	style="display:{{$ctrl.mode?'inline-block;':'block'}}"
 	ng-if="
@@ -90,8 +93,10 @@ ng-if="!$ctrl.selectListCollect"
 	cache.levelList[$ctrl.levelIndex+1] &&
 	$ctrl.selectList[$ctrl.levelIndex].childIds &&
 	list.length
+	&&
+	$ctrl.selectList.length==cache.levelList.length
 	"
-
+	
 	select-list="$ctrl.selectList"
 	select="$ctrl.selectList[$ctrl.levelIndex].select"
 	child-ids="$ctrl.selectList[$ctrl.levelIndex].childIds"

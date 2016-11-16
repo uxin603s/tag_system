@@ -1,5 +1,6 @@
 
 <button
+class="hidden"
 ng-click="cache.mode.select==item.select?cache.mode.select=undefined:cache.mode.select=item.select"
 ng-class="cache.mode.select==item.select?'btn-danger':'btn-primary'"
 class="btn btn-sm"
@@ -16,13 +17,20 @@ ng-if="cache.tagType.list[cache.tagType.select]"
 ng-if="cache.tagType.list[cache.tagType.select]"
 ></web-list>
 
-<tag-search
-ng-if="
-cache.mode.select==2 
-&& cache.tagType.list[cache.tagType.select] 
-&& cache.webList.list[cache.webList.select]"
-></tag-search>
+<div ng-show="cache.editMode" >
+	<tag-search
+	ng-if="
+	cache.tagType.list[cache.tagType.select] 
+	&& 
+	cache.webList.list[cache.webList.select]
+	"
+	></tag-search>
 
-<id-search
-ng-if="cache.mode.select==3 && cache.tagType.list[cache.tagType.select] && cache.webList.list[cache.webList.select]"
-></id-search>
+	<id-search
+	ng-if="
+	cache.tagType.list[cache.tagType.select] 
+	&& 
+	cache.webList.list[cache.webList.select]
+	"
+	></id-search>
+</div>

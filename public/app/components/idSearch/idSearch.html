@@ -21,13 +21,15 @@
 	</div>
 	<div>
 		<button 
-		ng-if="!item.type"
+		
+		ng-if="0 && !item.type"
 		ng-right-click=""
 		ng-repeat="item in cache.clickSearch"
-		class="btn btn-default btn-sm"
+		class="btn btn-default btn-sm "
 		>{{item.name}}</button>
 	</div>
-		
+	
+	
 	<id-relation
 	style="display:block;"
 	ng-repeat="source_id in cache.id_search.search "

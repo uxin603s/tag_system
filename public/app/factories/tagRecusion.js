@@ -2,28 +2,34 @@ angular.module('app').factory('tagRecusion',
 ['$rootScope','cache','tagRelation','tagRelationCount','tagName',
 function($rootScope,cache,tagRelation,tagRelationCount,tagName){
 	var get_count=function(levelIndex,childIds){
-		promiseRecursive(function* (){
-			var where_list=[]
-			where_list.push({field:'level_id',type:0,value:cache.levelList[levelIndex].id})
-			for(var i in childIds){
-				where_list.push({field:'id',type:0,value:i})
-			}
-			var res=yield tagRelationCount.get(where_list);
-			$rootScope.$apply();
-		}())
+		return new Promise(function(resolve,reject){
+			promiseRecursive(function* (){
+				var where_list=[]
+				where_list.push({field:'level_id',type:0,value:cache.levelList[levelIndex].id})
+				for(var i in childIds){
+					where_list.push({field:'id',type:0,value:i})
+				}
+				var res=yield tagRelationCount.get(where_list);
+				$rootScope.$apply();
+				resolve(res)
+			}())
+		})
 	}
-	var get_relation=function(levelIndex,select,callback){
-		promiseRecursive(function* (){
-			var where_list=[]
-			where_list.push({field:'level_id',type:0,value:cache.levelList[levelIndex].id})
-			where_list.push({field:'id',type:0,value:select})
-			var res=yield tagRelation.get(where_list);
-			callback && callback()
-			$rootScope.$apply();
-		}())
+	var get_relation=function(levelIndex,select){
+		return new Promise(function(resolve,reject){
+			return promiseRecursive(function* (){
+				var where_list=[]
+				where_list.push({field:'level_id',type:0,value:cache.levelList[levelIndex].id})
+				where_list.push({field:'id',type:0,value:select})
+				var res=yield tagRelation.get(where_list);
+				
+				$rootScope.$apply();
+				resolve(res);
+			}())
+		})
 	}
 	var add=function(levelIndex,select,search,childIds){
-		promiseRecursive(function* (){
+		return promiseRecursive(function* (){
 			var level_id=cache.levelList[levelIndex].id
 			if(!search.tagName){
 				yield Promise.reject("沒有設定標籤");
@@ -59,8 +65,7 @@ function($rootScope,cache,tagRelation,tagRelationCount,tagName){
 		}())
 	}
 	var del=function(levelIndex,select,child_id){
-		promiseRecursive(function* (){
-			// var child_id=$rootScope.list[index].id
+		return promiseRecursive(function* (){
 			if(levelIndex){//第一層沒有關聯;
 				var relation_del={
 					level_id:cache.levelList[levelIndex-1].id,

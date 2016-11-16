@@ -78,14 +78,14 @@ angular.module('app').component("idSearch",{
 			var source_id=$scope.cache.id_search.search.splice(index,1).pop();
 			delete $scope.cache.id_search.result[source_id];
 		}
-		$scope.select_id_search=function(item){
-			var index=cache.id_search.select.indexOf(item);
-			if(index==-1){
-				cache.id_search.select.push(item)
-			}else{
-				cache.id_search.select.splice(index,1)
-			}
-		}
+		// $scope.select_id_search=function(item){
+			// var index=cache.id_search.select.indexOf(item);
+			// if(index==-1){
+				// cache.id_search.select.push(item)
+			// }else{
+				// cache.id_search.select.splice(index,1)
+			// }
+		// }
 
 		
 	}],

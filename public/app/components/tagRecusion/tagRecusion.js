@@ -6,7 +6,7 @@ angular.module("app").component("tagRecusion",{
 		selectListCollect:"=",
 		
 		childIds:"=",
-		lock:"=",
+		lockLv1:"=",
 		mode:"=",
 		
 		func:"=",
@@ -56,7 +56,7 @@ angular.module("app").component("tagRecusion",{
 				var sort=$scope.$ctrl.func.sort.bind(this,$scope.$ctrl.levelIndex,$scope.$ctrl.select)
 				$scope.watch_sort=$scope.$watch("list",sort,1)
 			}
-			
+			// console.log($scope.$ctrl.selectList[$scope.$ctrl.levelIndex],$scope.$ctrl.levelIndex)
 			if($scope.$ctrl.selectList)
 			if(!$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select){
 				if($scope.list.length)
@@ -87,8 +87,10 @@ angular.module("app").component("tagRecusion",{
 					delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select;
 				}
 			}
-			if($scope.$ctrl.func)
+			if($scope.$ctrl.func){
+				// console.log($scope.$ctrl.levelIndex)
 				$scope.$ctrl.func.get_count($scope.$ctrl.levelIndex,$scope.$ctrl.childIds);
+			}
 		},1);
 		
 		if($scope.$ctrl.selectList){
@@ -112,9 +114,12 @@ angular.module("app").component("tagRecusion",{
 				clearTimeout($scope.watch_selectListCollect);
 				$scope.watch_selectListCollect=setTimeout(function(){
 					$scope.$ctrl.clickSearch.splice(0,$scope.$ctrl.clickSearch.length);
+					
 					for(var i in $scope.$ctrl.selectListCollect){
 						var selectList=angular.copy($scope.$ctrl.selectListCollect[i]);
+						if(selectList.length!=cache.levelList.length)continue;
 						var last=cache.levelList.length-1;
+						
 						var select=selectList[last].select;
 						if(select){
 							var name=cache.tagName[select];
@@ -164,6 +169,86 @@ angular.module("app").component("tagRecusion",{
 			$scope.$watch("$ctrl.selectListCollect",watch_selectListCollect,1)
 			$scope.$watch("cache.relation",watch_selectListCollect,1)
 			$scope.$watch("cache.tagName",watch_selectListCollect,1)
+			
+			var watch_select_list=function(){
+				
+				clearTimeout($scope.watch_select_list_timer);
+				$scope.watch_select_list_timer=setTimeout(function(){
+					if($scope.$ctrl.lockLv1){
+						promiseRecursive(function* (){
+							var level_id=cache.levelList[0].id
+							var res=yield $scope.$ctrl.func.get_count(0);
+							// console.log(res.list)//cache.count[level_id],
+							if(res.status){
+								var list=res.list.sort(function(a,b){
+									return a.sort_id-b.sort_id;
+								})
+								
+								// cache.count[level_id];
+								var cut=$scope.$ctrl.selectListCollect.length-list.length
+								
+								if(cut>0){
+									$scope.$ctrl.selectListCollect.splice(list.length,cut);
+								}
+								if(cut<0){
+									$scope.$ctrl.selectListCollect.splice(0,$scope.$ctrl.selectListCollect.length);
+								}
+								// console.log(list)
+								for(var i in list){
+									var select=list[i].id
+									if(!$scope.$ctrl.selectListCollect[i]){
+										$scope.$ctrl.selectListCollect.push([])
+									}
+									for(var j in cache.levelList){
+										if($scope.$ctrl.selectListCollect[i][j]){
+											// $scope.$ctrl.selectListCollect[i][j].select
+											if(!$scope.$ctrl.selectListCollect[i][j].select){
+												if(j==0){
+													$scope.$ctrl.selectListCollect[i][j].select=select;
+													var res=yield $scope.$ctrl.func.get_relation(j,select);
+													
+													if(res.status){
+														var childIds=cache.relation[level_id][select]
+													}else{
+														var childIds={};
+													}
+													
+													$scope.$ctrl.selectListCollect[i][j].select=select
+													$scope.$ctrl.selectListCollect[i][j].childIds=childIds
+												}
+											}
+										
+										}else{
+											var res=yield $scope.$ctrl.func.get_relation(j,select);
+											
+											if(res.status){
+												var childIds=cache.relation[level_id][select]
+											}else{
+												var childIds={};
+											}
+											$scope.$ctrl.selectListCollect[i].push({select:select,childIds:childIds})
+										}
+										
+									}
+								}
+								$scope.$apply();
+							}
+						}())
+					}else{
+						$scope.$ctrl.selectListCollect.splice(1,$scope.$ctrl.selectListCollect.length)
+						if(!$scope.$ctrl.selectListCollect[0]){
+							$scope.$ctrl.selectListCollect[0]=[];
+						}
+						for(var i in cache.levelList){
+							if(!$scope.$ctrl.selectListCollect[0][i]){
+								$scope.$ctrl.selectListCollect[0].push({})
+							}
+						}
+						$scope.$apply();
+					}
+				},500)
+			}
+			$scope.$watch("$ctrl.lockLv1",watch_select_list)
 		}
 	}]
 });
