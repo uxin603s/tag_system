@@ -51,7 +51,9 @@ angular.module('app').factory('tagRelationCount',['$rootScope','cache','tagName'
 						cache.count[level_id] || (cache.count[level_id]={});
 						cache.count[level_id][id]=data;
 					}
-					tagName.idToName(ids);
+					
+					tagName.idToName(ids)
+					
 					$rootScope.$apply();
 				}
 				resolve(res)

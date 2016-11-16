@@ -3,9 +3,14 @@ angular.module("app").component("tagRecusion",{
 		levelIndex:"=",
 		select:"=",
 		selectList:"=",
+		selectListCollect:"=",
+		
 		childIds:"=",
 		lock:"=",
+		mode:"=",
+		
 		func:"=",
+		clickSearch:"=",
 	},
 	templateUrl:'app/components/tagRecusion/tagRecusion.html?t='+Date.now(),
 	controller:["$scope","cache",function($scope,cache){
@@ -52,6 +57,7 @@ angular.module("app").component("tagRecusion",{
 				$scope.watch_sort=$scope.$watch("list",sort,1)
 			}
 			
+			if($scope.$ctrl.selectList)
 			if(!$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select){
 				if($scope.list.length)
 					if($scope.cache.levelList.length-1!=$scope.$ctrl.levelIndex){
@@ -74,7 +80,7 @@ angular.module("app").component("tagRecusion",{
 		
 		$scope.$watch("$ctrl.childIds",function(){
 			get_list();
-			if($scope.$ctrl.levelIndex){
+			if($scope.$ctrl.levelIndex && $scope.$ctrl.childIds){
 				var select=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select;
 				var childIds=$scope.$ctrl.childIds;
 				if(!childIds[select]){
@@ -84,19 +90,80 @@ angular.module("app").component("tagRecusion",{
 			if($scope.$ctrl.func)
 				$scope.$ctrl.func.get_count($scope.$ctrl.levelIndex,$scope.$ctrl.childIds);
 		},1);
-		$scope.$watch("$ctrl.selectList["+$scope.$ctrl.levelIndex+"].select",function(select){
-			if($scope.$ctrl.func)
-				$scope.$ctrl.func.get_relation($scope.$ctrl.levelIndex,select);
-			
-			get_child($scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select)
-		},1);
+		
+		if($scope.$ctrl.selectList){
+			$scope.$watch("$ctrl.selectList["+$scope.$ctrl.levelIndex+"].select",function(select){
+				if($scope.$ctrl.func)
+					$scope.$ctrl.func.get_relation($scope.$ctrl.levelIndex,select);
+				
+				get_child($scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select)
+			},1);
+			$scope.$watch("cache.relation["+$scope.level_id+"]",function(){
+				get_child($scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select)
+			},1);
+		}
 		
 		$scope.$watch("cache.count["+$scope.level_id+"]",function(count){
 			get_list();
 		},1);
-		$scope.$watch("cache.relation["+$scope.level_id+"]",function(){
-			get_child($scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select)
-		},1);
 		
+		if($scope.$ctrl.selectListCollect){
+			var watch_selectListCollect=function(){
+				clearTimeout($scope.watch_selectListCollect);
+				$scope.watch_selectListCollect=setTimeout(function(){
+					$scope.$ctrl.clickSearch.splice(0,$scope.$ctrl.clickSearch.length);
+					for(var i in $scope.$ctrl.selectListCollect){
+						var selectList=angular.copy($scope.$ctrl.selectListCollect[i]);
+						var last=cache.levelList.length-1;
+						var select=selectList[last].select;
+						if(select){
+							var name=cache.tagName[select];
+							if(name){
+								var index=$scope.$ctrl.clickSearch.findIndex(function(val){
+									return val.name==name;
+								})
+								if(index==-1)
+									$scope.$ctrl.clickSearch.push({name:name});
+							}
+						}else{		
+							var p_last_level_id=cache.levelList[last-1].id;
+							var select=selectList[last-1].select;
+							if(cache.relation[p_last_level_id]){
+								var list=cache.relation[p_last_level_id][select];
+									
+								if(list && Object.keys(list).length){
+									
+									for(var id in list){
+										var name=cache.tagName[id];
+										// console.log(cache.tagName,id,name)
+										if(name){
+											var index=$scope.$ctrl.clickSearch.findIndex(function(val){
+												return val.name==name;
+											})
+											if(index==-1)
+												$scope.$ctrl.clickSearch.push({name:name,type:1});
+										}
+									}
+								}else{
+									
+									if(select && last){
+										var name=$scope.cache.tagName[select];
+										var index=$scope.$ctrl.clickSearch.findIndex(function(val){
+											return val.name==name;
+										})
+										if(index==-1)
+											$scope.$ctrl.clickSearch.push({name:name});
+									}
+								}
+							}
+						}
+					}
+					$scope.$apply();
+				},50)
+			}
+			$scope.$watch("$ctrl.selectListCollect",watch_selectListCollect,1)
+			$scope.$watch("cache.relation",watch_selectListCollect,1)
+			$scope.$watch("cache.tagName",watch_selectListCollect,1)
+		}
 	}]
 });

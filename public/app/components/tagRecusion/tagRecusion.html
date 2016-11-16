@@ -1,77 +1,110 @@
-<div 
-	style="display:inline-block;" 
-	ng-show="$ctrl.lock && list.length"
+<div
+ng-if="$ctrl.selectListCollect"
+ng-repeat="selectList in $ctrl.selectListCollect"
 >
-	<button
-	class="btn btn-sm btn-primary"
-	>
-	{{cache.tagName[$ctrl.selectList[$ctrl.levelIndex].select]}}
-	({{cache.count[level_id][$ctrl.selectList[$ctrl.levelIndex].select].count}})
-	</button>
+	<tag-recusion
+	style="display:{{$ctrl.mode?'inline-block;':'block'}}"
+	ng-if="
+	selectList[$ctrl.levelIndex] 
+	"
+	
+	select-list="selectList"
+	lock="$ctrl.selectListCollect.length==1?0:1"
+	level-index="$ctrl.levelIndex"
+	func="$ctrl.func"
+	mode="$ctrl.mode"
+	></tag-recusion>
 </div>
 
-<div 
-	style="display:inline-block;" 
-	ng-show="!$ctrl.lock && list.length"
+<div
+ng-if="!$ctrl.selectListCollect"
 >
-
-	<input 
-	ng-show="cache.mode.select==1"
-	type="text" 
-	ng-model="search.tagName"
-	ng-enter="add($ctrl.levelIndex,$ctrl.select,search,$ctrl.childIds)"
-	/>
-	
-	<button
-	draggable="true"
-	sortable="list"
-	index="$index"
-	
-	ng-show="cache.tagName[item.id].indexOf(search.tagName)!=-1 && cache.mode.width>500"
-	ng-class="
-	$ctrl.selectList[$ctrl.levelIndex].select==item.id?
-	'btn-danger':
-	'btn-primary'
-	"
-	ng-click="
-	$ctrl.selectList[$ctrl.levelIndex].select==item.id?
-	$ctrl.selectList[$ctrl.levelIndex].select=undefined:
-	$ctrl.selectList[$ctrl.levelIndex].select=item.id
-	"
-	ng-right-click="del($ctrl.levelIndex,$ctrl.select,item.id)"
-	ng-repeat="item in list"
-	class="btn btn-sm" 
-	>{{cache.tagName[item.id]}}({{item.count}})
-	</button>
-	<select 
-	
-	ng-show="cache.mode.width<=500 && list.length"
-	ng-options="item.id as cache.tagName[item.id] for item in list"
-	ng-model="$ctrl.selectList[$ctrl.levelIndex].select"
+	<div 
+		style="display:inline-block;" 
+		ng-show="$ctrl.lock && list.length"
 	>
-	<option value="">無</option>
-	</select>
-</div>
-{{list}}
-<div class="hidden">
-{{$ctrl.selectList[$ctrl.levelIndex].select}}
-{{$ctrl.selectList[$ctrl.levelIndex].childIds}}
+		<button
+		class="btn btn-sm btn-primary"
+		>
+		{{cache.tagName[$ctrl.selectList[$ctrl.levelIndex].select]}}
+		({{cache.count[level_id][$ctrl.selectList[$ctrl.levelIndex].select].count}})
+		</button>
+	</div>
+
+	<div 
+		style="display:inline-block;" 
+		ng-show="!$ctrl.lock "
+	>
+	
+		<input 
+		ng-show="cache.mode.select==1"
+		type="text" 
+		ng-model="search.tagName"
+		ng-enter="$ctrl.func.add($ctrl.levelIndex,$ctrl.select,search,$ctrl.childIds)"
+		/>
+
+		<button
+		draggable="true"
+		sortable="list"
+		index="$index"
+
+		ng-show="
+		cache.tagName[item.id].indexOf(search.tagName)!=-1 
+		&& 
+		!$ctrl.mode
+		"
+		ng-class="
+		$ctrl.selectList[$ctrl.levelIndex].select==item.id?
+		'btn-danger':
+		'btn-primary'
+		"
+		ng-click="
+		$ctrl.selectList[$ctrl.levelIndex].select==item.id?
+		$ctrl.selectList[$ctrl.levelIndex].select=undefined:
+		$ctrl.selectList[$ctrl.levelIndex].select=item.id
+		"
+		ng-right-click="$ctrl.func.del($ctrl.levelIndex,$ctrl.select,item.id)"
+		ng-repeat="item in list"
+		class="btn btn-sm" 
+		>{{cache.tagName[item.id]}}({{item.count}})
+		</button>
+		<select 
+		ng-show="$ctrl.mode && list.length"
+		ng-options="item.id as cache.tagName[item.id] for item in list"
+		ng-model="$ctrl.selectList[$ctrl.levelIndex].select"
+		>
+		<option value="">無</option>
+		</select>
+	</div>
+	<div class="hidden">
+	{{list}}
+	</div>
+	<div class="hidden">
+	{{$ctrl.selectList[$ctrl.levelIndex].select}}
+	{{$ctrl.selectList[$ctrl.levelIndex].childIds}}
+	</div>
+	<tag-recusion
+	style="display:{{$ctrl.mode?'inline-block;':'block'}}"
+	ng-if="
+	$ctrl.selectList[$ctrl.levelIndex] && 
+	cache.levelList[$ctrl.levelIndex+1] &&
+	$ctrl.selectList[$ctrl.levelIndex].childIds &&
+	list.length
+	"
+
+	select-list="$ctrl.selectList"
+	select="$ctrl.selectList[$ctrl.levelIndex].select"
+	child-ids="$ctrl.selectList[$ctrl.levelIndex].childIds"
+	level-index="$ctrl.levelIndex+1"
+	func="$ctrl.func"
+	mode="$ctrl.mode"
+	></tag-recusion>
 </div>
 
-<tag-recusion
-style="display:{{cache.mode.width<=500?'inline-block;':'block'}}"
-ng-if="
-$ctrl.selectList[$ctrl.levelIndex] && 
-cache.levelList[$ctrl.levelIndex+1] &&
-$ctrl.selectList[$ctrl.levelIndex].childIds &&
-list.length
-"
 
-select-list="$ctrl.selectList"
-select="$ctrl.selectList[$ctrl.levelIndex].select"
-child-ids="$ctrl.selectList[$ctrl.levelIndex].childIds"
-level-index="$ctrl.levelIndex+1"
-func="$ctrl.func"
-></tag-recusion>
+
+
+
+
 
 

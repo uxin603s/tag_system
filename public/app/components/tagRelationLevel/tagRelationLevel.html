@@ -21,17 +21,14 @@
 	class="btn btn-primary btn-sm"
 	>新增階層</button>
 </div>
-<div
-	class="col-xs-12 bottom_line" 
-	ng-repeat="selectList in cache.selectList"
->
-	<tag-recusion
-	style="display:{{cache.mode.width<=500?'inline-block;':'block'}}"
-	
-	ng-if="cache.levelList.length && selectList[0]"
-	lock="cache.tagType.list[cache.tagType.select].lock_lv1"
-	select-list="selectList"
-	level-index="0"
-	func="func"
-	></tag-recusion>
-</div>			
+
+<tag-recusion
+style="display:{{cache.mode.width<300?'inline-block;':'block'}}"
+ng-if="cache.levelList.length && cache.clickSearch"
+select-list-collect="cache.selectList"
+level-index="0"
+func="func"
+mode="cache.mode.width<300"
+click-search="cache.clickSearch"
+></tag-recusion>
+		

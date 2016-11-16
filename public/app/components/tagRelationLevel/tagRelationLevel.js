@@ -9,6 +9,7 @@ angular.module('app').component("tagRelationLevel",{
 		cache.count || (cache.count={})
 		cache.relation || (cache.relation={})
 		cache.selectList || (cache.selectList=[]);
+		cache.clickSearch || (cache.clickSearch=[])
 		
 		$scope.get=function(){
 			var post_data={
@@ -20,7 +21,6 @@ angular.module('app').component("tagRelationLevel",{
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
 					cache.levelList=res.list;
-					
 				}else{
 					cache.levelList=[];
 					cache.count={};
@@ -63,53 +63,7 @@ angular.module('app').component("tagRelationLevel",{
 				}
 			},"json")
 		}
-		$scope.$watch("cache.selectList",function(){
-			clearTimeout($scope.watch_treeDataTimer);
-			$scope.watch_treeDataTimer=setTimeout(function(){
-				$scope.cache.clickSearch=[];
-				for(var i in cache.selectList){
-					var selectList=angular.copy(cache.selectList[i]);
-					var last=cache.levelList.length-1;
-					var select=selectList[last].select;
-					if(select){
-						var name=$scope.cache.tagName[select];
-						var index=$scope.cache.clickSearch.findIndex(function(val){
-							return val.name==name;
-						})
-						if(index==-1)
-							$scope.cache.clickSearch.push({name:name});
-					}else{		
-						var p_last_level_id=cache.levelList[last-1].id;
-						var select=selectList[last-1].select;
-						if(cache.relation[p_last_level_id]){
-							var list=cache.relation[p_last_level_id][select];
-								
-							if(list && Object.keys(list).length){
-								for(var id in list){
-									var name=$scope.cache.tagName[id];
-									var index=$scope.cache.clickSearch.findIndex(function(val){
-										return val.name==name;
-									})
-									if(index==-1)
-										$scope.cache.clickSearch.push({name:name,type:1});
-								}
-							}else{
-								
-								if(select && last){
-									var name=$scope.cache.tagName[select];
-									var index=$scope.cache.clickSearch.findIndex(function(val){
-										return val.name==name;
-									})
-									if(index==-1)
-										$scope.cache.clickSearch.push({name:name});
-								}
-							}
-						}
-					}
-				}
-				$scope.$apply();
-			},0)
-		},1)
+		
 		var watch_select_list=function(){
 			if(!cache.levelList)return;
 			if(!cache.tagType.list)return;
