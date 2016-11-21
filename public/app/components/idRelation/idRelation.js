@@ -8,8 +8,7 @@ angular.module('app').component("idRelation",{
 		$scope.cache=cache;
 		$scope.idRelation=idRelation
 		
-
-
+		
 		$scope.$watch("$ctrl.list",idRelation.ch,1)
 		
 		return;

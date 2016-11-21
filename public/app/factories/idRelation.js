@@ -1,10 +1,10 @@
 angular.module('app').factory('idRelation',
 ["$rootScope","cache","tagName","aliasList","tagRelation",
 function($rootScope,cache,tagName,aliasList,tagRelation){
-	var add=function(name,source_id){
+	var result={};
+	var add=function(name,source_id,level_id,wid){
 		return promiseRecursive(function* (){
-			var level_id=cache.levelList[cache.levelList.length-1].id;
-			var wid=cache.webList.list[cache.webList.select].id;
+			
 			var add_relation_object={
 				level_id:level_id,
 			};
@@ -27,21 +27,21 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 				});
 			}
 			add_relation_object.child_id=item.id;
-			add_relation_object.sort_id=cache.id_search.result[source_id].length
+			add_relation_object.sort_id=result[source_id].length
 			
 			
 			
-			var result=yield tagRelation.add(add_relation_object);
+			var res=yield tagRelation.add(add_relation_object);
 			
-			cache.id_search.result[source_id].push(add_relation_object);
+			result[source_id].push(add_relation_object);
 			
-			cache.id_search.result[source_id].map(function(val,key){
+			result[source_id].map(function(val,key){
 				val.sort_id=key
 			})
-			cache.id_search.result[source_id].sort(function(a,b){
+			result[source_id].sort(function(a,b){
 				return a.sort_id-b.sort_id;
 			})
-			yield tagName.idToName([result]);
+			yield tagName.idToName([res]);
 			
 			
 			$rootScope.$apply();
@@ -49,11 +49,11 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 	}
 	var del=function(index,source_id){
 		// if(!confirm("確認刪除關聯?"))return;
-		var del=angular.copy(cache.id_search.result[source_id][index]);
+		var del=angular.copy(result[source_id][index]);
 		del.auto_delete=1;
 		tagRelation.del(del)
 		.then(function(){
-			cache.id_search.result[source_id].splice(index,1);
+			result[source_id].splice(index,1);
 			$rootScope.$apply();
 		})
 	}
@@ -89,9 +89,54 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 			}
 		}
 	}
+	var search=[];
+	
+	
+	var timer;
+	var get=function(ids,wid,level_id){
+		clearTimeout(timer)
+		timer=setTimeout(function(){
+			return promiseRecursive(function* (){
+				
+				for(var i in ids){
+					var id=ids[i];
+					
+					var where_list=[
+						{field:'wid',type:0,value:wid},
+						{field:'source_id',type:0,value:id},
+					];
+					var res=yield aliasList.get(where_list)//把source_id轉換成id
+					if(res.status){
+						var item=res.list.pop();
+						var where_list=[
+							{field:'level_id',type:0,value:level_id},
+							{field:'child_id',type:0,value:item.id},
+						];
+						var res=yield tagRelation.get(where_list);
+					
+						if(res.status){
+							result[id]=res.list;
+							if(Object.keys(result).length==ids.length){
+								$rootScope.$apply();
+							}
+							tagName.idToName(res.list.map(function(val){
+								return val.id;
+							}));
+							
+						}else{
+							result[id]=[];
+							$rootScope.$apply();
+						}
+					}
+				}
+			}())
+		},0)
+	}
 	return {
 		add:add,
 		del:del,
 		ch:ch,
+		get:get,
+		result:result,
 	}
 }])

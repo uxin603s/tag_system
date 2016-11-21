@@ -3,29 +3,30 @@ angular.module('app').component("tagSearch",{
 	templateUrl:'app/components/tagSearch/tagSearch.html?t='+Date.now(),
 	controller:["$scope","cache","tagName","aliasList","tagRelation",function($scope,cache,tagName,aliasList,tagRelation){
 		$scope.cache=cache;
-		$scope.cache.tag_search || ($scope.cache.tag_search={});
-		$scope.cache.tag_search.search || ($scope.cache.tag_search.search=[]);
-		$scope.cache.tag_search.absoluteSearch || ($scope.cache.tag_search.absoluteSearch=[]);
-		$scope.cache.clickSearch || ($scope.cache.clickSearch=[]);
-		$scope.cache.tag_search.diffSearch || ($scope.cache.tag_search.diffSearch=[]);
+		cache.tag_search || (cache.tag_search={});
+		cache.tag_search.search || (cache.tag_search.search=[]);
+		cache.tag_search.absoluteSearch || (cache.tag_search.absoluteSearch=[]);
+		cache.clickSearch || (cache.clickSearch=[]);
+		cache.tag_search.diffSearch || (cache.tag_search.diffSearch=[]);
 		
 		var interSearch=function(){
 			clearTimeout($scope.interSearchTimer);
 			$scope.interSearchTimer=setTimeout(function(){
 				var absoluteSearch=angular.copy(cache.tag_search.absoluteSearch);
 				var clickSearch=angular.copy(cache.clickSearch);
-				$scope.cache.tag_search.diffSearch=[];
+				cache.tag_search.diffSearch=[];
 				for(var i in clickSearch){
 					var index=absoluteSearch.findIndex(function(val){
 						return val.name==clickSearch[i].name;
 					})
 					if(index==-1){
-						$scope.cache.tag_search.diffSearch.push(clickSearch[i]);
+						cache.tag_search.diffSearch.push(clickSearch[i]);
 						absoluteSearch.push(clickSearch[i]);
 					}
 				}
 				
-				$scope.cache.tag_search.search=absoluteSearch;
+				cache.tag_search.search=absoluteSearch;
+				// console.log(cache.tag_search.search)
 				$scope.$apply();
 				tag_search_id();
 				
@@ -40,23 +41,22 @@ angular.module('app').component("tagSearch",{
 			clearTimeout($scope.tag_search_id_timer)
 			$scope.tag_search_id_timer=setTimeout(function(){
 				promiseRecursive(function* (){
-					if(!$scope.cache.tag_search.search.length){
-						yield Promise.reject("搜不到標籤");
-					}
 					
-					var value=$scope.cache.tag_search.search.map(function(val){
+					
+					var value=cache.tag_search.search.map(function(val){
 						return val.name;
 					});
 					
 					var list=yield tagName.nameToId(value,1);
-					if($scope.cache.tag_search.search.length==list.length){
+					// console.log(cache.tag_search.search.length,value,list)
+					if(cache.tag_search.search.length==list.length){
 						var require_id=[];
 						var option_id=[];
 						for(var i in list){
 							var data=list[i];
 							var id=data.id;
 							var name=data.name;
-							var find=$scope.cache.tag_search.search.find(function(val){
+							var find=cache.tag_search.search.find(function(val){
 								return val.name==name;
 							});
 							if(find.type){
@@ -65,12 +65,12 @@ angular.module('app').component("tagSearch",{
 								require_id.push(id)
 							}
 						}
-						
+						// console.log(require_id,option_id)
 						var res=yield tagRelation.get_inter(require_id,option_id);
 						// console.log(res)
 						if(res.status){
 							var where_list=[
-								{field:'wid',type:0,value:$scope.cache.webList.list[$scope.cache.webList.select].id},
+								{field:'wid',type:0,value:cache.webList.list[cache.webList.select].id},
 							];
 							for(var i in res.list){
 								where_list.push({field:'id',type:0,value:res.list[i].child_id})
@@ -78,7 +78,7 @@ angular.module('app').component("tagSearch",{
 							var res=yield aliasList.get(where_list);//把id轉換成source_id
 							// console.log(res)
 							if(res.status){
-								$scope.cache.tag_search.result=res.list.map(function(value){
+								cache.tag_search.result=res.list.map(function(value){
 									return value.source_id;
 								})
 							}else{
@@ -88,10 +88,12 @@ angular.module('app').component("tagSearch",{
 						}else{
 							yield Promise.reject("tagRelation沒資料");
 						}
+					}else{
+						yield Promise.reject("搜尋不存在的標籤");
 					}
 				}())
 				.catch(function(message){
-					$scope.cache.tag_search.result=[];
+					cache.tag_search.result=[];
 					$scope.$apply();
 					// console.log(message)
 				})
@@ -101,15 +103,15 @@ angular.module('app').component("tagSearch",{
 		
 		
 		$scope.add_tag_search=function(name){
-			var index=$scope.cache.tag_search.absoluteSearch.findIndex(function(val){
+			var index=cache.tag_search.absoluteSearch.findIndex(function(val){
 				return val.name==name;
 			})
 			if(index==-1){
-				$scope.cache.tag_search.absoluteSearch.push({name:name});
+				cache.tag_search.absoluteSearch.push({name:name});
 			}
 		}
 		$scope.del_tag_search=function(index){
-			$scope.cache.tag_search.absoluteSearch.splice(index,1);
+			cache.tag_search.absoluteSearch.splice(index,1);
 		}
 		
 		
