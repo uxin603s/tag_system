@@ -3,14 +3,34 @@ angular.module('app').component("index",{
 	templateUrl:'app/components/index/index.html?t='+Date.now(),
 	controller:['$scope','cache','idRelation',function($scope,cache,idRelation){
 		$scope.cache=cache;
-		// var wid=cache.webList.list[cache.webList.select].id
-		// var level_id=cache.levelList[cache.levelList.length-1].id;
 		
 		postMessageHelper.receive("tagSystem",function(res){
 			if(res.name=="getTag"){
-				idRelation.search=res.value
+				var getTag_timer=setInterval(function(){
+					if(cache.webList && cache.webList.list[cache.webList.select] && cache.levelList){
+						clearTimeout(getTag_timer);
+						var wid=cache.webList.list[cache.webList.select].id
+						var level_id=cache.levelList[cache.levelList.length-1].id;
+						idRelation.get(res.value,wid,level_id)
+						.then(function(res){
+							var list=angular.copy(res);
+							for(var i in list){
+								for(var j in list[i]){
+									list[i][j].name=cache.tagName[list[i][j].id]
+									
+								}
+							}
+							postMessageHelper.send("tagSystem",{name:"getTag",value:list})
+						});
+						
+					}
+				},0)
 			}
+			$scope.$apply();
 		})
+		
+		// $scope.$watch("cache.webList.list",watch_receive)
+		// $scope.$watch("cache.levelList",watch_receive)
 	
 		$scope.$watch("cache.tag_search.result",function(value){
 			if(!value)return;

@@ -96,32 +96,64 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 	var get=function(ids,wid,level_id){
 		return new Promise(function(resolve){
 			return promiseRecursive(function* (){
+				var tmp_result={};
 				for(var i in ids){
 					var id=ids[i];
 					
 					var where_list=[
 						{field:'wid',type:0,value:wid},
 						{field:'source_id',type:0,value:id},
-					];
-					var res=yield aliasList.get(where_list)//把source_id轉換成id
-					result[id]=[];
-					if(res.status){
-						var item=res.list.pop();
-						var where_list=[
-							{field:'level_id',type:0,value:level_id},
-							{field:'child_id',type:0,value:item.id},
-						];
-						var res=yield tagRelation.get(where_list);
+					];//把source_id轉換成id
+					aliasList.get(where_list)
+					.then(function(id,res){
 						if(res.status){
-							result[id]=res.list
-							yield tagName.idToName(res.list.map(function(val){
-								return val.id;
-							}));
+							var item=res.list.pop();
+							var where_list=[
+								{field:'level_id',type:0,value:level_id},
+								{field:'child_id',type:0,value:item.id},
+							];
+							tagRelation.get(where_list)
+							.then(function(id,res){
+								if(res.status){
+									tagName.idToName(res.list.map(function(val){
+										return val.id;
+									}))
+									.then(function(id){
+										tmp_result[id]=res.list
+										if(Object.keys(tmp_result).length==ids.length){
+											for(var i in tmp_result){
+												result[i]=tmp_result[i];
+											}
+											$rootScope.$apply();
+											resolve(tmp_result);
+										}
+									}.bind(this,id))
+								}else{
+									tmp_result[id]=[];
+									if(Object.keys(tmp_result).length==ids.length){
+										for(var i in tmp_result){
+											result[i]=tmp_result[i];
+										}
+										$rootScope.$apply();
+										resolve(tmp_result);
+									}
+								}
+							}.bind(this,id))
+						}else{
+							tmp_result[id]=[];
+							if(Object.keys(tmp_result).length==ids.length){
+								for(var i in tmp_result){
+									result[i]=tmp_result[i];
+								}
+								$rootScope.$apply();
+								resolve(tmp_result);
+							}
 						}
-					}
+					}.bind(this,id))
 				}
-				$rootScope.$apply();
-				resolve(result);
+				
+				
+				
 			}())
 		})
 	}
@@ -130,6 +162,7 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 		del:del,
 		ch:ch,
 		get:get,
+		search:[],
 		result:result,
 	}
 }])

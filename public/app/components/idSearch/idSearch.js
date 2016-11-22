@@ -9,7 +9,9 @@ angular.module('app').component("idSearch",{
 			var wid=cache.webList.list[cache.webList.select].id
 			var level_id=cache.levelList[cache.levelList.length-1].id;
 			idRelation.get(value,wid,level_id);
+			
 		},1)
+		
 		$scope.add_id_search=function(id){
 			if(idRelation.search.indexOf(id)==-1){
 				idRelation.search.push(id)
