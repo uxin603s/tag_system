@@ -10,7 +10,7 @@
 		
 		<button 
 		draggable="true"
-		sortable="cache.id_search.search"
+		sortable="idRelation.search"
 		index="$index"
 		
 		ng-right-click="del_id_search($index,item)"
@@ -20,7 +20,6 @@
 	</div>
 	<div>
 		<button 
-		
 		ng-if="0 && !item.type"
 		ng-right-click=""
 		ng-repeat="item in cache.clickSearch"
@@ -28,13 +27,12 @@
 		>{{item.name}}</button>
 	</div>
 	
-	
-	<id-relation
-	style="display:block;"
-	ng-repeat="source_id in idRelation.search "
-	ng-if="idRelation.result[source_id]"
-	list="idRelation.result[source_id]"
-	source-id="source_id"
-	></id-relation>
-		
+	<div ng-repeat="source_id in idRelation.search">
+		{{source_id}}:
+		<id-relation
+		ng-if="idRelation.result[source_id]"
+		list="idRelation.result[source_id]"
+		source-id="source_id"
+		></id-relation>
+	</div>
 </div>

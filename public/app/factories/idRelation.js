@@ -17,7 +17,7 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 				{field:'wid',type:0,value:wid},
 				{field:'source_id',type:0,value:source_id},
 			];				
-			var res=yield aliasList.get(where_list); //§âsource_idÂà´«¦¨id
+			var res=yield aliasList.get(where_list); //æŠŠsource_idè½‰æ›æˆid
 			if(res.status){
 				var item=res.list.pop();
 			}else{
@@ -48,7 +48,7 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 		}());
 	}
 	var del=function(index,source_id){
-		// if(!confirm("½T»{§R°£ÃöÁp?"))return;
+		// if(!confirm("ç¢ºèªåˆªé™¤é—œè¯?"))return;
 		var del=angular.copy(result[source_id][index]);
 		del.auto_delete=1;
 		tagRelation.del(del)
@@ -94,10 +94,8 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 	
 	var timer;
 	var get=function(ids,wid,level_id){
-		clearTimeout(timer)
-		timer=setTimeout(function(){
+		return new Promise(function(resolve){
 			return promiseRecursive(function* (){
-				
 				for(var i in ids){
 					var id=ids[i];
 					
@@ -105,7 +103,8 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 						{field:'wid',type:0,value:wid},
 						{field:'source_id',type:0,value:id},
 					];
-					var res=yield aliasList.get(where_list)//§âsource_idÂà´«¦¨id
+					var res=yield aliasList.get(where_list)//æŠŠsource_idè½‰æ›æˆid
+					result[id]=[];
 					if(res.status){
 						var item=res.list.pop();
 						var where_list=[
@@ -113,24 +112,18 @@ function($rootScope,cache,tagName,aliasList,tagRelation){
 							{field:'child_id',type:0,value:item.id},
 						];
 						var res=yield tagRelation.get(where_list);
-					
 						if(res.status){
-							result[id]=res.list;
-							if(Object.keys(result).length==ids.length){
-								$rootScope.$apply();
-							}
-							tagName.idToName(res.list.map(function(val){
+							result[id]=res.list
+							yield tagName.idToName(res.list.map(function(val){
 								return val.id;
 							}));
-							
-						}else{
-							result[id]=[];
-							$rootScope.$apply();
 						}
 					}
 				}
+				$rootScope.$apply();
+				resolve(result);
 			}())
-		},0)
+		})
 	}
 	return {
 		add:add,

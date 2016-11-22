@@ -1,15 +1,17 @@
 angular.module('app').component("index",{
 	bindings:{},
 	templateUrl:'app/components/index/index.html?t='+Date.now(),
-	controller:['$scope','cache',function($scope,cache){
+	controller:['$scope','cache','idRelation',function($scope,cache,idRelation){
 		$scope.cache=cache;
+		// var wid=cache.webList.list[cache.webList.select].id
+		// var level_id=cache.levelList[cache.levelList.length-1].id;
+		
 		postMessageHelper.receive("tagSystem",function(res){
-			if(res){
-				if(res.name=="getTag"){
-					console.log(res.value)
-				}
+			if(res.name=="getTag"){
+				idRelation.search=res.value
 			}
 		})
+	
 		$scope.$watch("cache.tag_search.result",function(value){
 			if(!value)return;
 			postMessageHelper.send('tagSystem',{name:'search',value:value})
@@ -20,7 +22,7 @@ angular.module('app').component("index",{
 			$scope.resizeTimer=setTimeout(function(){
 				cache.width=$scope.document.scrollWidth;
 				cache.height=$scope.document.scrollHeight;
-				
+				// console.log(cache.width,cache.height)
 				postMessageHelper.send('tagSystem',{
 					name:'resize',
 					value:{
@@ -31,6 +33,7 @@ angular.module('app').component("index",{
 				$scope.$apply();
 			},0)
 		}
+		
 		$scope.$watch("document.scrollWidth",window.onresize);
 		$scope.$watch("document.scrollHeight",window.onresize);
 		$scope.$watch("cache.editMode",window.onresize);

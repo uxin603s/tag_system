@@ -1,21 +1,26 @@
 angular.module("app").component("tagRecusion",{
 	bindings:{
-		levelIndex:"=",
-		select:"=",
+		editMode:"=",
+		count:"=",//count 快取
+		relation:"=",//relation快取
+		levelList:"=",//階層資料
+		tagName:"=",//標籤名稱
+		
+		levelIndex:"=",//第幾層
+		select:"=",//這層選
 		selectList:"=",
 		selectListCollect:"=",
 		
 		childIds:"=",
-		lockLv1:"=",
-		mode:"=",
+		lockLv1:"=",//第一層鎖定
+		mode:"=",//標籤是否用按鈕顯示
 		
-		func:"=",
-		clickSearch:"=",
+		func:"=",//使用的func
+		clickSearch:"=",//選擇的標籤
 	},
 	templateUrl:'app/components/tagRecusion/tagRecusion.html?t='+Date.now(),
-	controller:["$scope","cache",function($scope,cache){
-		$scope.cache=cache;
-		$scope.level_id=cache.levelList[$scope.$ctrl.levelIndex].id;		
+	controller:["$scope",function($scope){
+		$scope.level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex].id;		
 		
 		$scope.search={tagName:''};
 		
@@ -23,7 +28,7 @@ angular.module("app").component("tagRecusion",{
 			$scope.watch_sort && $scope.watch_sort();
 			var childIds=$scope.$ctrl.childIds;
 			$scope.list=[];
-			var count=cache.count[$scope.level_id];
+			var count=$scope.$ctrl.count[$scope.level_id];
 			if(!count)return
 			if(childIds){
 				for(var i in childIds){
@@ -60,7 +65,7 @@ angular.module("app").component("tagRecusion",{
 			if($scope.$ctrl.selectList)
 			if(!$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select){
 				if($scope.list.length)
-					if($scope.cache.levelList.length-1!=$scope.$ctrl.levelIndex){
+					if($scope.$ctrl.levelList.length-1!=$scope.$ctrl.levelIndex){
 						if(count[$scope.list[0].id].count){
 							$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select=$scope.list[0].id;
 						}
@@ -69,9 +74,9 @@ angular.module("app").component("tagRecusion",{
 			
 		}
 		var get_child=function(select){
-			if(cache.relation[$scope.level_id])
-			if(cache.relation[$scope.level_id][select]){
-				$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds=cache.relation[$scope.level_id][select];
+			if($scope.$ctrl.relation[$scope.level_id])
+			if($scope.$ctrl.relation[$scope.level_id][select]){
+				$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds=$scope.$ctrl.relation[$scope.level_id][select];
 			}else{
 				$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].childIds={};
 			}
@@ -100,12 +105,12 @@ angular.module("app").component("tagRecusion",{
 				
 				get_child($scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select)
 			},1);
-			$scope.$watch("cache.relation["+$scope.level_id+"]",function(){
+			$scope.$watch("$ctrl.relation["+$scope.level_id+"]",function(){
 				get_child($scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select)
 			},1);
 		}
 		
-		$scope.$watch("cache.count["+$scope.level_id+"]",function(count){
+		$scope.$watch("$ctrl.count["+$scope.level_id+"]",function(count){
 			get_list();
 		},1);
 		
@@ -117,12 +122,12 @@ angular.module("app").component("tagRecusion",{
 					
 					for(var i in $scope.$ctrl.selectListCollect){
 						var selectList=angular.copy($scope.$ctrl.selectListCollect[i]);
-						if(selectList.length!=cache.levelList.length)continue;
-						var last=cache.levelList.length-1;
+						if(selectList.length!=$scope.$ctrl.levelList.length)continue;
+						var last=$scope.$ctrl.levelList.length-1;
 						
 						var select=selectList[last].select;
 						if(select){
-							var name=cache.tagName[select];
+							var name=$scope.$ctrl.tagName[select];
 							if(name){
 								var index=$scope.$ctrl.clickSearch.findIndex(function(val){
 									return val.name==name;
@@ -131,16 +136,16 @@ angular.module("app").component("tagRecusion",{
 									$scope.$ctrl.clickSearch.push({name:name});
 							}
 						}else{		
-							var p_last_level_id=cache.levelList[last-1].id;
+							var p_last_level_id=$scope.$ctrl.levelList[last-1].id;
 							var select=selectList[last-1].select;
-							if(cache.relation[p_last_level_id]){
-								var list=cache.relation[p_last_level_id][select];
+							if($scope.$ctrl.relation[p_last_level_id]){
+								var list=$scope.$ctrl.relation[p_last_level_id][select];
 									
 								if(list && Object.keys(list).length){
 									
 									for(var id in list){
-										var name=cache.tagName[id];
-										// console.log(cache.tagName,id,name)
+										var name=$scope.$ctrl.tagName[id];
+										// console.log($scope.$ctrl.tagName,id,name)
 										if(name){
 											var index=$scope.$ctrl.clickSearch.findIndex(function(val){
 												return val.name==name;
@@ -152,7 +157,7 @@ angular.module("app").component("tagRecusion",{
 								}else{
 									
 									if(select && last){
-										var name=$scope.cache.tagName[select];
+										var name=$scope.$ctrl.tagName[select];
 										var index=$scope.$ctrl.clickSearch.findIndex(function(val){
 											return val.name==name;
 										})
@@ -167,8 +172,8 @@ angular.module("app").component("tagRecusion",{
 				},50)
 			}
 			$scope.$watch("$ctrl.selectListCollect",watch_selectListCollect,1)
-			$scope.$watch("cache.relation",watch_selectListCollect,1)
-			$scope.$watch("cache.tagName",watch_selectListCollect,1)
+			$scope.$watch("$ctrl.relation",watch_selectListCollect,1)
+			$scope.$watch("$ctrl.tagName",watch_selectListCollect,1)
 			
 			var watch_select_list=function(){
 				
@@ -176,15 +181,15 @@ angular.module("app").component("tagRecusion",{
 				$scope.watch_select_list_timer=setTimeout(function(){
 					if($scope.$ctrl.lockLv1){
 						promiseRecursive(function* (){
-							var level_id=cache.levelList[0].id
+							var level_id=$scope.$ctrl.levelList[0].id
 							var res=yield $scope.$ctrl.func.get_count(0);
-							// console.log(res.list)//cache.count[level_id],
+							// console.log(res.list)//$scope.$ctrl.count[level_id],
 							if(res.status){
 								var list=res.list.sort(function(a,b){
 									return a.sort_id-b.sort_id;
 								})
 								
-								// cache.count[level_id];
+								// $scope.$ctrl.count[level_id];
 								var cut=$scope.$ctrl.selectListCollect.length-list.length
 								
 								if(cut>0){
@@ -199,7 +204,7 @@ angular.module("app").component("tagRecusion",{
 									if(!$scope.$ctrl.selectListCollect[i]){
 										$scope.$ctrl.selectListCollect.push([])
 									}
-									for(var j in cache.levelList){
+									for(var j in $scope.$ctrl.levelList){
 										if($scope.$ctrl.selectListCollect[i][j]){
 											// $scope.$ctrl.selectListCollect[i][j].select
 											if(!$scope.$ctrl.selectListCollect[i][j].select){
@@ -208,7 +213,7 @@ angular.module("app").component("tagRecusion",{
 													var res=yield $scope.$ctrl.func.get_relation(j,select);
 													
 													if(res.status){
-														var childIds=cache.relation[level_id][select]
+														var childIds=$scope.$ctrl.relation[level_id][select]
 													}else{
 														var childIds={};
 													}
@@ -222,7 +227,7 @@ angular.module("app").component("tagRecusion",{
 											var res=yield $scope.$ctrl.func.get_relation(j,select);
 											
 											if(res.status){
-												var childIds=cache.relation[level_id][select]
+												var childIds=$scope.$ctrl.relation[level_id][select]
 											}else{
 												var childIds={};
 											}
@@ -239,7 +244,7 @@ angular.module("app").component("tagRecusion",{
 						if(!$scope.$ctrl.selectListCollect[0]){
 							$scope.$ctrl.selectListCollect[0]=[];
 						}
-						for(var i in cache.levelList){
+						for(var i in $scope.$ctrl.levelList){
 							if(!$scope.$ctrl.selectListCollect[0][i]){
 								$scope.$ctrl.selectListCollect[0].push({})
 							}

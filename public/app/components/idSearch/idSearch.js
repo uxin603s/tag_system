@@ -5,6 +5,7 @@ angular.module('app').component("idSearch",{
 		$scope.idRelation=idRelation;
 		$scope.$watch("idRelation.search",function(value){
 			if(!value)return;
+			if(!value.length)return;
 			var wid=cache.webList.list[cache.webList.select].id
 			var level_id=cache.levelList[cache.levelList.length-1].id;
 			idRelation.get(value,wid,level_id);

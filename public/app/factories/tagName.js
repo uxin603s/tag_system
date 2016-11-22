@@ -89,32 +89,32 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 	}
 	
 	var idToName=function(ids){
-		return new Promise(function(ids,resolve,reject) {
+		return new Promise(function(resolve,reject) {
 			var where_list=[];
+			var result=[];
 			for(var i in ids){
 				if(cache.tagName[ids[i]]){
-					
-					// console.log(ids[i])
-					// console.log('use cache')
+					result.push(cache.tagName[ids[i]])
 				}else{
 					where_list.push({field:'id',type:0,value:ids[i]});
-					// console.log('no cache')
 				}
 			}
-			
-			if(!ids.length)return;
+			if(!where_list.length){
+				return resolve(result)
+			}
 			
 			getList(where_list)
 			.then(function(list){
 				for(var i in list){
 					var data=list[i];
 					cache.tagName[data.id]=data.name;
+					result.push(data.name)
 				}
 				$rootScope.$apply();
-				resolve()
+				return resolve(result);
 			})
-			resolve()
-		}.bind(this,ids))
+			
+		})
 	}
 	return {
 		insert:insert,

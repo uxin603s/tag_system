@@ -7,22 +7,20 @@ ng-if="cache.tagType.list[cache.tagType.select]"
 <web-list 
 ng-if="cache.tagType.list[cache.tagType.select]"
 ></web-list>
+<tag-search
+ng-if="
+cache.tagType.list[cache.tagType.select] 
+&& 
+cache.webList.list[cache.webList.select]
+"
+></tag-search>
 
-<div ng-show="cache.editMode" >
-	<tag-search
-	ng-if="
-	cache.tagType.list[cache.tagType.select] 
-	&& 
-	cache.webList.list[cache.webList.select]
-	"
-	></tag-search>
+<id-search
 
-	<id-search
-	
-	ng-if="0 &&
-	cache.tagType.list[cache.tagType.select] 
-	&& 
-	cache.webList.list[cache.webList.select]
-	"
-	></id-search>
-</div>
+ng-if="
+cache.tagType.list[cache.tagType.select] 
+&& 
+cache.webList.list[cache.webList.select]
+"
+
+></id-search>

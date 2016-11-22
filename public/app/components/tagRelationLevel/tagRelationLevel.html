@@ -1,6 +1,3 @@
-<div class="hidden">
-{{cache.clickSearch}}
-</div>
 <div class="col-xs-12 bottom_line" >
 	<input 
 	type="checkbox" 
@@ -35,11 +32,17 @@
 		>新增階層</button>
 	</div>
 </div>
-
 <tag-recusion
 ng-if="cache.levelList.length && cache.clickSearch"
+
+edit-mode="cache.editMode"
+count="cache.count"
+relation="cache.relation"
+level-list="cache.levelList"
+tag-name="cache.tagName"
 select-list-collect="cache.selectList"
-lock-lv1="cache.tagType.list[cache.tagType.select].lock_lv1==1?1:0"
+
+lock-lv1="cache.tagType.list[cache.tagType.select].lock_lv1*1"
 level-index="0"
 func="func"
 mode="cache.width<300"

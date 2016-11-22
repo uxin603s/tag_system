@@ -7,8 +7,14 @@ ng-repeat="selectList in $ctrl.selectListCollect"
 	ng-if="
 	selectList[$ctrl.levelIndex] 
 	&&
-	selectList.length==cache.levelList.length
+	selectList.length==$ctrl.levelList.length
 	"
+	
+	edit-mode="$ctrl.editMode"
+	count="$ctrl.count"
+	relation="$ctrl.relation"
+	level-list="$ctrl.levelList"
+	tag-name="$ctrl.tagName"
 	
 	select-list="selectList"
 	lock-lv1="$ctrl.lockLv1"
@@ -28,13 +34,13 @@ ng-if="!$ctrl.selectListCollect"
 		<button
 		class="btn btn-sm btn-primary"
 		>
-		{{cache.tagName[$ctrl.selectList[$ctrl.levelIndex].select]}}
-		({{cache.count[level_id][$ctrl.selectList[$ctrl.levelIndex].select].count}})
+		{{$ctrl.tagName[$ctrl.selectList[$ctrl.levelIndex].select]}}
+		({{$ctrl.count[level_id][$ctrl.selectList[$ctrl.levelIndex].select].count}})
 		</button>
 	</div>
 	
 	<input 
-	ng-show="cache.editMode && !$ctrl.lockLv1"
+	ng-show="$ctrl.editMode && !$ctrl.lockLv1"
 	type="text" 
 	ng-model="search.tagName"
 	ng-enter="$ctrl.func.add($ctrl.levelIndex,$ctrl.select,search,$ctrl.childIds)"
@@ -51,7 +57,7 @@ ng-if="!$ctrl.selectListCollect"
 		index="$index"
 
 		ng-show="
-		cache.tagName[item.id].indexOf(search.tagName)!=-1 
+		$ctrl.tagName[item.id].indexOf(search.tagName)!=-1 
 		&& 
 		!$ctrl.mode
 		"
@@ -68,11 +74,11 @@ ng-if="!$ctrl.selectListCollect"
 		ng-right-click="$ctrl.func.del($ctrl.levelIndex,$ctrl.select,item.id)"
 		ng-repeat="item in list"
 		class="btn btn-sm" 
-		>{{cache.tagName[item.id]}}({{item.count}})
+		>{{$ctrl.tagName[item.id]}}({{item.count}})
 		</button>
 		<select 
 		ng-show="$ctrl.mode && list.length"
-		ng-options="item.id as cache.tagName[item.id] for item in list"
+		ng-options="item.id as $ctrl.tagName[item.id] for item in list"
 		ng-model="$ctrl.selectList[$ctrl.levelIndex].select"
 		>
 		<option value="">無</option>
@@ -90,15 +96,23 @@ ng-if="!$ctrl.selectListCollect"
 	style="display:{{$ctrl.mode?'inline-block;':'block'}}"
 	ng-if="
 	$ctrl.selectList[$ctrl.levelIndex] && 
-	cache.levelList[$ctrl.levelIndex+1] &&
+	$ctrl.levelList[$ctrl.levelIndex+1] &&
 	$ctrl.selectList[$ctrl.levelIndex].childIds &&
 	list.length
 	&&
-	$ctrl.selectList.length==cache.levelList.length
+	$ctrl.selectList.length==$ctrl.levelList.length
 	"
+	edit-mode="$ctrl.editMode"
+	count="$ctrl.count"
+	relation="$ctrl.relation"
+	level-list="$ctrl.levelList"
+	tag-name="$ctrl.tagName"
+	
 	
 	select-list="$ctrl.selectList"
+	
 	select="$ctrl.selectList[$ctrl.levelIndex].select"
+	
 	child-ids="$ctrl.selectList[$ctrl.levelIndex].childIds"
 	level-index="$ctrl.levelIndex+1"
 	func="$ctrl.func"
