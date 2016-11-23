@@ -1,4 +1,5 @@
-angular.module('app').factory('tagRelation',['$rootScope','cache',function($rootScope,cache){
+angular.module('app').factory('tagRelation',
+['$rootScope','cache','tagName',function($rootScope,cache,tagName){
 	var get=function(where_list){
 		return new Promise(function(resolve,reject) {
 			var level_id;
@@ -44,30 +45,38 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 						cache.relation[level_id][id] || (cache.relation[level_id][id]={})
 						cache.relation[level_id][id][child_id]=data;
 					}
+					tagName.idToName(res.list.map(function(val){
+						return val.child_id;
+					}));
 				}
 				resolve(res)
+				$rootScope.$apply();
 			},"json")
 		});
 	}
 
 	var add=function(arg){
+		
 		return new Promise(function(resolve,reject) {
 			var post_data={
 				func_name:'TagRelation::insert',
 				arg:arg,
 			}
 			$.post("ajax.php",post_data,function(res){
+				
 				if(res.status){
 					var data=res.insert;
 					var level_id=data.level_id;
 					var id=data.id;
 					var child_id=data.child_id;
 					
-					if(cache.count[level_id][id])
-						cache.count[level_id][id].count++;
+					
 					cache.relation[level_id] || (cache.relation[level_id]={});
 					cache.relation[level_id][id] || (cache.relation[level_id][id]={})
 					cache.relation[level_id][id][child_id]=data;
+					
+					tagName.idToName([child_id])
+					
 					resolve(data);
 				}
 				else{
@@ -77,7 +86,7 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 			},"json")
 		})
 	}
-	var del=function(arg,list){
+	var del=function(arg){
 		return new Promise(function(resolve,reject) {
 			var post_data={
 				func_name:'TagRelation::delete',
@@ -90,14 +99,10 @@ angular.module('app').factory('tagRelation',['$rootScope','cache',function($root
 					var id=data.id;
 					var child_id=data.child_id;
 					
-					if(cache.count[level_id][id])
-						cache.count[level_id][id].count--;
-					
 					delete cache.relation[level_id][id][child_id];
-					resolve(data);
-				}else{
-					return reject("刪除關聯失敗");
+					
 				}
+				resolve(res);
 			},"json")
 			
 		});

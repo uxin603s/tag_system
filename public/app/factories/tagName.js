@@ -111,6 +111,7 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 					result.push(data.name)
 				}
 				$rootScope.$apply();
+				
 				return resolve(result);
 			})
 			

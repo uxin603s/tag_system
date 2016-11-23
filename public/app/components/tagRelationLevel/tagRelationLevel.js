@@ -2,10 +2,9 @@ angular.module('app').component("tagRelationLevel",{
 	bindings:{},
 	templateUrl:'app/components/tagRelationLevel/tagRelationLevel.html?t='+Date.now(),
 	controller:
-	["$scope","cache","tagRelationCount","tagName","tagRelation","tagRecusion",
-	function($scope,cache,tagRelationCount,tagName,tagRelation,tagRecusion){
+	["$scope","cache","tagName",
+	function($scope,cache,tagName){
 		$scope.cache=cache;
-		$scope.func=tagRecusion;
 		cache.count || (cache.count={})
 		cache.relation || (cache.relation={})
 		cache.selectList || (cache.selectList=[]);

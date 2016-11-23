@@ -25,6 +25,7 @@ ng-repeat="selectList in $ctrl.selectListCollect"
 </div>
 
 <div
+
 ng-if="!$ctrl.selectListCollect"
 >
 	<div 
@@ -35,9 +36,7 @@ ng-if="!$ctrl.selectListCollect"
 		class="btn btn-sm btn-primary"
 		>
 		{{$ctrl.tagName[$ctrl.selectList[$ctrl.levelIndex].select]}}
-		<!--
-		({{$ctrl.count[level_id][$ctrl.selectList[$ctrl.levelIndex].select].count}})
-		-->
+		
 		</button>
 	</div>
 	
@@ -45,7 +44,7 @@ ng-if="!$ctrl.selectListCollect"
 	ng-show="$ctrl.editMode && !$ctrl.lockLv1"
 	type="text" 
 	ng-model="search.tagName"
-	ng-enter="$ctrl.func.add($ctrl.levelIndex,$ctrl.select,search,$ctrl.childIds)"
+	ng-enter="add(search)"
 	/>
 	
 	<div 
@@ -59,56 +58,51 @@ ng-if="!$ctrl.selectListCollect"
 		index="$index"
 
 		ng-show="
-		$ctrl.tagName[item.id].indexOf(search.tagName)!=-1 
+		$ctrl.tagName[item.child_id].indexOf(search.tagName)!=-1 
 		&& 
 		!$ctrl.mode
 		"
 		ng-class="
-		$ctrl.selectList[$ctrl.levelIndex].select==item.id?
+		$ctrl.selectList[$ctrl.levelIndex].select==item.child_id?
 		'btn-danger':
 		'btn-primary'
 		"
 		ng-click="
-		$ctrl.selectList[$ctrl.levelIndex].select==item.id?
+		$ctrl.selectList[$ctrl.levelIndex].select==item.child_id?
 		$ctrl.selectList[$ctrl.levelIndex].select=undefined:
-		$ctrl.selectList[$ctrl.levelIndex].select=item.id
+		$ctrl.selectList[$ctrl.levelIndex].select=item.child_id
 		"
-		ng-right-click="$ctrl.func.del($ctrl.levelIndex,$ctrl.select,item.id)"
+		ng-right-click="del($index)"
 		ng-repeat="item in list"
 		class="btn btn-sm" 
-		>{{$ctrl.tagName[item.id]}}
-		<!--
-		({{item.count}})
-		-->
+		>{{$ctrl.tagName[item.child_id]}}
 		</button>
 		<select 
 		ng-show="$ctrl.mode && list.length"
-		ng-options="item.id as $ctrl.tagName[item.id] for item in list"
+		ng-options="item.child_id as $ctrl.tagName[item.child_id] for item in list"
 		ng-model="$ctrl.selectList[$ctrl.levelIndex].select"
 		>
 		<option value="">無</option>
 		</select>
 	</div>
 	<div class="hidden">
-	{{list}}
+	{{$ctrl.selectList[$ctrl.levelIndex]}}
 	</div>
 	<div class="hidden">
-	{{$ctrl.selectList[$ctrl.levelIndex].select}}
-	{{$ctrl.selectList[$ctrl.levelIndex].childIds}}
+	{{$ctrl.select}}
 	</div>
-	
 	<tag-recusion
 	style="display:{{$ctrl.mode?'inline-block;':'block'}}"
 	ng-if="
-	$ctrl.selectList[$ctrl.levelIndex] && 
+	$ctrl.selectList[$ctrl.levelIndex].select && 
 	$ctrl.levelList[$ctrl.levelIndex+1] &&
-	$ctrl.selectList[$ctrl.levelIndex].childIds &&
 	list.length
 	&&
 	$ctrl.selectList.length==$ctrl.levelList.length
 	"
+	
+	
 	edit-mode="$ctrl.editMode"
-	count="$ctrl.count"
 	relation="$ctrl.relation"
 	level-list="$ctrl.levelList"
 	tag-name="$ctrl.tagName"
@@ -118,7 +112,6 @@ ng-if="!$ctrl.selectListCollect"
 	
 	select="$ctrl.selectList[$ctrl.levelIndex].select"
 	
-	child-ids="$ctrl.selectList[$ctrl.levelIndex].childIds"
 	level-index="$ctrl.levelIndex+1"
 	func="$ctrl.func"
 	mode="$ctrl.mode"

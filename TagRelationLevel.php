@@ -1,8 +1,8 @@
 <?php
 class TagRelationLevel{
-	public static function get_p_level_id($id){
+	public static function get_level_id($id,$updown){
 		if($tmp=DB::select("select * from tag_relation_level where id = ?",[$id])){
-			$sort_id=$tmp[0]['sort_id']-1;
+			$sort_id=$tmp[0]['sort_id']+$updown;
 			$tid=$tmp[0]['tid'];
 			
 			if($tmp=DB::select("select * from tag_relation_level where sort_id ={$sort_id} && tid = {$tid}")){

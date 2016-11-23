@@ -53,44 +53,31 @@ class TagRelation{
 		//需要檢查欄位
 		
 		$status=false;
-		// if($insert['child_id']!=$insert['id']){}
 		if(DB::insert($insert,"tag_relation")){
-			$sql="select * from tag_relation_count where id = ? && level_id = ?";
-			$bind_data=[$insert['id'],$insert['level_id']];
-			if($tmp=DB::select($sql,$bind_data)){
-				$sql="update tag_relation_count set count=count+1 where id = ? && level_id = ?";
-				$result=DB::query($sql,$bind_data)->rowCount();
-			}else{
-				TagRelationCount::insert([
-					'id'=>$insert['id'],
-					'level_id'=>$insert['level_id'],
-					'count'=>1,
-				]);
-			}
 			$status=true;
 		}
 		
 		return compact(['insert','result','bind_data','status']);
 	}
 	public static function delete($delete){
-		$auto_delete=$delete['auto_delete'];
-		unset($delete['auto_delete']);
+		
+		$delete_flag=true;
+		
+		
+		
+		if($level_id=TagRelationLevel::get_level_id($delete['level_id'],1)){
+			$sql="select * from tag_relation where level_id = {$level_id} && id = ?";
+			$next=DB::select($sql,[$delete['child_id']]);
+			$delete_flag = $delete_flag &&  !$next;
+		}
+		
 		$status=false;
-		if(DB::delete($delete,"tag_relation")){
-			$status=true;
-			if(isset($delete['id'])){
-				$bind_data=[$delete['id'],$delete['level_id']];
-				$sql="update tag_relation_count set count=count-1 where id = ? && level_id = ?";
-				DB::query($sql,$bind_data);
-				if($auto_delete){
-					$tmp=TagRelationCount::delete([
-						'id'=>$delete['id'],
-						'level_id'=>$delete['level_id'],
-					]);
-				}
+		if($delete_flag){
+			if(DB::delete($delete,"tag_relation")){
+				$status=true;
 			}
 		}
-		return compact(['status','delete']);
+		return compact(['status','delete','prev','next']);
 	}
 	public static function update($arg){
 		if(DB::update($arg['update'],$arg['where'],"tag_relation")){
