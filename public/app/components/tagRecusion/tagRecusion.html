@@ -35,7 +35,9 @@ ng-if="!$ctrl.selectListCollect"
 		class="btn btn-sm btn-primary"
 		>
 		{{$ctrl.tagName[$ctrl.selectList[$ctrl.levelIndex].select]}}
+		<!--
 		({{$ctrl.count[level_id][$ctrl.selectList[$ctrl.levelIndex].select].count}})
+		-->
 		</button>
 	</div>
 	
@@ -74,7 +76,10 @@ ng-if="!$ctrl.selectListCollect"
 		ng-right-click="$ctrl.func.del($ctrl.levelIndex,$ctrl.select,item.id)"
 		ng-repeat="item in list"
 		class="btn btn-sm" 
-		>{{$ctrl.tagName[item.id]}}({{item.count}})
+		>{{$ctrl.tagName[item.id]}}
+		<!--
+		({{item.count}})
+		-->
 		</button>
 		<select 
 		ng-show="$ctrl.mode && list.length"
