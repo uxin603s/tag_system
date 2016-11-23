@@ -1,6 +1,6 @@
-angular.module('app').component("tagRelationLevel",{
+angular.module('app').component("tagLevel",{
 	bindings:{},
-	templateUrl:'app/components/tagRelationLevel/tagRelationLevel.html?t='+Date.now(),
+	templateUrl:'app/components/tagLevel/tagLevel.html?t='+Date.now(),
 	controller:
 	["$scope","cache","tagName",
 	function($scope,cache,tagName){
@@ -12,7 +12,7 @@ angular.module('app').component("tagRelationLevel",{
 		
 		$scope.get=function(){
 			var post_data={
-				func_name:'TagRelationLevel::getList',
+				func_name:'TagLevel::getList',
 				arg:{
 					tid:cache.tagType.list[cache.tagType.select].id,
 				},
@@ -31,7 +31,7 @@ angular.module('app').component("tagRelationLevel",{
 		$scope.get();
 		$scope.add=function(){
 			var post_data={
-				func_name:'TagRelationLevel::insert',
+				func_name:'TagLevel::insert',
 				arg:{
 					tid:cache.tagType.list[cache.tagType.select].id,
 					sort_id:cache.levelList.length || 0,
@@ -45,11 +45,9 @@ angular.module('app').component("tagRelationLevel",{
 			},"json")
 		}
 		$scope.del=function(index){
-			if(!confirm("確認刪除?")){
-				return;
-			}
+			
 			var post_data={
-				func_name:'TagRelationLevel::delete',
+				func_name:'TagLevel::delete',
 				arg:{
 					id:cache.levelList[index].id,
 					tid:cache.tagType.list[cache.tagType.select].id,

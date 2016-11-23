@@ -76,6 +76,7 @@ ng-if="!$ctrl.selectListCollect"
 		ng-repeat="item in list"
 		class="btn btn-sm" 
 		>{{$ctrl.tagName[item.child_id]}}
+		({{item.sort_id}})
 		</button>
 		<select 
 		ng-show="$ctrl.mode && list.length"
@@ -85,12 +86,7 @@ ng-if="!$ctrl.selectListCollect"
 		<option value="">無</option>
 		</select>
 	</div>
-	<div class="hidden">
-	{{$ctrl.selectList[$ctrl.levelIndex]}}
-	</div>
-	<div class="hidden">
-	{{$ctrl.select}}
-	</div>
+	
 	<tag-recusion
 	style="display:{{$ctrl.mode?'inline-block;':'block'}}"
 	ng-if="

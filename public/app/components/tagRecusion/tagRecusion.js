@@ -35,22 +35,18 @@ angular.module("app").component("tagRecusion",{
 		}
 		if($scope.$ctrl.selectListCollect){
 			//init selectListCollect
-			$scope.$watch("$ctrl.lockLv1",function(){
+			var init=function(){
 				promiseRecursive(function* (){
 					if($scope.$ctrl.lockLv1){
 						var res=yield get_list();
 						if(res.status){
-							var list=res.list.sort(function(a,b){
+							var list=res.list
+							list.sort(function(a,b){
 								return a.sort_id-b.sort_id;
 							})
-							
 							var cut=$scope.$ctrl.selectListCollect.length-list.length
-							
 							if(cut>0){
 								$scope.$ctrl.selectListCollect.splice(list.length,cut);
-							}
-							if(cut<0){
-								$scope.$ctrl.selectListCollect.splice(0,$scope.$ctrl.selectListCollect.length);
 							}
 							
 							for(var i in list){
@@ -58,21 +54,22 @@ angular.module("app").component("tagRecusion",{
 								if(!$scope.$ctrl.selectListCollect[i]){
 									$scope.$ctrl.selectListCollect.push([])
 								}
+								
 								for(var j in $scope.$ctrl.levelList){
-									// console.log($scope.$ctrl.selectListCollect[i][j])
 									if(!$scope.$ctrl.selectListCollect[i][j]){
 										$scope.$ctrl.selectListCollect[i].push({})
 									}
-									if(!$scope.$ctrl.selectListCollect[i][j].select){
-										if(j==0){
-											// console.log(i,j,select)
-											$scope.$ctrl.selectListCollect[i][j].select=select;
-											// console.log($scope.$ctrl.selectListCollect[i][j].select)
-										}
+									if(j==0){
+										$scope.$ctrl.selectListCollect[i][j].select=select;
 									}
+									
+								}
+								var cut=$scope.$ctrl.selectListCollect[i].length-$scope.$ctrl.levelList.length
+								if(cut>0){
+									$scope.$ctrl.selectListCollect[i].splice($scope.$ctrl.levelList.length,cut);
 								}
 							}
-							
+							// console.log($scope.$ctrl.selectListCollect)
 							
 							$scope.$apply();
 						}
@@ -85,13 +82,19 @@ angular.module("app").component("tagRecusion",{
 							if(!$scope.$ctrl.selectListCollect[0][i]){
 								$scope.$ctrl.selectListCollect[0].push({})
 							}
+							
+						}
+						var cut=$scope.$ctrl.selectListCollect[0].length-$scope.$ctrl.levelList.length
+						if(cut>0){
+							$scope.$ctrl.selectListCollect[0].splice($scope.$ctrl.levelList.length,cut);
 						}
 					}
 				}())
-			},1)
+			}
+			$scope.$watch("$ctrl.lockLv1",init,1)
+			$scope.$watch("$ctrl.levelList",init,1)
 			//watch click
 			var watch_selectListCollect=function(){
-				// return
 				clearTimeout($scope.watch_selectListCollect);
 				$scope.watch_selectListCollect=setTimeout(function(){
 					$scope.$ctrl.clickSearch.splice(0,$scope.$ctrl.clickSearch.length);
@@ -112,7 +115,7 @@ angular.module("app").component("tagRecusion",{
 								if(index==-1)
 									$scope.$ctrl.clickSearch.push({name:name});
 							}
-						}else{	
+						}else if(last){
 							var p_last_level_id=$scope.$ctrl.levelList[last-1].id;
 							var last_level_id=$scope.$ctrl.levelList[last].id;
 							var select=selectList[last-1].select;
@@ -192,6 +195,9 @@ angular.module("app").component("tagRecusion",{
 						}
 					}
 				}
+				$scope.list.sort(function(a,b){
+					return a.sort_id-b.sort_id;
+				})
 				
 				if($scope.list.length){					
 					if($scope.$ctrl.levelList.length-1!=$scope.$ctrl.levelIndex)
@@ -220,6 +226,31 @@ angular.module("app").component("tagRecusion",{
 				}
 			},1)
 			$scope.$watch("$ctrl.relation["+$scope.level_id+"]",watch_list,1)
+			$scope.$watch("list",function(curr,prev){
+				if(!curr)return;
+				if(!prev)return;
+				if(curr.length!=prev.length)return;
+				// console.log(curr,prev)
+				
+				for(var i in curr){
+					// console.log(curr[i],prev[i])
+					if(curr[i].child_id!=prev[i].child_id){
+						var where=angular.copy(curr[i]);
+						delete where.sort_id
+						var update={sort_id:i};
+						var ch={
+							update:update,
+							where:where
+						}
+						curr[i].sort_id=i;
+						
+						tagRelation.ch(ch)
+						.then(function(res){
+							console.log(res)
+						})
+					}
+				}
+			},1)
 			
 		}
 	}]

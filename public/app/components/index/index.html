@@ -1,14 +1,16 @@
 <tag-type></tag-type>
 
-<tag-relation-level
+<tag-level
 ng-if="cache.tagType.list[cache.tagType.select]"
-></tag-relation-level>
+></tag-level>
 
 <web-list 
 ng-if="cache.tagType.list[cache.tagType.select]"
 ></web-list>
+
 <tag-search
 ng-if="
+
 cache.tagType.list[cache.tagType.select] 
 && 
 cache.webList.list[cache.webList.select]
@@ -17,8 +19,7 @@ cache.webList.list[cache.webList.select]
 <id-search
 
 ng-if="
-0 
-&&
+
 cache.tagType.list[cache.tagType.select] 
 && 
 cache.webList.list[cache.webList.select]

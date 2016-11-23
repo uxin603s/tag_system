@@ -1,11 +1,14 @@
-angular.module('app').factory('cache',['$rootScope',function($rootScope){
+angular.module('app')
+.factory('cache',['$rootScope',function($rootScope){
 	var cache={
 		data:{}
 	};
-	localforage.getItem(location.pathname+"cache").then(function(data){
+	localforage.getItem(location.pathname+"cache")
+	.then(function(data){
 		if(data){
 			if(data.cache_time && ((Math.floor(Date.now()/1000) - 1) > data.cache_time )){
 				console.log("太久沒來了清除快取")
+				
 			}else{
 				for(var i in data.data){
 					cache.data[i]=data.data[i];

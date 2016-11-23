@@ -107,21 +107,7 @@ angular.module('app').factory('tagRelation',
 			
 		});
 	}
-	var get_inter=function(require_id,option_id){
-		return new Promise(function(resolve,reject){
-			var post_data={
-				func_name:'TagRelation::getIntersection',
-				arg:{
-					require_id:require_id,
-					option_id:option_id,
-				},
-			}
-			$.post("ajax.php",post_data,function(res){
-				resolve(res);
-				$rootScope.$apply();
-			},"json");
-		});
-	}
+	
 	var ch=function(arg){
 		return new Promise(function(resolve,reject) {
 			var post_data={
@@ -138,7 +124,7 @@ angular.module('app').factory('tagRelation',
 		add:add,
 		del:del,
 		get:get,
-		get_inter:get_inter,
+		
 		ch:ch,
 	}
 }])

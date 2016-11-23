@@ -1,7 +1,8 @@
 angular.module('app').component("tagSearch",{
 	bindings:{},
 	templateUrl:'app/components/tagSearch/tagSearch.html?t='+Date.now(),
-	controller:["$scope","cache","tagName","aliasList","tagRelation",function($scope,cache,tagName,aliasList,tagRelation){
+	controller:["$scope","cache","tagName","webRelation",
+	function($scope,cache,tagName,webRelation){
 		$scope.cache=cache;
 		cache.tag_search || (cache.tag_search={});
 		cache.tag_search.search || (cache.tag_search.search=[]);
@@ -26,10 +27,8 @@ angular.module('app').component("tagSearch",{
 				}
 				
 				cache.tag_search.search=absoluteSearch;
-				// console.log(cache.tag_search.search)
 				$scope.$apply();
 				tag_search_id();
-				
 			},0)
 			
 		}
@@ -41,14 +40,14 @@ angular.module('app').component("tagSearch",{
 			clearTimeout($scope.tag_search_id_timer)
 			$scope.tag_search_id_timer=setTimeout(function(){
 				promiseRecursive(function* (){
-					
-					
 					var value=cache.tag_search.search.map(function(val){
 						return val.name;
 					});
 					
 					var list=yield tagName.nameToId(value,1);
+					
 					// console.log(cache.tag_search.search.length,value,list)
+					// return
 					if(cache.tag_search.search.length==list.length){
 						var require_id=[];
 						var option_id=[];
@@ -65,28 +64,18 @@ angular.module('app').component("tagSearch",{
 								require_id.push(id)
 							}
 						}
-						// console.log(require_id,option_id)
-						var res=yield tagRelation.get_inter(require_id,option_id);
-						// console.log(res)
+						
+						var wid=cache.webList.list[cache.webList.select].id
+						var res=yield webRelation.getInter(require_id,option_id,wid);
+		
 						if(res.status){
-							var where_list=[
-								{field:'wid',type:0,value:cache.webList.list[cache.webList.select].id},
-							];
-							for(var i in res.list){
-								where_list.push({field:'id',type:0,value:res.list[i].child_id})
-							}
-							var res=yield aliasList.get(where_list);//把id轉換成source_id
-							// console.log(res)
-							if(res.status){
-								cache.tag_search.result=res.list.map(function(value){
-									return value.source_id;
-								})
-							}else{
-								yield Promise.reject("aliasList沒資料");
-							}
+							console.log(res)
+							cache.tag_search.result=res.list.map(function(val){
+								return val.source_id;
+							});
 							$scope.$apply()
 						}else{
-							yield Promise.reject("tagRelation沒資料");
+							yield Promise.reject("webRelation沒資料");
 						}
 					}else{
 						yield Promise.reject("搜尋不存在的標籤");
@@ -95,7 +84,7 @@ angular.module('app').component("tagSearch",{
 				.catch(function(message){
 					cache.tag_search.result=[];
 					$scope.$apply();
-					// console.log(message)
+					console.log(message)
 				})
 			},0);
 		}

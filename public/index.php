@@ -12,14 +12,14 @@
 	
 	<script src="app/factories/cache.js?t=<?=time()?>"></script>
 	<script src="app/factories/tagName.js?t=<?=time()?>"></script>
-	<script src="app/factories/aliasList.js?t=<?=time()?>"></script>
+	<script src="app/factories/webRelation.js?t=<?=time()?>"></script>
 	<script src="app/factories/tagRelation.js?t=<?=time()?>"></script>
 	
 	<script src="app/factories/idRelation.js?t=<?=time()?>"></script>
 	
 	<script src="app/components/index/index.js?t<?=time()?>"></script>
 	<script src="app/components/tagType/tagType.js?t<?=time()?>"></script>
-	<script src="app/components/tagRelationLevel/tagRelationLevel.js?t<?=time()?>"></script>
+	<script src="app/components/tagLevel/tagLevel.js?t<?=time()?>"></script>
 	<script src="app/components/webList/webList.js?t<?=time()?>"></script>
 	
 	<script src="app/components/tagRecusion/tagRecusion.js?t<?=time()?>"></script>
