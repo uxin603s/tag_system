@@ -15,6 +15,7 @@ ng-repeat="selectList in $ctrl.selectListCollect"
 	relation="$ctrl.relation"
 	level-list="$ctrl.levelList"
 	tag-name="$ctrl.tagName"
+	tag-count="$ctrl.tagCount"
 	
 	select-list="selectList"
 	lock-lv1="$ctrl.lockLv1"
@@ -75,8 +76,9 @@ ng-if="!$ctrl.selectListCollect"
 		ng-right-click="del($index)"
 		ng-repeat="item in list"
 		class="btn btn-sm" 
-		>{{$ctrl.tagName[item.child_id]}}
-		({{item.sort_id}})
+		>
+		{{$ctrl.tagName[item.child_id]}}
+		({{$ctrl.tagCount[item.child_id]||0}})
 		</button>
 		<select 
 		ng-show="$ctrl.mode && list.length"
@@ -102,7 +104,7 @@ ng-if="!$ctrl.selectListCollect"
 	relation="$ctrl.relation"
 	level-list="$ctrl.levelList"
 	tag-name="$ctrl.tagName"
-	
+	tag-count="$ctrl.tagCount"
 	
 	select-list="$ctrl.selectList"
 	

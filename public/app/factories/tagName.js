@@ -1,5 +1,8 @@
-angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$rootScope){
+angular.module('app').factory('tagName',
+['cache','$rootScope',
+function(cache,$rootScope){
 	cache.tagName || (cache.tagName={});
+	cache.tagCount || (cache.tagCount={});
 	var insert=function(name,callback){
 		if(name===""){
 			alert("標籤不能空白")
@@ -16,7 +19,14 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 			callback && callback(res)
 		},"json")
 	};
-	
+	var cacheTagName=function(list){
+		for(var i in list){
+			var data=list[i];
+			var id=data.id;
+			var name=data.name;
+			cache.tagName[id]=name;
+		}
+	}
 	var getList=function(where_list,return_type){
 		return new Promise(function(resolve,reject) {
 			var post_data={
@@ -40,10 +50,12 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 				}	
 				
 				if(return_type){//搜尋模式
+					cacheTagName(list)
 					resolve && resolve(list)
 				}else{//新增模式
 					var insert_arr=[];
 					if(where_list.length==list.length){
+						cacheTagName(list)
 						resolve && resolve(list)
 					}else{
 						for(var i in where_list){
@@ -56,6 +68,7 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 								if(res.status){
 									list.push(res.insert)
 									if(where_list.length==list.length){
+										cacheTagName(list)
 										resolve && resolve(list)
 									}
 								}
@@ -79,10 +92,7 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 		
 		return getList(where_list,return_type)
 		.then(function(list){
-			for(var i in list){
-				var data=list[i];
-				cache.tagName[data.id]=data.name;
-			}
+			
 			$rootScope.$apply();
 			return Promise.resolve(list);
 		})
@@ -105,11 +115,7 @@ angular.module('app').factory('tagName',['cache','$rootScope',function(cache,$ro
 			
 			getList(where_list)
 			.then(function(list){
-				for(var i in list){
-					var data=list[i];
-					cache.tagName[data.id]=data.name;
-					result.push(data.name)
-				}
+				
 				$rootScope.$apply();
 				
 				return resolve(result);

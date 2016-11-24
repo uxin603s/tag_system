@@ -77,11 +77,14 @@ function($rootScope,cache,tagName,webRelation){
 					.then(function(id,res){
 						
 						if(res.status){
-							tagName.idToName(res.list.map(function(val){
-								return val.id;
+							return tagName.idToName(res.list.map(function(val){
+								return val.tid;
 							}))
+							.then(function(id){
+								tmp_result[id]=res.list
+							}.bind(this,id))
 							
-							tmp_result[id]=res.list
+							
 						}else{
 							tmp_result[id]=[];
 						}

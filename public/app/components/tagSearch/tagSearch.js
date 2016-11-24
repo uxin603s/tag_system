@@ -44,10 +44,11 @@ angular.module('app').component("tagSearch",{
 						return val.name;
 					});
 					
+					if(!value.length){
+						yield Promise.reject("沒有搜尋資料");
+					}
 					var list=yield tagName.nameToId(value,1);
 					
-					// console.log(cache.tag_search.search.length,value,list)
-					// return
 					if(cache.tag_search.search.length==list.length){
 						var require_id=[];
 						var option_id=[];
@@ -69,7 +70,7 @@ angular.module('app').component("tagSearch",{
 						var res=yield webRelation.getInter(require_id,option_id,wid);
 		
 						if(res.status){
-							console.log(res)
+							// console.log(res)
 							cache.tag_search.result=res.list.map(function(val){
 								return val.source_id;
 							});
@@ -84,7 +85,7 @@ angular.module('app').component("tagSearch",{
 				.catch(function(message){
 					cache.tag_search.result=[];
 					$scope.$apply();
-					console.log(message)
+					// console.log(message)
 				})
 			},0);
 		}

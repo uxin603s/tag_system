@@ -1,26 +1,29 @@
 angular.module('app').component("index",{
 	bindings:{},
 	templateUrl:'app/components/index/index.html?t='+Date.now(),
-	controller:['$scope','cache','idRelation',function($scope,cache,idRelation){
+	controller:['$scope','cache','idRelation',"tagRelation",
+	function($scope,cache,idRelation,tagRelation){
 		$scope.cache=cache;
 		
 		postMessageHelper.receive("tagSystem",function(res){
 			var getTag_timer=setInterval(function(){
-				if(cache.webList && cache.webList.list[cache.webList.select] && cache.levelList){
+				if(cache.webList && cache.webList.list[cache.webList.select]){
 					clearTimeout(getTag_timer);
 					var wid=cache.webList.list[cache.webList.select].id
-					var level_id=cache.levelList[cache.levelList.length-1].id;
 					if(res.name=="getTag"){
-						idRelation.get(res.value,wid,level_id)
+						idRelation.get(res.value,wid)
 						.then(function(res){
+							
 							var list=angular.copy(res);
 							var result={};
 							for(var i in list){
 								result[i]=[];
 								for(var j in list[i]){
-									result[i].push(cache.tagName[list[i][j].id]);
+									result[i].push(cache.tagName[list[i][j].tid]);
 								}
 							}
+							// console.log(result)
+							// return
 							postMessageHelper.send("tagSystem",{name:"getTag",value:result})
 						});
 					}
@@ -41,9 +44,23 @@ angular.module('app').component("index",{
 			if(!selectList)return;
 			clearTimeout(watch_selectList)
 			watch_selectList=setTimeout(function(){
-				// console.log(selectList)
+				
 				var selectTag;
 				for(var i in selectList){
+					// var data=selectList[i][selectList[i].length-2];
+					// if(data.select){
+						// tagRelation
+						// .get_list(data.select,cache.levelList.length-1)
+						// .then(function(res){
+							// console.log(res)
+						// })
+						// if(!cache.relation[cache.levelList[cache.levelList.length-1].id][data.select]){
+							// selectTag=cache.tagName[data.select];
+							// delete data.select
+							// break;
+						// }
+					// }
+					
 					var data=selectList[i][selectList[i].length-1];
 					
 					if(data.select){
@@ -52,8 +69,10 @@ angular.module('app').component("index",{
 						break;
 					}
 				}
+				
 				if(selectTag){
-					postMessageHelper.send("tagSystem",{name:"selectTag",value:selectTag})
+					console.log(selectTag)
+					// postMessageHelper.send("tagSystem",{name:"selectTag",value:selectTag})
 				}
 				
 			},0)

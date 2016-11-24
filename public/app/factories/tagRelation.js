@@ -1,6 +1,8 @@
 angular.module('app').factory('tagRelation',
-['$rootScope','cache','tagName',function($rootScope,cache,tagName){
+['$rootScope','cache','tagName',"webRelation",
+function($rootScope,cache,tagName,webRelation){
 	var get=function(where_list){
+		
 		return new Promise(function(resolve,reject) {
 			var level_id;
 			var id;
@@ -13,7 +15,6 @@ angular.module('app').factory('tagRelation',
 				if(field=="id"){
 					id=value;
 				}
-				
 			}
 			var relation=cache.relation[level_id];
 			if(relation && Object.keys(relation).length){
@@ -22,7 +23,6 @@ angular.module('app').factory('tagRelation',
 					for(var i in relation[id]){
 						list.push(relation[id][i]);
 					}
-					// console.log("use cache")
 					return resolve({status:true,list:list})
 				}
 			}
@@ -52,7 +52,8 @@ angular.module('app').factory('tagRelation',
 				resolve(res)
 				$rootScope.$apply();
 			},"json")
-		});
+		})
+		
 	}
 
 	var add=function(arg){
@@ -120,11 +121,25 @@ angular.module('app').factory('tagRelation',
 			},"json")
 		});
 	}
+	var get_list=function(select,levelIndex){
+		if(!levelIndex){
+			levelIndex=0;
+		}
+		var level_id=cache.levelList[levelIndex].id;
+		var where_list=[
+			{field:'level_id',type:0,value:level_id},
+			{field:'id',type:0,value:select?select:0},
+		];
+		// webRelation.getCount(res.list.map(function(val){
+			// return val.child_id
+		// }))
+		return get(where_list);
+	}
 	return {
 		add:add,
 		del:del,
 		get:get,
-		
 		ch:ch,
+		get_list:get_list,
 	}
 }])
