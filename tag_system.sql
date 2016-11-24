@@ -1,8 +1,8 @@
--- MySQL dump 10.15  Distrib 10.0.27-MariaDB, for Linux (x86_64)
+-- MySQL dump 10.16  Distrib 10.1.10-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: tag_system
 -- ------------------------------------------------------
--- Server version	10.0.27-MariaDB
+-- Server version	10.1.10-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -54,7 +54,7 @@ CREATE TABLE `tag_name` (
   `created_time_int` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,7 +63,7 @@ CREATE TABLE `tag_name` (
 
 LOCK TABLES `tag_name` WRITE;
 /*!40000 ALTER TABLE `tag_name` DISABLE KEYS */;
-INSERT INTO `tag_name` VALUES (1,'a','2016-11-23 21:09:29',1479906569),(2,'aa','2016-11-23 21:09:41',1479906581),(3,'aaa','2016-11-23 21:09:43',1479906583),(4,'b','2016-11-23 21:13:56',1479906836),(5,'bb','2016-11-23 21:14:00',1479906840),(6,'bbb','2016-11-23 21:14:04',1479906844),(7,'aaaa','2016-11-23 21:14:11',1479906851),(8,'bbbb','2016-11-23 21:14:14',1479906854),(9,'aaaaa','2016-11-23 21:14:16',1479906856),(10,'bbbbb','2016-11-23 21:14:19',1479906859),(11,'cc','2016-11-23 21:14:35',1479906875),(12,'sss','2016-11-23 22:53:16',1479912796),(13,'','2016-11-23 22:53:38',1479912818),(14,'ertert','2016-11-23 23:01:50',1479913310),(15,'ddd','2016-11-23 23:20:25',1479914425),(16,'qq','2016-11-23 23:21:00',1479914460);
+INSERT INTO `tag_name` VALUES (1,'a','2016-11-23 21:09:29',1479906569),(2,'aa','2016-11-23 21:09:41',1479906581),(3,'aaa','2016-11-23 21:09:43',1479906583),(4,'b','2016-11-23 21:13:56',1479906836),(5,'bb','2016-11-23 21:14:00',1479906840),(6,'bbb','2016-11-23 21:14:04',1479906844),(7,'aaaa','2016-11-23 21:14:11',1479906851),(8,'bbbb','2016-11-23 21:14:14',1479906854),(9,'aaaaa','2016-11-23 21:14:16',1479906856),(10,'bbbbb','2016-11-23 21:14:19',1479906859),(11,'cc','2016-11-23 21:14:35',1479906875),(12,'sss','2016-11-23 22:53:16',1479912796),(13,'','2016-11-23 22:53:38',1479912818),(14,'ertert','2016-11-23 23:01:50',1479913310),(15,'ddd','2016-11-23 23:20:25',1479914425),(16,'qq','2016-11-23 23:21:00',1479914460),(17,'dd','2016-11-24 10:18:05',1479953885);
 /*!40000 ALTER TABLE `tag_name` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,7 +89,7 @@ CREATE TABLE `tag_relation` (
 
 LOCK TABLES `tag_relation` WRITE;
 /*!40000 ALTER TABLE `tag_relation` DISABLE KEYS */;
-INSERT INTO `tag_relation` VALUES (0,1,1,0),(1,2,2,0),(2,3,3,0),(0,4,1,1),(4,5,2,1),(5,6,3,0),(2,7,3,1),(5,8,3,1),(2,9,3,2),(5,10,3,2),(4,11,2,0);
+INSERT INTO `tag_relation` VALUES (0,1,1,0),(1,2,2,0),(2,3,3,0),(0,4,1,1),(4,5,2,0),(5,6,3,0),(2,7,3,1),(5,8,3,1),(2,9,3,2),(5,10,3,2),(4,11,2,1),(1,17,2,1);
 /*!40000 ALTER TABLE `tag_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -104,9 +104,8 @@ CREATE TABLE `tag_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `sort_id` int(11) NOT NULL,
-  `lock_lv1` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +114,7 @@ CREATE TABLE `tag_type` (
 
 LOCK TABLES `tag_type` WRITE;
 /*!40000 ALTER TABLE `tag_type` DISABLE KEYS */;
-INSERT INTO `tag_type` VALUES (1,'圖片',0,1);
+INSERT INTO `tag_type` VALUES (1,'主題',0),(2,'模板',1);
 /*!40000 ALTER TABLE `tag_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,7 +130,7 @@ CREATE TABLE `web_list` (
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `sort_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -140,7 +139,7 @@ CREATE TABLE `web_list` (
 
 LOCK TABLES `web_list` WRITE;
 /*!40000 ALTER TABLE `web_list` DISABLE KEYS */;
-INSERT INTO `web_list` VALUES (1,'cfd圖片',0);
+INSERT INTO `web_list` VALUES (1,'cfd圖片',0),(2,'cfd模板',0);
 /*!40000 ALTER TABLE `web_list` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -166,8 +165,32 @@ CREATE TABLE `web_relation` (
 
 LOCK TABLES `web_relation` WRITE;
 /*!40000 ALTER TABLE `web_relation` DISABLE KEYS */;
-INSERT INTO `web_relation` VALUES (3,1,1,0),(11,2,1,1),(6,2,1,0),(6,1,1,1),(11,3,1,0),(3,3,1,1);
+INSERT INTO `web_relation` VALUES (3,1,1,1),(11,2,1,1),(6,2,1,0),(6,1,1,0),(11,3,1,0),(3,3,1,1);
 /*!40000 ALTER TABLE `web_relation` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `web_tag_type`
+--
+
+DROP TABLE IF EXISTS `web_tag_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `web_tag_type` (
+  `wid` int(11) NOT NULL,
+  `tid` int(11) NOT NULL,
+  `sort_id` int(11) NOT NULL,
+  PRIMARY KEY (`wid`,`tid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `web_tag_type`
+--
+
+LOCK TABLES `web_tag_type` WRITE;
+/*!40000 ALTER TABLE `web_tag_type` DISABLE KEYS */;
+/*!40000 ALTER TABLE `web_tag_type` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -179,4 +202,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-23 23:38:27
+-- Dump completed on 2016-11-24 12:57:12
