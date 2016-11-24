@@ -4,6 +4,34 @@ angular.module('app').component("tagType",{
 	controller:["$scope","cache",function($scope,cache){
 		
 		$scope.cache=cache;
+		$scope.get=function(){
+			$scope.cache.tagType || ($scope.cache.tagType={});
+			var post_data={
+				func_name:'TagType::getList',
+				arg:{}
+			}
+			$.post("ajax.php",post_data,function(res){
+				if(res.status){
+					$scope.cache.tagType.list=res.list;
+					if($scope.uri_tid){
+						
+						var index=$scope.cache.tagType.list.findIndex(function(val){
+							return val.id==$scope.uri_tid;
+						});
+						if(index==-1){
+							alert("沒有這個標籤類別")
+						}else{
+							$scope.cache.tagType.select=index;
+						}
+					}else{
+						$scope.cache.tagType.select=0;
+					}
+				}else{
+					$scope.cache.tagType.list=[];
+				}
+				$scope.$apply();
+			},"json")
+		}
 		location.search.match(/tid=(\d+?)/g)
 		if(RegExp.$1){
 			$scope.uri_tid=RegExp.$1
@@ -70,34 +98,7 @@ angular.module('app').component("tagType",{
 				$scope.$apply();
 			},"json")
 		}
-		$scope.get=function(){
-			$scope.cache.tagType || ($scope.cache.tagType={});
-			var post_data={
-				func_name:'TagType::getList',
-				arg:{}
-			}
-			$.post("ajax.php",post_data,function(res){
-				if(res.status){
-					$scope.cache.tagType.list=res.list;
-					if($scope.uri_tid){
-						
-						var index=$scope.cache.tagType.list.findIndex(function(val){
-							return val.id==$scope.uri_tid;
-						});
-						if(index==-1){
-							alert("沒有這個標籤類別")
-						}else{
-							$scope.cache.tagType.select=index;
-						}
-					}else{
-						$scope.cache.tagType.select=0;
-					}
-				}else{
-					$scope.cache.tagType.list=[];
-				}
-				$scope.$apply();
-			},"json")
-		}
+		
 		$scope.del=function(index){
 			if(!confirm("確認刪除?"))return;
 			var post_data={

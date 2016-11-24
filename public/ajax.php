@@ -12,6 +12,7 @@ include_once __DIR__."/../TagLevel.php";
 
 include_once __DIR__."/../WebList.php";
 include_once __DIR__."/../WebRelation.php";
+include_once __DIR__."/../WebTagType.php";
 
 
 $DBConfig=json_decode(file_get_contents(__DIR__."/../config/DB.json"),1);

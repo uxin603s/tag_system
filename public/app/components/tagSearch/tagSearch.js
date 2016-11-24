@@ -14,6 +14,23 @@ angular.module('app').component("tagSearch",{
 			clearTimeout($scope.interSearchTimer);
 			$scope.interSearchTimer=setTimeout(function(){
 				var absoluteSearch=angular.copy(cache.tag_search.absoluteSearch);
+				var name_arr=angular.copy(cache.tag_search.absoluteSearch)
+				.map(function(val){
+					return val.name;
+				})
+				// console.log(name_arr)
+				tagName
+				.nameToId(name_arr,1)
+				.then(function(res){
+					cache.require_id=res.map(function(val){
+						return val.id;
+					})
+					
+					// cache.option_id=option_id;
+					webRelation.getCount();
+				})
+				
+				
 				var clickSearch=angular.copy(cache.clickSearch);
 				cache.tag_search.diffSearch=[];
 				for(var i in clickSearch){
@@ -24,6 +41,9 @@ angular.module('app').component("tagSearch",{
 						cache.tag_search.diffSearch.push(clickSearch[i]);
 						absoluteSearch.push(clickSearch[i]);
 					}
+					// else{
+						// absoluteSearch[index].type=1;
+					// }
 				}
 				
 				cache.tag_search.search=absoluteSearch;
@@ -65,12 +85,12 @@ angular.module('app').component("tagSearch",{
 								require_id.push(id)
 							}
 						}
+						// console.log(option_id,require_id)
 						
 						var wid=cache.webList.list[cache.webList.select].id
 						var res=yield webRelation.getInter(require_id,option_id,wid);
 		
 						if(res.status){
-							// console.log(res)
 							cache.tag_search.result=res.list.map(function(val){
 								return val.source_id;
 							});

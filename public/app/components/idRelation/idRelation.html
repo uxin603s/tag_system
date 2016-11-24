@@ -15,5 +15,6 @@ ng-right-click="idRelation.del($index,$ctrl.sourceId)"
 class="btn btn-primary btn-sm"
 ng-repeat="item in $ctrl.list"
 >
-{{cache.tagName[item.tid]}}({{item.sort_id}})
+{{cache.tagName[item.tid]}}
+<span class="hidden">({{cache.tagCount[item.tid] || 0}})</span>
 </button>

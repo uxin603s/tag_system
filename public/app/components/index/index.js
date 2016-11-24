@@ -47,19 +47,23 @@ angular.module('app').component("index",{
 				
 				var selectTag;
 				for(var i in selectList){
-					// var data=selectList[i][selectList[i].length-2];
-					// if(data.select){
-						// tagRelation
-						// .get_list(data.select,cache.levelList.length-1)
-						// .then(function(res){
-							// console.log(res)
-						// })
-						// if(!cache.relation[cache.levelList[cache.levelList.length-1].id][data.select]){
-							// selectTag=cache.tagName[data.select];
-							// delete data.select
-							// break;
-						// }
-					// }
+					var data=selectList[i][selectList[i].length-2];
+					if(data.select){
+						tagRelation
+						.get_list(data.select,cache.levelList.length-1)
+						.then(function(data,res){
+							if(!res.status){
+								selectTag=cache.tagName[data.select];
+								delete data.select
+								if(selectTag){
+									console.log(selectTag)
+									// postMessageHelper.send("tagSystem",{name:"selectTag",value:selectTag})
+								}
+							}
+							// console.log(res.status)
+						}.bind(this,data))
+						
+					}
 					
 					var data=selectList[i][selectList[i].length-1];
 					

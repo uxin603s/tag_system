@@ -1,16 +1,15 @@
 angular.module("app").component("tagRecusion",{
 	bindings:{
-		editMode:"=",
+		// editMode:"=",
 		
-		relation:"=",//relation快取
-		levelList:"=",//階層資料
-		tagName:"=",//標籤名稱
-		tagCount:"=",//標籤名稱
+		// relation:"=",//relation快取
+		// levelList:"=",//階層資料
+		// tagName:"=",//標籤名稱
+		// tagCount:"=",//標籤名稱
 		
 		levelIndex:"=",//第幾層
 		select:"=",//這層選
 		selectList:"=",
-		selectListCollect:"=",
 		
 		childIds:"=",
 		lockLv1:"=",//第一層鎖定
@@ -19,204 +18,76 @@ angular.module("app").component("tagRecusion",{
 		clickSearch:"=",//選擇的標籤
 	},
 	templateUrl:'app/components/tagRecusion/tagRecusion.html?t='+Date.now(),
-	controller:["$scope","tagRelation","tagName",function($scope,tagRelation,tagName){
-		$scope.level_id=$scope.$ctrl.levelList[$scope.$ctrl.levelIndex].id;		
+	controller:["$scope","tagRelation","tagName","cache",
+	function($scope,tagRelation,tagName,cache){
+		$scope.cache=cache;
+		$scope.level_id=cache.levelList[$scope.$ctrl.levelIndex].id;		
 		$scope.search={tagName:''};
 		
-		if($scope.$ctrl.selectListCollect){
-			//init selectListCollect
-			var init=function(){
-				promiseRecursive(function* (){
-					if($scope.$ctrl.lockLv1){
-						var res=yield tagRelation.get_list();
+		
+		$scope.add=function(search){
+			promiseRecursive(function* (){
+				var res=yield tagName.nameToId(search.tagName);
+				var select=$scope.$ctrl.select?$scope.$ctrl.select:0;
+				var sort_id=0;
+				if(cache.relation[$scope.level_id]){
+					if(cache.relation[$scope.level_id][select])
+						sort_id=Object.keys(cache.relation[$scope.level_id][select]).length;
+				}
+				var add={
+					level_id:$scope.level_id,
+					id:select,
+					child_id:res[0].id,
+					sort_id:sort_id,
+				}
+				tagRelation.add(add);
+				search.tagName='';
+			}())
+		}
+		$scope.del=function(index){
+			var del=angular.copy($scope.list[index]);
+			tagRelation.del(del)
+			.then(function(res){
+				if(res.status){
+					$scope.list.splice(index,1)
+					$scope.$apply();
+				}
+			})
+		}
+		var watch_list=function(value){
+			$scope.watch_list && $scope.watch_list();
+			$scope.list=[];
+			if(cache.relation[$scope.level_id]){
+				var relation=cache.relation[$scope.level_id][$scope.$ctrl.select?$scope.$ctrl.select:0];
+				if(relation){
+					var select=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select
+					if(!relation[select]){
+						delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select
+					}
+					for(var i in relation){
+						$scope.list.push(relation[i])
+					}
+				}
+			}
+			$scope.list.sort(function(a,b){
+				return a.sort_id-b.sort_id;
+			})
+			
+			if($scope.list.length){					
+				if(cache.levelList.length-1!=$scope.$ctrl.levelIndex)
+				if(!$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select){
+					var child_id=$scope.list[0].child_id;
+					
+					tagRelation.get_list(child_id,$scope.$ctrl.levelIndex+1)
+					.then(function(res){
 						if(res.status){
-							var list=res.list
-							list.sort(function(a,b){
-								return a.sort_id-b.sort_id;
-							})
-							var cut=$scope.$ctrl.selectListCollect.length-list.length
-							if(cut>0){
-								$scope.$ctrl.selectListCollect.splice(list.length,cut);
-							}
-							
-							for(var i in list){
-								var select=list[i].child_id;
-								if(!$scope.$ctrl.selectListCollect[i]){
-									$scope.$ctrl.selectListCollect.push([])
-								}
-								
-								for(var j in $scope.$ctrl.levelList){
-									if(!$scope.$ctrl.selectListCollect[i][j]){
-										$scope.$ctrl.selectListCollect[i].push({})
-									}
-									if(j==0){
-										$scope.$ctrl.selectListCollect[i][j].select=select;
-									}
-									
-								}
-								var cut=$scope.$ctrl.selectListCollect[i].length-$scope.$ctrl.levelList.length
-								if(cut>0){
-									$scope.$ctrl.selectListCollect[i].splice($scope.$ctrl.levelList.length,cut);
-								}
-							}
-							// console.log($scope.$ctrl.selectListCollect)
-							
+							$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select=child_id;
 							$scope.$apply();
 						}
-					}else{
-						$scope.$ctrl.selectListCollect.splice(1,$scope.$ctrl.selectListCollect.length)
-						if(!$scope.$ctrl.selectListCollect[0]){
-							$scope.$ctrl.selectListCollect[0]=[];
-						}
-						for(var i in $scope.$ctrl.levelList){
-							if(!$scope.$ctrl.selectListCollect[0][i]){
-								$scope.$ctrl.selectListCollect[0].push({})
-							}
-							
-						}
-						var cut=$scope.$ctrl.selectListCollect[0].length-$scope.$ctrl.levelList.length
-						if(cut>0){
-							$scope.$ctrl.selectListCollect[0].splice($scope.$ctrl.levelList.length,cut);
-						}
-					}
-				}())
-			}
-			$scope.$watch("$ctrl.lockLv1",init,1)
-			$scope.$watch("$ctrl.levelList",init,1)
-			//watch click
-			var watch_selectListCollect=function(){
-				clearTimeout($scope.watch_selectListCollect);
-				$scope.watch_selectListCollect=setTimeout(function(){
-					$scope.$ctrl.clickSearch.splice(0,$scope.$ctrl.clickSearch.length);
-					
-					for(var i in $scope.$ctrl.selectListCollect){
-						var selectList=angular.copy($scope.$ctrl.selectListCollect[i]);
-						if(selectList.length!=$scope.$ctrl.levelList.length)continue;
-						var last=$scope.$ctrl.levelList.length-1;
-						
-						
-						var select=selectList[last].select;
-						if(select){
-							var name=$scope.$ctrl.tagName[select];
-							if(name){
-								var index=$scope.$ctrl.clickSearch.findIndex(function(val){
-									return val.name==name;
-								})
-								if(index==-1)
-									$scope.$ctrl.clickSearch.push({name:name});
-							}
-						}else if(last){
-							var p_last_level_id=$scope.$ctrl.levelList[last-1].id;
-							var last_level_id=$scope.$ctrl.levelList[last].id;
-							var select=selectList[last-1].select;
-							var relation=$scope.$ctrl.relation[last_level_id];
-							if(relation){
-								var list=relation[select]
-								if(list && Object.keys(list).length){
-									for(var child_id in list){
-										var name=$scope.$ctrl.tagName[child_id];
-										var index=$scope.$ctrl.clickSearch.findIndex(function(val){
-											return val.name==name;
-										})
-										if(index==-1)
-											$scope.$ctrl.clickSearch.push({name:name,type:1});
-									}
-								}else{
-									if(select){
-										var name=$scope.$ctrl.tagName[select];
-										var index=$scope.$ctrl.clickSearch.findIndex(function(val){
-											return val.name==name;
-										})
-										if(index==-1)
-											$scope.$ctrl.clickSearch.push({name:name});
-									}
-								}
-							}
-						}
-					}
-					$scope.$apply();
-				},0)
-			}
-			$scope.$watch("$ctrl.selectListCollect",watch_selectListCollect,1)
-			$scope.$watch("$ctrl.relation",watch_selectListCollect,1)
-			$scope.$watch("$ctrl.tagName",watch_selectListCollect,1)
-		}else{
-			$scope.add=function(search){
-				promiseRecursive(function* (){
-					var res=yield tagName.nameToId(search.tagName);
-					var select=$scope.$ctrl.select?$scope.$ctrl.select:0;
-					var sort_id=0;
-					if($scope.$ctrl.relation[$scope.level_id]){
-						if($scope.$ctrl.relation[$scope.level_id][select])
-							sort_id=Object.keys($scope.$ctrl.relation[$scope.level_id][select]).length;
-					}
-					var add={
-						level_id:$scope.level_id,
-						id:select,
-						child_id:res[0].id,
-						sort_id:sort_id,
-					}
-					tagRelation.add(add);
-					search.tagName='';
-				}())
-			}
-			$scope.del=function(index){
-				var del=angular.copy($scope.list[index]);
-				tagRelation.del(del)
-				.then(function(res){
-					if(res.status){
-						$scope.list.splice(index,1)
-						$scope.$apply();
-					}
-				})
-			}
-			var watch_list=function(value){
-				$scope.list=[];
-				if($scope.$ctrl.relation[$scope.level_id]){
-					var relation=$scope.$ctrl.relation[$scope.level_id][$scope.$ctrl.select?$scope.$ctrl.select:0];
-					if(relation){
-						var select=$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select
-						if(!relation[select]){
-							delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select
-						}
-						for(var i in relation){
-							$scope.list.push(relation[i])
-						}
-					}
-				}
-				$scope.list.sort(function(a,b){
-					return a.sort_id-b.sort_id;
-				})
-				
-				if($scope.list.length){					
-					if($scope.$ctrl.levelList.length-1!=$scope.$ctrl.levelIndex)
-					if(!$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select){
-						var child_id=$scope.list[0].child_id;
-						$scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select=child_id;
-						// tagRelation.get_list(child_id,$scope.$ctrl.levelIndex+1)
-						// .then(function(res){
-							// if(res.status){
-								// $scope.$ctrl.selectList[$scope.$ctrl.levelIndex].select=child_id;
-								// $scope.$apply();
-							// }
-						// })						
-					}
+					})						
 				}
 			}
-			
-			$scope.$watch("$ctrl.select",function(value){
-				tagRelation.get_list(value,$scope.$ctrl.levelIndex);
-				watch_list(value);
-			},1)
-			$scope.$watch("$ctrl.selectList["+$scope.$ctrl.levelIndex+"].select",function(select){
-				if(!select){
-					if($scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1]){
-						delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1].select
-					}
-				}
-			},1)
-			$scope.$watch("$ctrl.relation["+$scope.level_id+"]",watch_list,1)
-			$scope.$watch("list",function(curr,prev){
+			$scope.watch_list=$scope.$watch("list",function(curr,prev){
 				if(!curr)return;
 				if(!prev)return;
 				if(curr.length!=prev.length)return;
@@ -239,7 +110,22 @@ angular.module("app").component("tagRecusion",{
 					}
 				}
 			},1)
-			
 		}
+		
+		$scope.$watch("$ctrl.select",function(value){
+			tagRelation.get_list(value,$scope.$ctrl.levelIndex);
+			watch_list(value);
+		},1)
+		$scope.$watch("$ctrl.selectList["+$scope.$ctrl.levelIndex+"].select",function(select){
+			if(!select){
+				if($scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1]){
+					delete $scope.$ctrl.selectList[$scope.$ctrl.levelIndex+1].select
+				}
+			}
+		},1)
+		$scope.$watch("cache.relation["+$scope.level_id+"]",watch_list,1)
+			
+			
+		
 	}]
 });

@@ -19,8 +19,16 @@ angular.module('app').component("tagLevel",{
 			}
 			$.post("ajax.php",post_data,function(res){
 				if(res.status){
+					
 					cache.levelList=res.list;
+					var count=res.list.length;
+					cache.selectList=[];
+					for(var i=0;i<count;i++){
+						cache.selectList.push({})
+					}
+					
 				}else{
+					cache.selectList=[]
 					cache.levelList=[];
 					cache.count={};
 					cache.relation={};

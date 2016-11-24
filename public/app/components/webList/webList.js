@@ -7,6 +7,10 @@ angular.module('app').component("webList",{
 		if(RegExp.$1){
 			$scope.uri_wid=RegExp.$1
 		}
+		$scope.add_relation=function(){
+			console.log(cache.webList.list[cache.webList.select].id)
+
+		}
 		$scope.get=function(){
 			$scope.cache.webList || ($scope.cache.webList={});
 			var post_data={

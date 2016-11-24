@@ -130,10 +130,17 @@ function($rootScope,cache,tagName,webRelation){
 			{field:'level_id',type:0,value:level_id},
 			{field:'id',type:0,value:select?select:0},
 		];
-		// webRelation.getCount(res.list.map(function(val){
-			// return val.child_id
-		// }))
-		return get(where_list);
+		
+		return get(where_list)
+		// .then(function(res){
+			// if(res.status){
+				// webRelation.getCount(res.list.map(function(val){
+					// return val.child_id;
+				// }))
+				// $rootScope.$apply();
+			// }
+			// return res;
+		// })
 	}
 	return {
 		add:add,

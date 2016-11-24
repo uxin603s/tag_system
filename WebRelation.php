@@ -37,7 +37,7 @@ class WebRelation{
 	public static function getIntersection($arg){
 		$status=false;
 		
-		if($arg['require_id'] || $arg['option_id']){
+		if(($arg['require_id'] && count($arg['require_id']) )|| ($arg['option_id'] && count($arg['option_id']))){
 			$bind_data=[];
 			$require_id_count=0;
 			if(isset($arg['require_id'])){
@@ -47,6 +47,9 @@ class WebRelation{
 			
 			if(isset($arg['option_id'])){
 				$bind_data=array_merge($bind_data,$arg['option_id']);
+				if(!$require_id_count){
+					$require_id_count+=1;
+				}
 			}
 			
 			$where_in=implode(",",array_fill(0,count($bind_data),"?"));
