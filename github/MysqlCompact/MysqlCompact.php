@@ -57,16 +57,19 @@ class MysqlCompact{
 		"desc",
 	];
 	public static function orderBy($orderBy_list,$filter_fields=[]){
-		$query_str="order by ";
-		$order_array=[];
-		foreach($orderBy_list as $item){
-			$field=$item['field'];
-			$sort=self::$sort_list[$item['type']];
-			if(in_array($field,$filter_fields) && $sort){
-				$order_array[]="{$field} {$sort}";
+		$query_str='';
+		if(count($orderBy_list)){
+			$query_str="order by ";
+			$order_array=[];
+			foreach($orderBy_list as $item){
+				$field=$item['field'];
+				$sort=self::$sort_list[$item['type']];
+				if(in_array($field,$filter_fields) && $sort){
+					$order_array[]="{$field} {$sort}";
+				}
 			}
+			$query_str.=implode(",",$order_array);
 		}
-		$query_str.=implode(",",$order_array);
 		return $query_str;
 	}
 }

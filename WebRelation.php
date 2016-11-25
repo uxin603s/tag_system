@@ -1,6 +1,8 @@
 <?php
 class WebRelation{
+	public static $table='web_relation';
 	public static $filter_field=['wid','source_id','tid','sort_id'];
+	use CRUD;
 	public static function getCount($arg){
 		
 		$result=self::getIntersection($arg);
@@ -76,46 +78,5 @@ class WebRelation{
 		}
 		return compact(['status','list','sql','bind_data','arg']);
 	}
-	public static function getList($arg){
-		
-		$bind_data=[];
-		$where_str=MysqlCompact::where($arg['where_list'],self::$filter_field,$bind_data);		
-		$sql="select * from web_relation {$where_str}
-		order by sort_id 
-		";
-		if($tmp=DB::select($sql,$bind_data)){
-			$status=true;
-			$list=$tmp;
-		}else{
-			$status=false;
-		}
-		
-		return compact(['status','list','sql','bind_data']);
-	}
-	public static function insert($insert){
-		//需要檢查欄位
-		
-		$status=false;
-		if(DB::insert($insert,"web_relation")){
-			$status=true;
-		}
-		
-		return compact(['insert','status']);
-	}
-	public static function delete($delete){
-		$status=false;
-		if(DB::delete($delete,"web_relation")){
-			$status=true;
-		}
-		
-		return compact(['status','delete','prev','next']);
-	}
-	public static function update($arg){
-		if(DB::update($arg['update'],$arg['where'],"web_relation")){
-			$status=true;
-		}else{
-			$status=false;
-		}
-		return compact(['status','arg']);
-	}
+	
 }

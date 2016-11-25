@@ -1,8 +1,8 @@
--- MySQL dump 10.15  Distrib 10.0.27-MariaDB, for Linux (x86_64)
+-- MySQL dump 10.16  Distrib 10.1.10-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: tag_system
 -- ------------------------------------------------------
--- Server version	10.0.27-MariaDB
+-- Server version	10.1.10-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,7 +27,7 @@ CREATE TABLE `tag_level` (
   `sort_id` int(11) NOT NULL COMMENT '第一層為0',
   `tid` int(11) NOT NULL COMMENT 'tag_type表關聯',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,7 +36,7 @@ CREATE TABLE `tag_level` (
 
 LOCK TABLES `tag_level` WRITE;
 /*!40000 ALTER TABLE `tag_level` DISABLE KEYS */;
-INSERT INTO `tag_level` VALUES (1,0,1),(2,1,1),(3,2,1);
+INSERT INTO `tag_level` VALUES (1,0,1),(2,1,1),(13,0,15),(10,0,2),(12,1,2),(14,1,15);
 /*!40000 ALTER TABLE `tag_level` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,7 +54,7 @@ CREATE TABLE `tag_name` (
   `created_time_int` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,7 +63,7 @@ CREATE TABLE `tag_name` (
 
 LOCK TABLES `tag_name` WRITE;
 /*!40000 ALTER TABLE `tag_name` DISABLE KEYS */;
-INSERT INTO `tag_name` VALUES (1,'a','2016-11-23 21:09:29',1479906569),(2,'aa','2016-11-23 21:09:41',1479906581),(3,'aaa','2016-11-23 21:09:43',1479906583),(4,'b','2016-11-23 21:13:56',1479906836),(5,'bb','2016-11-23 21:14:00',1479906840),(6,'bbb','2016-11-23 21:14:04',1479906844),(7,'aaaa','2016-11-23 21:14:11',1479906851),(8,'bbbb','2016-11-23 21:14:14',1479906854),(9,'aaaaa','2016-11-23 21:14:16',1479906856),(10,'bbbbb','2016-11-23 21:14:19',1479906859),(11,'cc','2016-11-23 21:14:35',1479906875),(12,'sss','2016-11-23 22:53:16',1479912796),(13,'','2016-11-23 22:53:38',1479912818),(14,'ertert','2016-11-23 23:01:50',1479913310),(15,'ddd','2016-11-23 23:20:25',1479914425),(16,'qq','2016-11-23 23:21:00',1479914460),(17,'dd','2016-11-24 10:18:05',1479953885);
+INSERT INTO `tag_name` VALUES (1,'a','2016-11-23 21:09:29',1479906569),(2,'aa','2016-11-23 21:09:41',1479906581),(3,'aaa','2016-11-23 21:09:43',1479906583),(4,'b','2016-11-23 21:13:56',1479906836),(5,'bb','2016-11-23 21:14:00',1479906840),(6,'bbb','2016-11-23 21:14:04',1479906844),(7,'aaaa','2016-11-23 21:14:11',1479906851),(8,'bbbb','2016-11-23 21:14:14',1479906854),(9,'aaaaa','2016-11-23 21:14:16',1479906856),(10,'bbbbb','2016-11-23 21:14:19',1479906859),(11,'cc','2016-11-23 21:14:35',1479906875),(12,'sss','2016-11-23 22:53:16',1479912796),(13,'','2016-11-23 22:53:38',1479912818),(14,'ertert','2016-11-23 23:01:50',1479913310),(15,'ddd','2016-11-23 23:20:25',1479914425),(16,'qq','2016-11-23 23:21:00',1479914460),(17,'dd','2016-11-24 10:18:05',1479953885),(18,'變數','2016-11-25 11:25:09',1480044309),(19,'變數1','2016-11-25 11:29:18',1480044558),(20,'變數2','2016-11-25 11:29:22',1480044562),(21,'變數二','2016-11-25 11:35:37',1480044937),(22,'result','2016-11-25 12:03:02',1480046582),(23,'cover','2016-11-25 12:03:04',1480046584),(24,'去被','2016-11-25 12:03:20',1480046600),(25,'去背','2016-11-25 12:03:28',1480046608);
 /*!40000 ALTER TABLE `tag_name` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,7 +89,7 @@ CREATE TABLE `tag_relation` (
 
 LOCK TABLES `tag_relation` WRITE;
 /*!40000 ALTER TABLE `tag_relation` DISABLE KEYS */;
-INSERT INTO `tag_relation` VALUES (0,1,1,0),(1,2,2,0),(2,3,3,0),(0,4,1,1),(4,5,2,0),(5,6,3,0),(2,7,3,1),(5,8,3,1),(2,9,3,2),(5,10,3,2),(4,11,2,1),(1,17,2,1);
+INSERT INTO `tag_relation` VALUES (0,1,1,0),(1,2,2,0),(0,22,13,0),(0,4,1,1),(4,5,2,1),(5,6,3,0),(0,18,10,0),(5,8,3,1),(18,19,0,1),(5,10,3,2),(4,11,2,0),(1,17,2,1),(18,20,0,0),(18,20,12,1),(18,19,12,0),(0,23,13,1),(0,25,13,2);
 /*!40000 ALTER TABLE `tag_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -104,8 +104,9 @@ CREATE TABLE `tag_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `sort_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,7 +115,7 @@ CREATE TABLE `tag_type` (
 
 LOCK TABLES `tag_type` WRITE;
 /*!40000 ALTER TABLE `tag_type` DISABLE KEYS */;
-INSERT INTO `tag_type` VALUES (1,'主題',0),(2,'模板',1);
+INSERT INTO `tag_type` VALUES (1,'主題',0),(2,'模板',1),(15,'快速設定',2);
 /*!40000 ALTER TABLE `tag_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,8 +130,9 @@ CREATE TABLE `web_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `sort_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,7 +141,7 @@ CREATE TABLE `web_list` (
 
 LOCK TABLES `web_list` WRITE;
 /*!40000 ALTER TABLE `web_list` DISABLE KEYS */;
-INSERT INTO `web_list` VALUES (1,'cfd圖片',1),(2,'cfd模板',0);
+INSERT INTO `web_list` VALUES (1,'cfd圖片',0),(2,'cfd模板',1);
 /*!40000 ALTER TABLE `web_list` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,7 +192,7 @@ CREATE TABLE `web_tag_type` (
 
 LOCK TABLES `web_tag_type` WRITE;
 /*!40000 ALTER TABLE `web_tag_type` DISABLE KEYS */;
-INSERT INTO `web_tag_type` VALUES (1,2,1),(1,1,0);
+INSERT INTO `web_tag_type` VALUES (1,15,2),(2,2,1),(1,1,0),(1,2,1);
 /*!40000 ALTER TABLE `web_tag_type` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -203,4 +205,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-25 11:33:34
+-- Dump completed on 2016-11-25 13:19:47
