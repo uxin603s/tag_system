@@ -26,14 +26,20 @@ class WebList{
 		return compact(['status','message','insert']);
 	}
 	public static function update($arg){
+		//欄位案權限 再過濾一次
 		
+		if(DB::update($arg['update'],$arg['where'],'web_list')){
+			$status=true;
+			$message="修改成功";
+		}else{
+			$status=false;
+			$message="修改失敗";
+		}
+		return compact(['status','message','arg','update','where']);
 	}
 	public static function delete($where){
 		
-		if(DB::select("select * from alias_list where wid = ? ",[$where['id']])){
-			$status=false;
-			$message="alias_list 有資料無法刪除";
-		}else if(DB::delete($where,'web_list')){
+		if(DB::delete($where,'web_list')){
 			$status=true;
 			$message="刪除成功";
 		}else{

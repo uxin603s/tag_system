@@ -25,7 +25,17 @@ class WebTagType{
 		return compact(['status','message','insert']);
 	}
 	public static function update($arg){
+		//欄位案權限 再過濾一次
 		
+		
+		if(DB::update($arg['update'],$arg['where'],'web_tag_type')){
+			$status=true;
+			$message="修改成功";
+		}else{
+			$status=false;
+			$message="修改失敗";
+		}
+		return compact(['status','message','arg','update','where']);
 	}
 	public static function delete($where){
 		
