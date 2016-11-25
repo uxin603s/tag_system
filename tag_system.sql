@@ -1,8 +1,8 @@
--- MySQL dump 10.16  Distrib 10.1.10-MariaDB, for Linux (x86_64)
+-- MySQL dump 10.15  Distrib 10.0.27-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: tag_system
 -- ------------------------------------------------------
--- Server version	10.1.10-MariaDB
+-- Server version	10.0.27-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -139,7 +139,7 @@ CREATE TABLE `web_list` (
 
 LOCK TABLES `web_list` WRITE;
 /*!40000 ALTER TABLE `web_list` DISABLE KEYS */;
-INSERT INTO `web_list` VALUES (1,'cfd圖片',0),(2,'cfd模板',0);
+INSERT INTO `web_list` VALUES (1,'cfd圖片',1),(2,'cfd模板',0);
 /*!40000 ALTER TABLE `web_list` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,6 +190,7 @@ CREATE TABLE `web_tag_type` (
 
 LOCK TABLES `web_tag_type` WRITE;
 /*!40000 ALTER TABLE `web_tag_type` DISABLE KEYS */;
+INSERT INTO `web_tag_type` VALUES (1,2,1),(1,1,0);
 /*!40000 ALTER TABLE `web_tag_type` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -202,4 +203,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-24 12:57:12
+-- Dump completed on 2016-11-25 11:33:34
