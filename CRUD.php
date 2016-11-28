@@ -30,7 +30,6 @@ trait CRUD{
 	}
 	public static function update($arg){
 		//欄位案權限 再過濾一次
-		
 		if(DB::update($arg['update'],$arg['where'],self::$table)){
 			$status=true;
 			$message="修改成功";
@@ -41,7 +40,6 @@ trait CRUD{
 		return compact(['status','message','arg','update','where']);
 	}
 	public static function delete($where){
-		
 		if(DB::delete($where,self::$table)){
 			$status=true;
 			$message="刪除成功";
