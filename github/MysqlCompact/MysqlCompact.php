@@ -64,7 +64,7 @@ class MysqlCompact{
 			foreach($list as $item){
 				$field=$item['field'];
 				$sort=self::$sort_list[$item['type']];
-				if(in_array($field,$filter_fields) && $sort){
+				if($sort){
 					$array[]="{$field} {$sort}";
 				}
 			}
