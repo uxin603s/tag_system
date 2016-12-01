@@ -2,8 +2,8 @@
 
 include_once __DIR__."/github/DB/DB.php";
 include_once __DIR__."/github/MysqlCompact/MysqlCompact.php";
+include_once __DIR__."/github/MysqlCompact/CRUD.php";
 
-include_once __DIR__."/CRUD.php";
 include_once __DIR__."/WebList.php";
 include_once __DIR__."/TagType.php";
 include_once __DIR__."/WebTagType.php";
