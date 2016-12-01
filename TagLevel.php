@@ -1,7 +1,7 @@
 <?php
 class TagLevel{
 	public static $table='tag_level';
-	public static $filter_field=['id','tid','sort_id'];
+	public static $filter_field_arr=['id','tid','sort_id'];
 	use CRUD {
 		CRUD::delete as tmp_delete;
 	}
