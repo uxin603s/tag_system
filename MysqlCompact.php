@@ -15,7 +15,7 @@ class MysqlCompact{
 		"like",
 		"not like",
 	];
-	public static function where($where_list=[],$filter_fields=[],&$bind_data){
+	public static function where($where_list=[],&$bind_data){
 		$query_str="where 1=1 ";
 		
 		$used_count=array_count_values(array_column($where_list,'field'));
@@ -35,7 +35,7 @@ class MysqlCompact{
 			$value=$item['value'];
 			$symbol=self::$type_list[$type];
 			//欄位白名單
-			if(in_array($field,$filter_fields) && $symbol){
+			if($symbol){
 				if(in_array($field,$and_array)){
 					$query_str.=" && {$field} {$symbol} ?";
 					$bind_data[]=$value;
@@ -56,19 +56,37 @@ class MysqlCompact{
 		"asc",
 		"desc",
 	];
-	public static function orderBy($orderBy_list,$filter_fields=[]){
+	public static function order($list){
 		$query_str='';
-		if(count($orderBy_list)){
+		if(is_array($list) && count($list)){
 			$query_str="order by ";
-			$order_array=[];
-			foreach($orderBy_list as $item){
+			$array=[];
+			foreach($list as $item){
 				$field=$item['field'];
 				$sort=self::$sort_list[$item['type']];
 				if(in_array($field,$filter_fields) && $sort){
-					$order_array[]="{$field} {$sort}";
+					$array[]="{$field} {$sort}";
 				}
 			}
-			$query_str.=implode(",",$order_array);
+			$query_str.=implode(",",$array);
+		}
+		return $query_str;
+	}
+	public static function group($list,&$bind_data){
+		$query_str='';
+		if(is_array($list) && count($list)){
+			foreach($list as $item){
+				if($item['type']==0){
+					if(is_array($item['value'])){
+						$query_str="group by {$item['field']} having count({$item['field']})  >=  ? ";
+						$bind_data[]=array_shift($item['value']);
+						foreach($item['value'] as $value){
+							$query_str.=" && max( CASE `{$item['field']}`  WHEN ? THEN 1 ELSE 0 END ) = 1";
+							$bind_data[]=$value;
+						}
+					}
+				}
+			}
 		}
 		return $query_str;
 	}
