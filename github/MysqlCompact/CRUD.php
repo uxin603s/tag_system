@@ -28,7 +28,7 @@ trait CRUD{
 		}else{
 			$status=false;
 		}
-		return compact(['status','list','sql','bind_data']);
+		return compact(['status','list','sql','bind_data',]);
 	}
 	
 	public static function insert($insert){

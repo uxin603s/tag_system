@@ -18,7 +18,7 @@ include_once __DIR__."/WebRelation.php";
 
 $DBConfig=json_decode(file_get_contents(__DIR__."/config/DB.json"),1);
 DB::$config=$DBConfig;
-
+DB::query("SET NAMES utf8");
 
 session_start();
 $_SESSION['id']=0;
