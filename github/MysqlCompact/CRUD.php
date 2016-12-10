@@ -21,9 +21,7 @@ trait CRUD{
 		return $list;
 	}
 	public static function getList($arg){
-		$bind_data=[];
-
-		
+		$bind_data=[];		
 		$select_str_arr=[];
 		if($arg['select_list']){
 			$arg['select_list']=self::filter_field($arg['select_list']);
