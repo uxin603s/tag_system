@@ -15,3 +15,5 @@ table{field}
 		
 帶法等同
 https://github.com/uxin603s/fans_system_backend/blob/master/how_to_use_api.txt
+
+http://tag.cfd888.info/ajax.php?func_name=webList::getList&arg={}
