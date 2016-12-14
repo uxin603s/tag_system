@@ -1,0 +1,39 @@
+
+未來還會新增權限表
+http://tag.cfd888.info/
+
+table{field}
+	webList:網站列表{id:auto_id,name:網站名稱,sort_id:排序id}
+	tagType:標籤種類{id:auto_id,name:標籤種類名稱,sort_id:排序id}
+	webTagType:標籤種類與網站列表的關聯{wid:與網站列表auto_id關聯,tid:與標籤種類auto_id關聯,sort_id:排序id}		
+	tagName:標籤名稱{id:auto_id,name:標籤名稱}
+	tag_level:標籤階層{id:auto_id,sort_id:排序id,tid:標籤種類的auto_id關聯}
+	tag_relation:標籤階層關聯{id:父層,child_id:子層,level_id:與標籤階層auto_id關聯,sort_id:排序id}
+	web_relation:網站標籤關聯{tid:與標籤名稱auto_id關聯,source_id:該網站的原始id,wid:與網站列表auto_id關聯,sort_id:排序id}
+		
+$insert['fb_id']="粉絲團id";
+FansList::insert($insert);
+http://fans.cfd888.info/ajax.php?func_name=FansList::insert&arg={"fb_id":"粉絲團id"}
+
+
+where_list->type
+0:等於,1:不等於,2:like,3:not like,4:大於,5:小於
+欄位相同會變成where in
+
+$where_list=[
+	[field=>"id",type=>"0","value"=>"1",],
+];
+
+
+FansList::getList([where_list=>$where_list]);
+http://fans.cfd888.info/ajax.php?func_name=FansList::getList&arg={"where_list":[{"field":"id","type":"0","value":"1"}]}
+
+
+$update['comment']="測試粉絲團";
+$where['id']="1";
+FansList::update(["update"=>$update,"where"=>$where]);
+http://fans.cfd888.info/ajax.php?func_name=FansList::update&arg={"update":{"comment":"測試粉絲團123"},"where":{"id":1}}
+
+$where['id']="1";
+FansList::delete($where);
+http://fans.cfd888.info/ajax.php?func_name=FansList::delete&arg={"id":"1"}
