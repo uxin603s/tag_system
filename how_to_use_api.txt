@@ -7,12 +7,15 @@ table{field}
 	tagType:標籤種類{id:auto_id,name:標籤種類名稱,sort_id:排序id}
 	webTagType:標籤種類與網站列表的關聯{wid:與網站列表auto_id關聯,tid:與標籤種類auto_id關聯,sort_id:排序id}		
 	tagName:標籤名稱{id:auto_id,name:標籤名稱}
+	
 	tag_level:標籤階層{id:auto_id,sort_id:排序id,tid:標籤種類的auto_id關聯}
 	tag_relation:標籤階層關聯{id:父層,child_id:子層,level_id:與標籤階層auto_id關聯,sort_id:排序id}
-	父層為0為最上層
+	父層為0為最上層,父層與子層與tagName關聯
 	
 	web_relation:網站標籤關聯{wid:與網站列表auto_id關聯,source_id:該網站的原始id,tid:與標籤名稱auto_id關聯,sort_id:排序id}
-		
+	
+
+	
 帶法等同
 https://github.com/uxin603s/fans_system_backend/blob/master/how_to_use_api.txt
 
