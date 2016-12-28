@@ -11,6 +11,6 @@ class TagRelation{
 				$TagRelation[$item['level_id']][$item['id']][]=$item['child_id'];
 			}
 		}
-		Cache::run("TagRelation",$TagRelation);
+		Cache::group_save("TagRelation",$TagRelation);
 	}
 }

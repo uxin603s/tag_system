@@ -11,6 +11,6 @@ class TagName{
 				$TagName[$item['id']]=$item['name'];
 			}
 		}
-		Cache::run("TagName",$TagName);
+		Cache::group_save("TagName",$TagName);
 	}
 }

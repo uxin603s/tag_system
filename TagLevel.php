@@ -13,7 +13,7 @@ class TagLevel{
 				$TagLevel[$item['tid']][]=$item;
 			}
 		}
-		Cache::run("TagLevel",$TagLevel);
+		Cache::group_save("TagLevel",$TagLevel);
 	}
 	public static function get_level_id($id,$updown){
 		if($tmp=DB::select("select * from tag_level where id = ?",[$id])){

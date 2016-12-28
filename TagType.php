@@ -13,7 +13,7 @@ class TagType{
 				$TagType[$item['id']]=$item['name'];
 			}
 		}
-		Cache::run("TagType",$TagType);
+		Cache::group_save("TagType",$TagType);
 	}
 	public static function delete($arg){
 		if(isset($arg['id'])){

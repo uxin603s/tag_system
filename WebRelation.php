@@ -14,8 +14,8 @@ class WebRelation{
 			}
 		}
 		foreach($WebRelation as $wid=>$item){
-			Cache::run("WebRelation".$wid,$WebRelation[$wid]);
-			Cache::run("WebRelationR".$wid,$WebRelationR[$wid]);
+			Cache::group_save("WebRelation".$wid,$WebRelation[$wid]);
+			Cache::group_save("WebRelationR".$wid,$WebRelationR[$wid]);
 		}
 	}
 	

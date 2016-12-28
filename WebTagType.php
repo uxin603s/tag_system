@@ -13,7 +13,7 @@ class WebTagType{
 				$TagTypeWeb[$item['tid']][]=$item['wid'];
 			}
 		}
-		Cache::run("WebTagType",$WebTagType);
-		Cache::run("TagTypeWeb",$TagTypeWeb);
+		Cache::group_save("WebTagType",$WebTagType);
+		Cache::group_save("TagTypeWeb",$TagTypeWeb);
 	}
 }
