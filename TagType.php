@@ -5,6 +5,16 @@ class TagType{
 	use CRUD {
 		CRUD::delete as tmp_delete;
 	}
+	public static function flushCache(){
+		$tmp=self::getList();
+		$TagType=[];
+		if($tmp['status']){
+			foreach($tmp['list'] as $item){
+				$TagType[$item['id']]=$item['name'];
+			}
+		}
+		Cache::run("TagType",$TagType);
+	}
 	public static function delete($arg){
 		if(isset($arg['id'])){
 			$where_list=[

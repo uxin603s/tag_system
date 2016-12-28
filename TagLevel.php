@@ -5,6 +5,16 @@ class TagLevel{
 	use CRUD {
 		CRUD::delete as tmp_delete;
 	}
+	public static function flushCache(){
+		$tmp=self::getList();
+		$TagLevel=[];
+		if($tmp['status']){
+			foreach($tmp['list'] as $item){
+				$TagLevel[$item['tid']][]=$item;
+			}
+		}
+		Cache::run("TagLevel",$TagLevel);
+	}
 	public static function get_level_id($id,$updown){
 		if($tmp=DB::select("select * from tag_level where id = ?",[$id])){
 			$sort_id=$tmp[0]['sort_id']+$updown;
