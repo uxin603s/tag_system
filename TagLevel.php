@@ -2,19 +2,11 @@
 class TagLevel{
 	public static $table='tag_level';
 	public static $filter_field_arr=['id','tid','sort_id'];
+	public static $cache_key_field=["id","tid"];
 	use CRUD {
 		CRUD::delete as tmp_delete;
 	}
-	public static function flushCache(){
-		$tmp=self::getList();
-		$TagLevel=[];
-		if($tmp['status']){
-			foreach($tmp['list'] as $item){
-				$TagLevel[$item['tid']][]=$item;
-			}
-		}
-		Cache::group_save("TagLevel",$TagLevel);
-	}
+	
 	public static function get_level_id($id,$updown){
 		if($tmp=DB::select("select * from tag_level where id = ?",[$id])){
 			$sort_id=$tmp[0]['sort_id']+$updown;

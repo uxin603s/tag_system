@@ -2,19 +2,11 @@
 class TagType{
 	public static $table='tag_type';
 	public static $filter_field_arr=["id","name","sort_id"];
+	public static $cache_key_field=["id"];
 	use CRUD {
 		CRUD::delete as tmp_delete;
 	}
-	public static function flushCache(){
-		$tmp=self::getList();
-		$TagType=[];
-		if($tmp['status']){
-			foreach($tmp['list'] as $item){
-				$TagType[$item['id']]=$item['name'];
-			}
-		}
-		Cache::group_save("TagType",$TagType);
-	}
+	
 	public static function delete($arg){
 		if(isset($arg['id'])){
 			$where_list=[
