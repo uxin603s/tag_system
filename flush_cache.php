@@ -2,20 +2,31 @@
 include_once __DIR__."/include.php";
 
 
-TagLevel::flushCache();
+// file_put_contents($file, $person, FILE_APPEND | LOCK_EX);
+
+
+// var_dump(Mcache::get('test'));
+// exit;
+// Mcache::init();
+// Mcache::$con->delete("test");
+// for($i=0;$i<10;$i++){
+	// exec("nohup php test.php &");
+// }
+exit;
+// for($i=0;$i<100;$i++){
+	// Mcache::$con->increment("test");
+// }
+// var_dump(Mcache::$con->get("test"));
+// exit;
+// Fcache::del_all();
+
 TagName::flushCache();
 TagRelation::flushCache();
 TagType::flushCache();
 WebTagType::flushCache();
 WebRelation::flushCache();
 
-
-// $WebRelation=WebRelation::getCache();
-
-// var_dump($WebRelation);
-// exit;
-
-
+$result=[];
 $TagType=TagType::getCache();
 $tids=[];
 foreach($TagType as $val){
@@ -49,17 +60,20 @@ foreach($TagType as $val){
 	}
 	$TagRelation=array_pop($TagRelation);
 	$TagRelation=array_pop($TagRelation);
-	
-	var_dump($TagRelation);
+	$result[$val['id']]=$TagRelation;
 	
 }
 $TagName=array_column(TagName::getCache(['id'=>$tids]),'name','id');
+
+$WebTagType=WebTagType::getCache();
+$web_data=[];
+
+foreach($WebTagType as $val){
+	$web_data[0][$val['tid']]=$result[$val['tid']];
+	$web_data[$val['wid']][$val['tid']]=$result[$val['tid']];
+}
+
 var_dump($TagName);
-
-
-// $list=Fcache::where();
-// $list=Fcache::del_all();
-// var_dump(Cache::group_get_all("WebRelation1"));
-// var_dump(Cache::group_del_all("WebRelation.wid.1.source_id.477"));
-// var_dump(Cache::get_one("TagRelation",1));
+var_dump($web_data);
 exit;
+
