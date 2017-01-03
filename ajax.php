@@ -7,7 +7,8 @@ if(isset($_SESSION['rid'])){
 	
 }else{
 	if(isset($_GET['access_token'])){
-		UserSystemHelp::login("UserSystemHelp::success","UserSystemHelp::error",false);
+		UserSystemHelp::$location=false;
+		UserSystemHelp::login();
 	}
 }
 
