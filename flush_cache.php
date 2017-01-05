@@ -1,12 +1,14 @@
 <?php
 include_once __DIR__."/include.php";
 
-
+TagName::flushCache();
+$list=TagName::getCache(['id'=>1]);
+var_dump($list);
 // file_put_contents($file, $person, FILE_APPEND | LOCK_EX);
 
 
 // var_dump(Mcache::get('test'));
-// exit;
+// exit;                                                                                     
 // Mcache::init();
 // Mcache::$con->delete("test");
 // for($i=0;$i<10;$i++){
@@ -20,7 +22,7 @@ exit;
 // exit;
 // Fcache::del_all();
 
-TagName::flushCache();
+
 TagRelation::flushCache();
 TagType::flushCache();
 WebTagType::flushCache();
