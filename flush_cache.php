@@ -5,7 +5,7 @@ include_once __DIR__."/include.php";
 // WebRelation::flushCache();
 
 
-var_dump(count(WebRelation::getCache(['tid'=>555,],[],['count'=>200,'page'=>$argv[1],'rand'=>false,])));
+var_dump(count(WebRelation::getCache(['where'=>['tid'=>555,],[],['count'=>200,'page'=>$argv[1],'rand'=>false,]])));
 exit;
 TagName::flushCache();
 TagLevel::flushCache();
