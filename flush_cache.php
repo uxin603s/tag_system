@@ -4,8 +4,15 @@ include_once __DIR__."/include.php";
 
 // WebRelation::flushCache();
 
-
-var_dump(count(WebRelation::getCache(['where'=>['tid'=>555,],[],['count'=>200,'page'=>$argv[1],'rand'=>false,]])));
+// $dd=WebRelation::getCache(['where'=>['tid'=>555,]]);
+$dd=WebRelation::getCache([
+'group'=>['source_id','tid'],
+// 'required'=>[555,1,],
+// 'not_required'=>[2],
+// 'optional'=>[555],
+// 'limit'=>['count'=>10,'page'=>$argv[1]],
+]);//
+var_dump(($dd));
 exit;
 TagName::flushCache();
 TagLevel::flushCache();
