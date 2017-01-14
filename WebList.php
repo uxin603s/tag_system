@@ -13,7 +13,6 @@ class WebList{
 			}
 			$list=array_values($list);
 		}
-		
 		return compact(["status","list"]);
 	}
 }

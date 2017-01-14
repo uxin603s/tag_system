@@ -21,5 +21,4 @@ include_once __DIR__."/TagLevel.php";
 
 include_once __DIR__."/WebRelation.php";
 
-DB::query("SET NAMES utf8");
 Mcache::$prefix="cfd_chichi_tag";

@@ -25,6 +25,11 @@ class WebRelation{
 			unset($arg['tag_name']);
 			$arg['tid']=$tagdata['id'];
 		}
-		return self::tmp_insert($arg);
+		if($arg['tid']){
+			return self::tmp_insert($arg);
+		}else{
+			$status=false;
+			return compact(['status']);
+		}
 	}
 }
