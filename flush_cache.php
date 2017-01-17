@@ -1,6 +1,20 @@
 <?php
 include_once __DIR__."/include.php";
-WebRelation::flushCache();
+
+
+$data=json_decode(file_get_contents("/home/cfdchi/ggwp.json"),1);
+
+$wid=3;
+foreach($data as $source_id=>$tag_names){
+	foreach($tag_names as $tag_name){
+		$arg=compact(['source_id','tag_name','wid']);
+		WebRelation::insert($arg);
+		var_dump($arg);
+	}
+	
+}
+
+exit;
 exit;
 $time=microtime(1);
 TagName::getCache(['where'=>['id'=>1]]);
