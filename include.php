@@ -18,7 +18,7 @@ include_once __DIR__."/TagName.php";
 include_once __DIR__."/TagRelation.php";
 
 include_once __DIR__."/TagLevel.php";
-
+include_once __DIR__."/TagTree.php";
 include_once __DIR__."/WebRelation.php";
 
 Mcache::$prefix="cfd_chichi_tag";

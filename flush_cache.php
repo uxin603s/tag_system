@@ -2,6 +2,13 @@
 include_once __DIR__."/include.php";
 
 
+
+
+
+
+TagTree::get(['wid'=>1]);
+
+exit;
 $data=json_decode(file_get_contents("/home/cfdchi/ggwp.json"),1);
 
 $wid=3;

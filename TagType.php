@@ -4,9 +4,14 @@ class TagType{
 	public static $filter_field_arr=["id","name","sort_id"];
 	public static $cache_key_field=["id"];
 	use CRUD {
-		CRUD::delete as tmp_delete;
+		CRUD::delete as private tmp_delete;
+		CRUD::insert as private tmp_insert;
 	}
 	
+	public static function insert($arg){
+		TagName::insert(['name'=>$arg['name']]);
+		return self::tmp_insert($arg);
+	}
 	public static function delete($arg){
 		if(isset($arg['id'])){
 			$where_list=[
