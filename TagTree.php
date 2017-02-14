@@ -43,10 +43,11 @@ class TagTree{
 			$tmp=TagLevel::getList(compact(['where_list']));
 			if($tmp['status']){
 				$TagLevel=[];
+				
 				foreach($tmp['list'] as $val){
 					$tid=$type_to_tid[$val['tid']];
 					$TagLevel[$tid][$val['sort_id']]=$val['id'];
-					krsort($TagLevel[$tid]);
+					ksort($TagLevel[$tid]);
 				}
 				
 				$level_ids=array_column($tmp['list'],"id");
@@ -57,19 +58,22 @@ class TagTree{
 				}
 				$tmp=TagRelation::getList(compact(['where_list']));
 				$TagRelation=[];
+				$TagRelationR=[];
+				
 				$tids=[];
 				if($tmp['status']){
 					foreach($tmp['list'] as $val){
 						$TagRelation[$val['level_id']][$val['id']][$val['child_id']]=$val['child_id'];
+						$TagRelationR[$val['level_id']][$val['child_id']]=$val['id'];
 						$tids[]=$val['child_id'];
 					}
 				}
-				$copy_TagRelation=$TagRelation;
+				
 				$data=[];
-				// $resultRow=[];
+				
 				foreach($TagLevel as $tid=>$level_ids){
 					while(1){
-						$level_id=array_shift($level_ids);
+						$level_id=array_pop($level_ids);
 						
 						if(count($level_ids)){
 							foreach($TagRelation[$level_ids[0]] as $id=>$array){
@@ -83,14 +87,21 @@ class TagTree{
 								}
 							}							
 						}else{
-							
 							$data[$tid]=$TagRelation[$level_id][0];
 							break;
 						}
 					}
 				}
-				// var_dump($resultRow);
-				// exit;
+				
+				$dataR=[];
+				foreach($TagLevel as $tid=>$level_ids){
+					foreach($level_ids as $level_id){
+						$tmp=$TagRelationR[$level_id];
+						foreach($tmp as $child_id=>$id){
+							$dataR[$tid][$child_id]=$id;
+						}
+					}
+				}
 				$where_list=[];
 				foreach($tids as $tid){
 					$where_list[]=['field'=>'id','type'=>0,'value'=>$tid];
@@ -110,7 +121,7 @@ class TagTree{
 				// var_dump($result);
 			}
 		}
-		return compact(['status','tagName','data']);
+		return compact(['status','tagName','data','dataR','TagRelation']);
 	}
 	public static function replace_tid($result,$tagName){
 		if(is_array($result) && count($result)){
