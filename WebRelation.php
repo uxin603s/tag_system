@@ -9,7 +9,7 @@ class WebRelation{
 		CRUD::insert as private tmp_insert;
 		CRUD::delete as private tmp_delete;
 	}
-	public static function flushCache($arg,$type){
+	public static function flush($arg,$type){
 		/**
 		1變數
 		2標籤
