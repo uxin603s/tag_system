@@ -3,9 +3,10 @@ class TagName{
 	public static $table='tag_name';
 	public static $filter_field_arr=['id','name',];
 	public static $cache_key_field=["id",];
-	use CRUD{
+	use CRUD {
 		CRUD::flushCache as private tmp_flushCache;
 	}
+	
 	public static function flushCache($arg,$type){
 		/**
 		1變數
