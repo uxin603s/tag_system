@@ -2,7 +2,6 @@
 class TagType{
 	public static $table='tag_type';
 	public static $filter_field_arr=["id","name","sort_id"];
-	public static $cache_key_field=["id"];
 	use CRUD {
 		CRUD::delete as private tmp_delete;
 		CRUD::insert as private tmp_insert;

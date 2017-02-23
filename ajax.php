@@ -3,6 +3,8 @@ session_start();
 session_write_close();
 include_once __DIR__."/include.php";
 
+
+
 if(isset($_SESSION['rid'])){
 	
 }else{
